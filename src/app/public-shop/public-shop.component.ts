@@ -1,8 +1,6 @@
-import { Component, inject, signal, computed, OnInit, LOCALE_ID } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
-import { DatePipe } from '@angular/common';
-registerLocaleData(localeFr);
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +13,8 @@ import { Annonce, ANNONCE_TYPE_CONFIG } from '../models/annonce.model';
 import { Category } from '../models/category.model';
 import { Product } from '../models/product.model';
 
+registerLocaleData(localeFr);
+
 @Component({
   selector: 'app-public-shop',
   standalone: true,
@@ -23,9 +23,7 @@ import { Product } from '../models/product.model';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    DatePipe,
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'fr' }],
   templateUrl: './public-shop.component.html',
   styleUrls: ['./public-shop.component.scss'],
 })
@@ -45,6 +43,10 @@ export class PublicShopComponent implements OnInit {
 
   openAnn(ann: Annonce): void  { this.selectedAnn.set(ann); }
   closeAnn(): void             { this.selectedAnn.set(null); }
+
+  formatDate(date: Date): string {
+    return new Date(date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  }
 
   readonly cartItems = toSignal(this.cartService.items$, { initialValue: [] });
   readonly cartItemIds = computed(() => new Set(this.cartItems().map(i => i.product.id)));

@@ -157,7 +157,7 @@
         @if (selectedAnn()!.dateFin) {
           <p class="ann-modal-date">
             <mat-icon>event</mat-icon>
-            Valable jusqu'au {{ selectedAnn()!.dateFin | date:'dd MMMM yyyy':'':'fr' }}
+            Valable jusqu'au {{ formatDate(selectedAnn()!.dateFin!) }}
           </p>
         }
       </div>
