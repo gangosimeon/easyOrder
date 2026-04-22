@@ -1,9 +1,11 @@
 .form-dialog {
   width: 100%;
-  max-width: 520px;
+  max-width: 540px;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .dialog-header {
