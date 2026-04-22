@@ -26,11 +26,24 @@ export class CartComponent {
   }
 
   generateWhatsAppMessage(items: CartItem[], companyName: string): string {
-    let msg = `Bonjour, je souhaite commander chez ${companyName} :\n`;
+    let msg = `🛍️ Bonjour, je souhaite commander chez *${companyName}* :\n\n`;
+
+    let total = 0;
+
     for (const item of items) {
-      msg += `• ${item.product.name} (${item.quantity}x) : ${this.formatPrice(item.product.price * item.quantity)}\n`;
+      const productTotal = item.product.price * item.quantity;
+      total += productTotal;
+      msg += `📦 *${item.product.name}*\n`;
+      msg += `   ➤ Quantité : ${item.quantity}x\n`;
+      msg += `   ➤ Prix : ${this.formatPrice(productTotal)}\n`;
+
+      if (item.product.image) {
+        msg += `   📷 Image : ${item.product.image}\n`;
+      }
+      msg += `\n`;
     }
-    msg += `\nTotal : ${this.formatPrice(this.getTotal())}`;
+    msg += `💰 *TOTAL : ${this.formatPrice(total)}*\n\n`;
+    msg += `Merci de me confirmer la disponibilité 🙏`;
     return msg;
   }
 
