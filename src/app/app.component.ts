@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
+import { filter, map } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { CartService } from './services/cart.service';
 
 interface NavItem {
   label: string;
@@ -17,9 +20,41 @@ interface NavItem {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  private router = inject(Router);
+  readonly cartService = inject(CartService);
+  readonly cartCount = toSignal(this.cartService.items$.pipe(map(items => items.length)), { initialValue: 0 });
+
+  readonly isPublicRoute = signal(
+    window.location.pathname.startsWith('/shop') || window.location.pathname.startsWith('/cart')
+  );
+
   readonly navItems: NavItem[] = [
     { label: 'Catégories', icon: 'category',    route: '/categories' },
     { label: 'Produits',   icon: 'inventory_2', route: '/products'   },
     { label: 'Annonces',   icon: 'campaign',    route: '/annonces'   },
   ];
+
+  constructor() {
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe((e: NavigationEnd) => {
+      const url = e.urlAfterRedirects;
+      this.isPublicRoute.set(url.startsWith('/shop') || url.startsWith('/cart'));
+    });
+  }
+
+  selectPublicCategory(id: string | null): void {
+    this.cartService.selectCategory(id);
+    const slug = this.cartService.company()?.slug;
+    if (slug && !this.router.url.startsWith('/shop')) {
+      this.router.navigate(['/shop', slug]);
+    }
+  }
+
+  contactWhatsApp(): void {
+    const company = this.cartService.company();
+    if (!company) return;
+    const msg = encodeURIComponent('Bonjour, je viens de votre boutique en ligne');
+    window.open(`https://wa.me/${company.phone}?text=${msg}`, '_blank');
+  }
 }

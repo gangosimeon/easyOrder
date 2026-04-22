@@ -1,0 +1,181 @@
+<!-- ===== LOADING ===== -->
+@if (loading()) {
+  <div class="loading-container">
+    <mat-spinner diameter="48" />
+    <p>Chargement de la boutique...</p>
+  </div>
+}
+
+<!-- ===== ERROR ===== -->
+@if (error()) {
+  <div class="error-state">
+    <mat-icon class="error-icon">store_off</mat-icon>
+    <h2>{{ error() }}</h2>
+    <p>Vérifiez l'adresse de la boutique et réessayez.</p>
+  </div>
+}
+
+<!-- ===== SHOP CONTENT ===== -->
+@if (!loading() && !error() && shopData()) {
+
+  <!-- ANNOUNCEMENTS -->
+  @if (announcements().length > 0) {
+    <section class="announcements-section" id="announcements">
+      @for (ann of announcements(); track ann.id) {
+        <div
+          class="announcement-card"
+          [class.pinned]="ann.epinglee"
+          [style.background]="ANNONCE_TYPE_CONFIG[ann.type].bgColor"
+          [style.border-left-color]="ANNONCE_TYPE_CONFIG[ann.type].color"
+          (click)="openAnn(ann)"
+          role="button"
+        >
+          @if (ann.epinglee) {
+            <span class="pin-mark">📌</span>
+          }
+          <div class="ann-meta">
+            <span class="ann-emoji">{{ ann.emoji }}</span>
+            <span class="ann-type-label" [style.color]="ANNONCE_TYPE_CONFIG[ann.type].color">
+              <mat-icon class="ann-icon">{{ ANNONCE_TYPE_CONFIG[ann.type].icon }}</mat-icon>
+              {{ ANNONCE_TYPE_CONFIG[ann.type].label }}
+            </span>
+          </div>
+          <p class="ann-titre">{{ ann.titre }}</p>
+          <p class="ann-message">{{ ann.message }}</p>
+          <span class="ann-read-more">Lire plus →</span>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- CATEGORIES BAR -->
+  @if (categories().length > 0) {
+    <section class="categories-section mobile-only">
+      <div class="categories-bar">
+        <button
+          class="cat-chip"
+          [class.active]="cartService.selectedCategoryId() === null"
+          (click)="selectCategory(null)"
+        >
+          <span>🏪</span> Tous
+        </button>
+        @for (cat of categories(); track cat.id) {
+          <button
+            class="cat-chip"
+            [class.active]="cartService.selectedCategoryId() === cat.id"
+            [style.--cat-color]="cat.color"
+            (click)="selectCategory(cat.id)"
+          >
+            <mat-icon class="cat-icon" [style.color]="cartService.selectedCategoryId() === cat.id ? '#fff' : cat.color">
+              {{ cat.icon }}
+            </mat-icon>
+            {{ cat.name }}
+          </button>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- PRODUCTS -->
+  <section class="products-section" [class.has-footer]="cartItemIds().size > 0">
+    @if (productsByCategory().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">inventory_2</mat-icon>
+        <h3>Aucun produit disponible</h3>
+        <p>Cette boutique n'a pas encore de produits.</p>
+      </div>
+    }
+
+    @for (group of productsByCategory(); track group.category.id) {
+      <div class="category-group">
+        <div class="cat-group-header">
+          <mat-icon [style.color]="group.category.color">{{ group.category.icon }}</mat-icon>
+          <h2>{{ group.category.name }}</h2>
+          <span class="cat-count">{{ group.products.length }}</span>
+        </div>
+        <div class="products-grid">
+          @for (product of group.products; track product.id) {
+            <div class="product-card" [class.in-cart]="cartItemIds().has(product.id)" (click)="toggleProduct(product)">
+
+              @if (product.promotion) {
+                <div class="promo-badge">-{{ product.promotion }}%</div>
+              }
+
+              <div class="product-image">{{ product.image }}</div>
+
+              <div class="product-info">
+                <p class="product-name">{{ product.name }}</p>
+                @if (product.unit) {
+                  <span class="product-unit">/ {{ product.unit }}</span>
+                }
+                <div class="product-pricing">
+                  <span class="price-current">{{ formatPrice(product.price) }}</span>
+                  @if (product.originalPrice) {
+                    <span class="price-original">{{ formatPrice(product.originalPrice) }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="product-action">
+                @if (cartItemIds().has(product.id)) {
+                  <div class="action-check">
+                    <mat-icon>check_circle</mat-icon>
+                  </div>
+                } @else {
+                  <div class="action-add">
+                    <mat-icon>add_circle_outline</mat-icon>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- ANNOUNCEMENT DETAIL MODAL -->
+  @if (selectedAnn()) {
+    <div class="ann-modal-backdrop" (click)="closeAnn()"></div>
+    <div class="ann-modal" [style.border-top-color]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].color">
+      <div class="ann-modal-header" [style.background]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].bgColor">
+        <div class="ann-modal-meta">
+          <span class="ann-modal-emoji">{{ selectedAnn()!.emoji }}</span>
+          <span class="ann-modal-type" [style.color]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].color">
+            <mat-icon>{{ ANNONCE_TYPE_CONFIG[selectedAnn()!.type].icon }}</mat-icon>
+            {{ ANNONCE_TYPE_CONFIG[selectedAnn()!.type].label }}
+          </span>
+          @if (selectedAnn()!.epinglee) { <span class="ann-modal-pin">📌 Épinglée</span> }
+        </div>
+        <button class="ann-modal-close" (click)="closeAnn()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="ann-modal-body">
+        <h2 class="ann-modal-titre">{{ selectedAnn()!.titre }}</h2>
+        <p class="ann-modal-message">{{ selectedAnn()!.message }}</p>
+        @if (selectedAnn()!.dateFin) {
+          <p class="ann-modal-date">
+            <mat-icon>event</mat-icon>
+            Valable jusqu'au {{ selectedAnn()!.dateFin | date:'dd MMMM yyyy':'':'fr' }}
+          </p>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- STICKY CART FOOTER -->
+  @if (cartItemIds().size > 0) {
+    <div class="sticky-footer">
+      <button class="footer-btn btn-cart" (click)="goToCart()">
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Voir panier</span>
+        <span class="cart-badge">{{ cartItemIds().size }}</span>
+      </button>
+      <button class="footer-btn btn-order" (click)="goToCart()">
+        <span class="wa-dot">🟢</span>
+        <span>Commander maintenant</span>
+      </button>
+    </div>
+  }
+}
