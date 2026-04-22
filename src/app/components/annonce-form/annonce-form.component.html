@@ -1,0 +1,137 @@
+<div class="form-dialog">
+  <!-- Header dynamique selon le type -->
+  <div class="dialog-header" [style.background]="currentConfig.color">
+    <div class="header-icon">
+      <mat-icon>{{ currentConfig.icon }}</mat-icon>
+    </div>
+    <div class="header-text">
+      <h2>{{ data.mode === 'add' ? 'Nouvelle Annonce' : 'Modifier Annonce' }}</h2>
+      <span class="header-sub">{{ currentConfig.label }}</span>
+    </div>
+    <button class="close-btn" (click)="onCancel()"><mat-icon>close</mat-icon></button>
+  </div>
+
+  <!-- Aperçu live -->
+  <div class="preview-banner" [style.background]="currentConfig.bgColor"
+       [style.border-left-color]="currentConfig.color">
+    <span class="preview-emoji">{{ selectedEmoji() }}</span>
+    <div class="preview-text">
+      <strong [style.color]="currentConfig.color">{{ form.get('titre')?.value || 'Titre de l\'annonce' }}</strong>
+      <p>{{ form.get('message')?.value || 'Votre message apparaîtra ici…' }}</p>
+    </div>
+    <div class="preview-badge" [style.background]="currentConfig.color">
+      {{ currentConfig.label }}
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-body">
+
+    <!-- Type d'annonce -->
+    <div class="section-label"><mat-icon>tune</mat-icon> Type d'annonce</div>
+    <div class="type-grid">
+      @for (type of types; track type) {
+        <button type="button" class="type-btn"
+                [class.selected]="selectedType() === type"
+                [style.--type-color]="typeConfig[type].color"
+                (click)="onTypeChange(type); form.get('type')?.setValue(type)"
+                matRipple>
+          <mat-icon>{{ typeConfig[type].icon }}</mat-icon>
+          <span>{{ typeConfig[type].label }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Titre -->
+    <mat-form-field appearance="outline">
+      <mat-label>Titre de l'annonce</mat-label>
+      <input matInput formControlName="titre" placeholder="Ex: Grande Promotion !" />
+      <mat-icon matSuffix>title</mat-icon>
+      @if (form.get('titre')?.hasError('required')) {
+        <mat-error>Le titre est requis</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Message -->
+    <mat-form-field appearance="outline">
+      <mat-label>Message</mat-label>
+      <textarea matInput formControlName="message" rows="3"
+                placeholder="Décrivez votre annonce en détail…"></textarea>
+      <mat-hint align="end">{{ form.get('message')?.value?.length ?? 0 }} caractères</mat-hint>
+      @if (form.get('message')?.hasError('required')) {
+        <mat-error>Le message est requis</mat-error>
+      }
+      @if (form.get('message')?.hasError('minlength')) {
+        <mat-error>Minimum 10 caractères</mat-error>
+      }
+    </mat-form-field>
+
+    <!-- Emoji -->
+    <div class="section-label"><mat-icon>mood</mat-icon> Emoji de l'annonce</div>
+    <div class="emoji-section">
+      <div class="selected-emoji-big">{{ selectedEmoji() }}</div>
+      <div class="emoji-grid">
+        @for (emoji of emojis; track emoji) {
+          <button type="button" class="emoji-btn"
+                  [class.selected]="selectedEmoji() === emoji"
+                  (click)="selectEmoji(emoji)" matRipple>{{ emoji }}</button>
+        }
+      </div>
+    </div>
+
+    <!-- Dates -->
+    <div class="row-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Date de début</mat-label>
+        <input matInput type="date" formControlName="dateDebut" />
+        <mat-icon matSuffix>calendar_today</mat-icon>
+        @if (form.get('dateDebut')?.hasError('required')) {
+          <mat-error>Date requise</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Date de fin (optionnel)</mat-label>
+        <input matInput type="date" formControlName="dateFin" />
+        <mat-icon matSuffix>event</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Toggles -->
+    <div class="toggles-row">
+      <div class="toggle-item">
+        <div class="toggle-info">
+          <mat-icon>visibility</mat-icon>
+          <div>
+            <span class="toggle-title">Annonce active</span>
+            <span class="toggle-sub">Visible pour les clients</span>
+          </div>
+        </div>
+        <mat-slide-toggle formControlName="active" color="primary" />
+      </div>
+
+      <div class="toggle-item">
+        <div class="toggle-info">
+          <mat-icon>push_pin</mat-icon>
+          <div>
+            <span class="toggle-title">Épingler</span>
+            <span class="toggle-sub">Afficher en priorité</span>
+          </div>
+        </div>
+        <mat-slide-toggle formControlName="epinglee" color="warn" />
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" mat-stroked-button (click)="onCancel()" class="btn-cancel">
+        Annuler
+      </button>
+      <button type="submit" mat-raised-button class="btn-save"
+              [disabled]="form.invalid"
+              [style.background]="currentConfig.color">
+        <mat-icon>{{ data.mode === 'add' ? 'campaign' : 'save' }}</mat-icon>
+        {{ data.mode === 'add' ? 'Publier' : 'Enregistrer' }}
+      </button>
+    </div>
+
+  </form>
+</div>

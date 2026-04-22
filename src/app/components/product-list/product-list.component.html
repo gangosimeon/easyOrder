@@ -1,0 +1,139 @@
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-info">
+      <div class="breadcrumb">
+        <a routerLink="/categories" class="breadcrumb-link">
+          <mat-icon>category</mat-icon> Catégories
+        </a>
+        <mat-icon class="breadcrumb-sep">chevron_right</mat-icon>
+        @if (selectedCategory()) {
+          <span [style.color]="selectedCategory()!.color">
+            {{ selectedCategory()!.name }}
+          </span>
+        } @else {
+          <span>Tous les produits</span>
+        }
+      </div>
+      <h1 class="page-title" [style.color]="selectedCategory()?.color ?? 'var(--text-primary)'">
+        <mat-icon class="title-icon">{{ selectedCategory()?.icon ?? 'inventory_2' }}</mat-icon>
+        {{ selectedCategory()?.name ?? 'Tous les Produits' }}
+      </h1>
+      <p class="page-subtitle">{{ filteredProducts().length }} produit{{ filteredProducts().length > 1 ? 's' : '' }}</p>
+    </div>
+    <button mat-raised-button color="primary" class="btn-add" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon> Nouveau Produit
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" [value]="searchQuery()"
+             (input)="onSearch($any($event.target).value)"
+             placeholder="Rechercher un produit…"
+             class="search-input" />
+      @if (searchQuery()) {
+        <button class="clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="category-filter">
+      <button class="filter-chip" [class.active]="selectedCategoryId() === 'all'"
+              (click)="onCategoryChange('all')" matRipple>
+        <mat-icon>apps</mat-icon> Tous
+      </button>
+      @for (cat of categories(); track cat.id) {
+        <button class="filter-chip"
+                [class.active]="selectedCategoryId() === cat.id"
+                [style.--chip-color]="cat.color"
+                (click)="onCategoryChange(cat.id)" matRipple>
+          <mat-icon>{{ cat.icon }}</mat-icon>
+          {{ cat.name }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Products -->
+  <div class="products-grid">
+    @for (product of filteredProducts(); track product.id) {
+      <div class="product-card card-item">
+
+        @if (product.promotion) {
+          <div class="promo-badge">
+            <mat-icon>local_offer</mat-icon> -{{ product.promotion }}%
+          </div>
+        }
+
+        <div class="card-actions">
+          <button class="action-btn edit"   (click)="openEditDialog(product, $event)" matTooltip="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button class="action-btn delete" (click)="deleteProduct(product, $event)"  matTooltip="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="product-image"
+             [style.background]="(getCategoryFor(product)?.color ?? '#ccc') + '15'">
+          <span class="product-emoji">{{ product.image }}</span>
+          @if (selectedCategoryId() === 'all') {
+            <div class="cat-badge"
+                 [style.background]="getCategoryFor(product)?.color ?? '#ccc'">
+              <mat-icon>{{ getCategoryFor(product)?.icon }}</mat-icon>
+            </div>
+          }
+        </div>
+
+        <div class="product-info">
+          <h3 class="product-name">{{ product.name }}</h3>
+          @if (product.description) {
+            <p class="product-desc">{{ product.description }}</p>
+          }
+
+          <div class="price-block">
+            <span class="price-current"
+                  [style.color]="getCategoryFor(product)?.color ?? 'var(--primary)'">
+              {{ fmt(product.price) }}
+            </span>
+            @if (product.originalPrice) {
+              <span class="price-original">{{ fmt(product.originalPrice) }}</span>
+            }
+          </div>
+
+          <div class="product-footer">
+            @if (product.unit) {
+              <span class="unit-badge">
+                <mat-icon>straighten</mat-icon> {{ product.unit }}
+              </span>
+            }
+            @if (product.stock !== undefined) {
+              <span class="stock-badge">
+                <mat-icon>warehouse</mat-icon> {{ product.stock }}
+              </span>
+            }
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state" style="grid-column:1/-1">
+        <mat-icon class="empty-icon">inventory_2</mat-icon>
+        <h3>Aucun produit trouvé</h3>
+        @if (searchQuery()) {
+          <p>Aucun résultat pour "{{ searchQuery() }}"</p>
+        } @else {
+          <p>Ajoutez votre premier produit</p>
+        }
+        <button mat-raised-button color="primary" (click)="openAddDialog()" style="margin-top:20px">
+          <mat-icon>add</mat-icon> Ajouter un produit
+        </button>
+      </div>
+    }
+  </div>
+
+</div>

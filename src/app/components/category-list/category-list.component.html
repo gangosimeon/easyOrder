@@ -1,0 +1,88 @@
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-info">
+      <h1 class="page-title">
+        <mat-icon class="title-icon">category</mat-icon>
+        Mes Catégories
+      </h1>
+      <p class="page-subtitle">{{ count() }} catégorie{{ count() > 1 ? 's' : '' }}</p>
+    </div>
+    <button mat-raised-button color="primary" class="btn-add" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon>
+      Nouvelle Catégorie
+    </button>
+  </div>
+
+  <!-- Stats bar -->
+  @if (categories().length > 0) {
+    <div class="stats-bar">
+      @for (item of statsBar(); track item.id) {
+        <div class="stat-item">
+          <div class="stat-dot" [style.background]="item.color"></div>
+          <span>{{ item.name }}</span>
+          <span class="stat-count">{{ item.productCount }}</span>
+        </div>
+      }
+      @if (categories().length > 4) {
+        <span class="stat-more">+{{ categories().length - 4 }} autres</span>
+      }
+    </div>
+  }
+
+  <!-- Grid -->
+  <div class="categories-grid">
+    <!-- ✅ Angular 20 @for + @empty intégré -->
+    @for (cat of categories(); track cat.id) {
+      <div class="category-card card-item" (click)="goToProducts(cat.id)" matRipple>
+
+        <div class="card-bg-circle" [style.background]="cat.color + '15'"></div>
+
+        <div class="card-actions">
+          <button class="action-btn edit"   (click)="openEditDialog(cat, $event)"  matTooltip="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button class="action-btn delete" (click)="deleteCategory(cat, $event)"  matTooltip="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <div class="card-icon" [style.background]="cat.color + '20'" [style.color]="cat.color">
+          <mat-icon>{{ cat.icon }}</mat-icon>
+        </div>
+
+        <div class="card-info">
+          <h3 class="card-name">{{ cat.name }}</h3>
+          @if (cat.description) {
+            <p class="card-desc">{{ cat.description }}</p>
+          }
+        </div>
+
+        <div class="card-footer" [style.border-top-color]="cat.color + '30'">
+          <div class="product-count">
+            <mat-icon>inventory_2</mat-icon>
+            <span>{{ countFor(cat.id) }} produit{{ countFor(cat.id) > 1 ? 's' : '' }}</span>
+          </div>
+          <div class="card-arrow" [style.color]="cat.color">
+            <mat-icon>chevron_right</mat-icon>
+          </div>
+        </div>
+
+        <div class="color-stripe"
+             [style.background]="'linear-gradient(90deg,' + cat.color + ',' + cat.color + '80)'">
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state" style="grid-column:1/-1">
+        <mat-icon class="empty-icon">category</mat-icon>
+        <h3>Aucune catégorie</h3>
+        <p>Créez votre première catégorie pour organiser vos produits</p>
+        <button mat-raised-button color="primary" (click)="openAddDialog()" style="margin-top:20px">
+          <mat-icon>add</mat-icon> Créer une catégorie
+        </button>
+      </div>
+    }
+  </div>
+
+</div>

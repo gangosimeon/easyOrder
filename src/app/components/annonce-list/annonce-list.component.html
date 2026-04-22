@@ -1,0 +1,164 @@
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-info">
+      <h1 class="page-title">
+        <mat-icon class="title-icon">campaign</mat-icon>
+        Annonces
+      </h1>
+      <p class="page-subtitle">
+        {{ annonces().length }} annonce{{ annonces().length > 1 ? 's' : '' }} —
+        <span class="active-count">{{ countActives() }} active{{ countActives() > 1 ? 's' : '' }}</span>
+      </p>
+    </div>
+    <button mat-raised-button color="primary" class="btn-add" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon> Nouvelle Annonce
+    </button>
+  </div>
+
+  <!-- Bandeau épinglées -->
+  @if (epinglees().length > 0) {
+    <div class="pinned-banner">
+      <div class="pinned-header">
+        <mat-icon>push_pin</mat-icon>
+        <span>Annonces épinglées</span>
+        <span class="pinned-count">{{ epinglees().length }}</span>
+      </div>
+      <div class="pinned-list">
+        @for (ann of epinglees(); track ann.id) {
+          <div class="pinned-item" [style.--ann-color]="typeConfig[ann.type].color"
+               [style.border-color]="typeConfig[ann.type].color + '50'">
+            <span class="pinned-emoji">{{ ann.emoji }}</span>
+            <div class="pinned-text">
+              <strong [style.color]="typeConfig[ann.type].color">{{ ann.titre }}</strong>
+              <p>{{ ann.message }}</p>
+            </div>
+            @if (ann.dateFin) {
+              <span class="pinned-date">
+                <mat-icon>schedule</mat-icon>
+                jusqu'au {{ formatDate(ann.dateFin) }}
+              </span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Onglets filtre -->
+  <div class="filter-tabs">
+    @for (tab of tabs; track tab.key) {
+      <button class="tab-btn" [class.active]="activeFilter() === tab.key"
+              (click)="setFilter(tab.key)" matRipple>
+        <mat-icon>{{ tab.icon }}</mat-icon>
+        <span>{{ tab.label }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Liste des annonces -->
+  <div class="annonces-list">
+    @for (ann of filteredAnnonces(); track ann.id) {
+      <div class="annonce-card card-item"
+           [class.inactive]="!ann.active || isExpired(ann)"
+           [style.--ann-color]="typeConfig[ann.type].color"
+           [style.--ann-bg]="typeConfig[ann.type].bgColor">
+
+        <!-- Bandeau type -->
+        <div class="type-stripe" [style.background]="typeConfig[ann.type].color"></div>
+
+        <div class="card-body">
+          <!-- Gauche : emoji + contenu -->
+          <div class="card-left">
+            <div class="ann-emoji-wrap" [style.background]="typeConfig[ann.type].bgColor">
+              <span class="ann-emoji">{{ ann.emoji }}</span>
+              @if (ann.epinglee) {
+                <div class="pin-indicator">
+                  <mat-icon>push_pin</mat-icon>
+                </div>
+              }
+            </div>
+
+            <div class="ann-content">
+              <div class="ann-meta">
+                <span class="type-badge" [style.background]="typeConfig[ann.type].color">
+                  <mat-icon>{{ typeConfig[ann.type].icon }}</mat-icon>
+                  {{ typeConfig[ann.type].label }}
+                </span>
+                @if (!ann.active) {
+                  <span class="status-badge inactive">Inactive</span>
+                }
+                @if (isExpired(ann)) {
+                  <span class="status-badge expired">Expirée</span>
+                }
+                @if (ann.active && !isExpired(ann)) {
+                  <span class="status-badge active-badge">
+                    <span class="dot-live"></span> En ligne
+                  </span>
+                }
+              </div>
+
+              <h3 class="ann-titre" [style.color]="ann.active ? 'var(--text-primary)' : 'var(--text-muted)'">
+                {{ ann.titre }}
+              </h3>
+              <p class="ann-message">{{ ann.message }}</p>
+
+              <div class="ann-dates">
+                <span>
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ formatDate(ann.dateDebut) }}
+                </span>
+                @if (ann.dateFin) {
+                  <span>
+                    <mat-icon>arrow_forward</mat-icon>
+                    {{ formatDate(ann.dateFin) }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Droite : actions -->
+          <div class="card-actions">
+            <button class="action-btn pin"
+                    [class.pinned]="ann.epinglee"
+                    (click)="toggleEpinglee(ann, $event)"
+                    [matTooltip]="ann.epinglee ? 'Désépingler' : 'Épingler'">
+              <mat-icon>push_pin</mat-icon>
+            </button>
+
+            <button class="action-btn toggle"
+                    [class.active-toggle]="ann.active"
+                    (click)="toggleActive(ann, $event)"
+                    [matTooltip]="ann.active ? 'Désactiver' : 'Activer'">
+              <mat-icon>{{ ann.active ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+
+            <button class="action-btn edit"
+                    (click)="openEditDialog(ann, $event)"
+                    matTooltip="Modifier">
+              <mat-icon>edit</mat-icon>
+            </button>
+
+            <button class="action-btn delete"
+                    (click)="deleteAnnonce(ann, $event)"
+                    matTooltip="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">campaign</mat-icon>
+        <h3>Aucune annonce</h3>
+        <p>Publiez votre première annonce pour informer vos clients</p>
+        <button mat-raised-button color="primary" (click)="openAddDialog()" style="margin-top:20px">
+          <mat-icon>add</mat-icon> Créer une annonce
+        </button>
+      </div>
+    }
+  </div>
+
+</div>

@@ -1,0 +1,109 @@
+<div class="form-dialog">
+  <!-- Header -->
+  <div class="dialog-header" [style.background]="data.category.color">
+    <div class="header-icon"><mat-icon>{{ data.category.icon }}</mat-icon></div>
+    <div class="header-text">
+      <h2>{{ data.mode === 'add' ? 'Nouveau Produit' : 'Modifier Produit' }}</h2>
+      <span class="header-sub">{{ data.category.name }}</span>
+    </div>
+    <button class="close-btn" (click)="onCancel()"><mat-icon>close</mat-icon></button>
+  </div>
+
+  <!-- Emoji Picker -->
+  <div class="emoji-section">
+    <div class="selected-emoji-display">{{ selectedEmoji() }}</div>
+    <div class="emoji-grid">
+      @for (emoji of productEmojis; track emoji) {
+        <button type="button" class="emoji-btn"
+                [class.selected]="selectedEmoji() === emoji"
+                (click)="selectEmoji(emoji)" matRipple>{{ emoji }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-body">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nom du produit</mat-label>
+      <input matInput formControlName="name" placeholder="Ex: Riz local 5kg" />
+      <mat-icon matSuffix>sell</mat-icon>
+      @if (form.get('name')?.hasError('required')) {
+        <mat-error>Le nom est requis</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="row-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Prix (FCFA)</mat-label>
+        <input matInput type="number" formControlName="price" placeholder="1500" min="0" />
+        <span matSuffix class="currency-suffix">FCFA</span>
+        @if (form.get('price')?.hasError('required')) {
+          <mat-error>Prix requis</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Unité</mat-label>
+        <mat-select formControlName="unit">
+          @for (unit of productUnits; track unit) {
+            <mat-option [value]="unit">{{ unit }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Promo toggle -->
+    <div class="promo-toggle">
+      <div class="toggle-label">
+        <mat-icon>local_offer</mat-icon>
+        <span>Appliquer une promotion</span>
+      </div>
+      <mat-slide-toggle [checked]="hasPromo()" (change)="togglePromo($event.checked)" color="warn" />
+    </div>
+
+    @if (hasPromo()) {
+      <div class="promo-block">
+        <mat-form-field appearance="outline">
+          <mat-label>Réduction (%)</mat-label>
+          <input matInput type="number" formControlName="promotion" placeholder="20" min="1" max="99" />
+          <span matSuffix>%</span>
+        </mat-form-field>
+
+        @if (form.get('price')?.value && form.get('promotion')?.value) {
+          <div class="price-preview">
+            <div class="price-before">
+              <span class="label">Prix original :</span>
+              <span class="value striked">{{ fmt(form.get('price')?.value) }}</span>
+            </div>
+            <div class="price-after">
+              <span class="label">Prix promo :</span>
+              <span class="value promo" [style.color]="data.category.color">{{ fmt(discountedPrice()) }}</span>
+              <span class="badge-mini" [style.background]="data.category.color">-{{ form.get('promotion')?.value }}%</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Stock disponible (optionnel)</mat-label>
+      <input matInput type="number" formControlName="stock" placeholder="50" min="0" />
+      <mat-icon matSuffix>warehouse</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description (optionnel)</mat-label>
+      <textarea matInput formControlName="description" rows="2" placeholder="Détails…"></textarea>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button type="button" mat-stroked-button (click)="onCancel()" class="btn-cancel">Annuler</button>
+      <button type="submit" mat-raised-button class="btn-save"
+              [disabled]="form.invalid" [style.background]="data.category.color">
+        <mat-icon>{{ data.mode === 'add' ? 'add_shopping_cart' : 'save' }}</mat-icon>
+        {{ data.mode === 'add' ? 'Ajouter' : 'Enregistrer' }}
+      </button>
+    </div>
+  </form>
+</div>

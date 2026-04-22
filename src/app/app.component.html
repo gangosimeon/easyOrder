@@ -1,0 +1,52 @@
+<div class="app-layout">
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🛒</div>
+      <div class="logo-text">
+        <span class="logo-name">BurkinaShop</span>
+        <span class="logo-tagline">Gestion Boutique</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- ✅ Angular 20 — @for built-in control flow -->
+      @for (item of navItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="active" class="nav-item" matRipple>
+          <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="country-badge">
+        <span>🇧🇫</span>
+        <span>Burkina Faso</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <div class="mobile-logo">
+        <span>🛒</span>
+        <span class="mobile-title">BurkinaShop</span>
+      </div>
+      <div class="mobile-nav">
+        @for (item of navItems; track item.route) {
+          <a [routerLink]="item.route" routerLinkActive="active-mobile" class="mobile-nav-item">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      </div>
+    </header>
+
+    <div class="page-container">
+      <router-outlet />
+    </div>
+  </main>
+</div>
