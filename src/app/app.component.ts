@@ -28,6 +28,10 @@ export class AppComponent {
     window.location.pathname.startsWith('/shop') || window.location.pathname.startsWith('/cart')
   );
 
+  readonly isAuthRoute = signal(
+    window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register')
+  );
+
   readonly navItems: NavItem[] = [
     { label: 'Catégories', icon: 'category',    route: '/categories' },
     { label: 'Produits',   icon: 'inventory_2', route: '/products'   },
@@ -40,6 +44,7 @@ export class AppComponent {
     ).subscribe((e: NavigationEnd) => {
       const url = e.urlAfterRedirects;
       this.isPublicRoute.set(url.startsWith('/shop') || url.startsWith('/cart'));
+      this.isAuthRoute.set(url.startsWith('/login') || url.startsWith('/register'));
     });
   }
 

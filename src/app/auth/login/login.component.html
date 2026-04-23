@@ -1,0 +1,75 @@
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- ── Header brand ── -->
+    <div class="auth-header">
+      <div class="brand-icon">🛒</div>
+      <div class="brand-text">
+        <h1>BurkinaShop</h1>
+        <p>Gestion de boutique</p>
+      </div>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="auth-body">
+      <h2 class="auth-title">Connexion</h2>
+      <p class="auth-sub">Accédez à votre espace boutique</p>
+
+      @if (errorMsg()) {
+        <div class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMsg() }}</span>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Numéro de téléphone</mat-label>
+          <input matInput type="tel" formControlName="phone" placeholder="Ex: 22677938688" />
+          <mat-icon matSuffix>phone</mat-icon>
+          @if (form.get('phone')?.hasError('required') && form.get('phone')?.touched) {
+            <mat-error>Le numéro est requis</mat-error>
+          }
+          @if (form.get('phone')?.hasError('pattern') && form.get('phone')?.touched) {
+            <mat-error>Format invalide (8 à 15 chiffres)</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password" />
+          <button mat-icon-button matSuffix type="button" (click)="togglePassword()">
+            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+            <mat-error>Le mot de passe est requis</mat-error>
+          }
+          @if (form.get('password')?.hasError('minlength') && form.get('password')?.touched) {
+            <mat-error>Minimum 6 caractères</mat-error>
+          }
+        </mat-form-field>
+
+        <button type="submit" class="btn-submit" [disabled]="loading()">
+          @if (loading()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            <mat-icon>login</mat-icon>
+          }
+          <span>{{ loading() ? 'Connexion...' : 'Se connecter' }}</span>
+        </button>
+
+      </form>
+
+      <!-- ── Footer ── -->
+      <div class="auth-footer">
+        <p>Pas encore de compte ? <a routerLink="/register">Créer une boutique</a></p>
+        <div class="demo-hint">
+          <mat-icon>info</mat-icon>
+          <span>Démo — <strong>22677938688</strong> / <strong>password123</strong></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
