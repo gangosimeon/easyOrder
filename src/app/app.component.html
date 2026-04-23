@@ -1,112 +1,24 @@
 @if (isAuthRoute()) {
   <router-outlet />
 } @else {
-<div class="app-layout">
-
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar" [style.--cover-color]="cartService.company()?.coverColor">
-  <div class="header-bg"></div>
-    @if (isPublicRoute()) {
-      <!-- ── SIDEBAR PUBLIQUE ── -->
-      <div class="sidebar-logo">
-        <div class="shop-logo">{{ cartService.company()?.logo ?? '🏪' }}</div>
-        <div class="shop-meta">
-          <h1 class="shop-name">{{ cartService.company()?.name  ?? 'Boutique'}}</h1>
-          @if (cartService.company()?.description) {
-            <p class="shop-desc">{{ cartService.company()?.description }}</p>
-          }@else {
-            <span class="logo-tagline">Boutique en ligne</span>
-          }
-          @if (cartService.company()?.address) {
-            <div class="shop-location">
-              <mat-icon>location_on</mat-icon>
-              <span>{{ cartService.company()?.address }}</span>
-            </div>
-          }
-        </div>
-        <!-- <div class="logo-text">
-          <span class="logo-name">{{ cartService.company()?.name ?? 'Boutique' }}</span>
-          <span class="logo-tagline">Boutique en ligne</span>
-        </div> -->
-      </div>
-
-      <nav class="sidebar-nav">
-        <button class="nav-item" [class.active]="cartService.selectedCategoryId() === null"
-          (click)="selectPublicCategory(null)" matRipple>
-          <mat-icon class="nav-icon">store</mat-icon>
-          <span class="nav-label">Tous les produits</span>
-        </button>
-        @for (cat of cartService.categories(); track cat.id) {
-          <button class="nav-item" [class.active]="cartService.selectedCategoryId() === cat.id"
-            (click)="selectPublicCategory(cat.id)" matRipple>
-            <mat-icon class="nav-icon">{{ cat.icon }}</mat-icon>
-            <span class="nav-label">{{ cat.name }}</span>
-          </button>
-        }
-        <a routerLink="/cart" routerLinkActive="active" class="nav-item nav-cart" matRipple>
-          <mat-icon class="nav-icon">shopping_cart</mat-icon>
-          <span class="nav-label">Mon panier</span>
-          @if (cartService.getItems().length > 0) {
-            <span class="nav-badge">{{ cartService.getItems().length }}</span>
-          }
-        </a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <button class="wa-sidebar-btn" (click)="contactWhatsApp()">
-          <span>💬</span> Contacter via WhatsApp
-        </button>
-        <div class="country-badge">
-          <span>🇧🇫</span>
-          <span>Burkina Faso</span>
-        </div>
-      </div>
-
-    } @else {
-      <!-- ── SIDEBAR ADMIN ── -->
-      <div class="sidebar-logo">
-        <div class="logo-icon">🛒</div>
-        <div class="logo-text">
-          <span class="logo-name">BurkinaShop</span>
-          <span class="logo-tagline">Gestion Boutique</span>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        @for (item of navItems; track item.route) {
-          <a [routerLink]="item.route" routerLinkActive="active" class="nav-item" matRipple>
-            <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
-            <span class="nav-label">{{ item.label }}</span>
-          </a>
-        }
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="country-badge">
-          <span>🇧🇫</span>
-          <span>Burkina Faso</span>
-        </div>
-      </div>
-    }
-
-  </aside>
-
-  <!-- ===== MAIN CONTENT ===== -->
-  <main class="main-content">
-
-    <!-- Mobile Header -->
-    <header class="mobile-header" [style.--cover-color]="cartService.company()?.coverColor">
+  <div class="app-layout">
+    <!-- ===== SIDEBAR ===== -->
+    <aside
+      class="sidebar"
+      [style.--cover-color]="coverColor()"
+    >
       <div class="header-bg"></div>
-      <div class="header-content">
-        @if (isPublicRoute()) {
-          <!-- ── MOBILE HEADER PUBLIC ── -->
-           <div class="mobile-logo">
-           <div class="shop-logo">{{ cartService.company()?.logo ?? '🏪' }}</div>
+      @if (isPublicRoute()) {
+        <!-- ── SIDEBAR PUBLIQUE ── -->
+        <div class="sidebar-logo">
+          <div class="shop-logo">{{ cartService.company()?.logo ?? "🏪" }}</div>
           <div class="shop-meta">
-            <h1 class="shop-name">{{ cartService.company()?.name  ?? 'Boutique'}}</h1>
+            <h1 class="shop-name">
+              {{ cartService.company()?.name ?? "Boutique" }}
+            </h1>
             @if (cartService.company()?.description) {
               <p class="shop-desc">{{ cartService.company()?.description }}</p>
-            }@else {
+            } @else {
               <span class="logo-tagline">Boutique en ligne</span>
             }
             @if (cartService.company()?.address) {
@@ -116,60 +28,243 @@
               </div>
             }
           </div>
-          </div>
-          
-          <div class="mobile-nav">
-            <a [routerLink]="['/shop', cartService.company()?.slug]"
-              routerLinkActive="active-mobile" class="mobile-nav-item"
-              (click)="cartService.selectCategory(null)">
-              <mat-icon>store</mat-icon>
-              <span>Produits</span>
-            </a>
-            <a routerLink="/cart" routerLinkActive="active-mobile" class="mobile-nav-item">
-              <span class="mobile-cart-icon">
-                <mat-icon>shopping_cart</mat-icon>
-                @if (cartCount() > 0) {
-                  <span class="mobile-badge">{{ cartCount() }}</span>
-                }
-              </span>
-              <span>Panier</span>
-            </a>
-            <button class="mobile-nav-item" (click)="contactWhatsApp()">
-              <mat-icon>chat</mat-icon>
-              <span>Contactez-nous</span>
-            </button>
-          </div>
+          <!-- <div class="logo-text">
+          <span class="logo-name">{{ cartService.company()?.name ?? 'Boutique' }}</span>
+          <span class="logo-tagline">Boutique en ligne</span>
+        </div> -->
+        </div>
 
-        } @else {
-          <!-- ── MOBILE HEADER ADMIN ── -->
-          <div class="mobile-header-admin" [style.--cover-color]="cartService.company()?.coverColor">
-            <div class="mobile-logo">
-              <span>🛒</span>
-              <span class="mobile-title">BurkinaShop</span>
+        <nav class="sidebar-nav">
+          <button
+            class="nav-item"
+            [class.active]="cartService.selectedCategoryId() === null"
+            (click)="selectPublicCategory(null)"
+            matRipple
+          >
+            <mat-icon class="nav-icon">store</mat-icon>
+            <span class="nav-label">Tous les produits</span>
+          </button>
+          @for (cat of cartService.categories(); track cat.id) {
+            <button
+              class="nav-item"
+              [class.active]="cartService.selectedCategoryId() === cat.id"
+              (click)="selectPublicCategory(cat.id)"
+              matRipple
+            >
+              <mat-icon class="nav-icon">{{ cat.icon }}</mat-icon>
+              <span class="nav-label">{{ cat.name }}</span>
+            </button>
+          }
+          <a
+            routerLink="/cart"
+            routerLinkActive="active"
+            class="nav-item nav-cart"
+            matRipple
+          >
+            <mat-icon class="nav-icon">shopping_cart</mat-icon>
+            <span class="nav-label">Mon panier</span>
+            @if (cartService.getItems().length > 0) {
+              <span class="nav-badge">{{ cartService.getItems().length }}</span>
+            }
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button class="wa-sidebar-btn" (click)="contactWhatsApp()">
+            <span>💬</span> Contacter via WhatsApp
+          </button>
+          <div class="country-badge">
+            <span>🇧🇫</span>
+            <span>Burkina Faso</span>
+          </div>
+        </div>
+      } @else {
+        <!-- ── SIDEBAR ADMIN ── -->
+        <div class="sidebar-logo">
+          <div class="shop-logo">
+            {{ authService.company()?.logo ?? "🏪" }}
+          </div>
+          <div class="shop-meta">
+            <h1 class="shop-name">
+              {{ authService.company()?.name ?? "Boutique" }}
+              </h1>
+              @if (authService.company()?.description) {
+                <p class="shop-desc">
+                  {{ authService.company()?.description }}
+                </p>
+              } @else {
+                <span class="logo-tagline">Boutique en ligne</span>
+              }
+              @if (authService.company()?.address) {
+                <div class="shop-location">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ authService.company()?.address }}</span>
+                </div>
+              }
             </div>
-            <div class="mobile-actions">
-              <button mat-icon-button class="mobile-actions btn" (click)="contactWhatsApp()">
-                <span>Se connecter</span>
-                <mat-icon>login</mat-icon>
+        </div>
+
+        <nav class="sidebar-nav">
+          @for (item of navItems; track item.route) {
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              class="nav-item"
+              matRipple
+            >
+              <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+              <span class="nav-label">{{ item.label }}</span>
+            </a>
+          }
+        </nav>
+
+        <div class="sidebar-footer">
+          @if (authService.isLoggedIn()) {
+            <button class="btn-logout" (click)="authService.logout()" matRipple>
+              <mat-icon>logout</mat-icon>
+              <span>Se déconnecter</span>
+            </button>
+          } @else {
+            <a routerLink="/login" class="btn-login" matRipple>
+              <mat-icon>login</mat-icon>
+              <span>Se connecter</span>
+            </a>
+          }
+          <div class="country-badge">
+            <span>🇧🇫</span>
+            <span>Burkina Faso</span>
+          </div>
+        </div>
+      }
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+      <!-- Mobile Header -->
+      <header
+        class="mobile-header"
+        [style.--cover-color]="coverColor()"
+      >
+        <div class="header-bg"></div>
+        <div class="header-content">
+          @if (isPublicRoute()) {
+            <!-- ── MOBILE HEADER PUBLIC ── -->
+            <div class="mobile-logo">
+              <div class="shop-logo">
+                {{ cartService.company()?.logo ?? "🏪" }}
+              </div>
+              <div class="shop-meta">
+                <h1 class="shop-name">
+                  {{ cartService.company()?.name ?? "Boutique" }}
+                </h1>
+                @if (cartService.company()?.description) {
+                  <p class="shop-desc">
+                    {{ cartService.company()?.description }}
+                  </p>
+                } @else {
+                  <span class="logo-tagline">Boutique en ligne</span>
+                }
+                @if (cartService.company()?.address) {
+                  <div class="shop-location">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{ cartService.company()?.address }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="mobile-nav">
+              <a
+                [routerLink]="['/shop', cartService.company()?.slug]"
+                routerLinkActive="active-mobile"
+                class="mobile-nav-item"
+                (click)="cartService.selectCategory(null)"
+              >
+                <mat-icon>store</mat-icon>
+                <span>Produits</span>
+              </a>
+              <a
+                routerLink="/cart"
+                routerLinkActive="active-mobile"
+                class="mobile-nav-item"
+              >
+                <span class="mobile-cart-icon">
+                  <mat-icon>shopping_cart</mat-icon>
+                  @if (cartCount() > 0) {
+                    <span class="mobile-badge">{{ cartCount() }}</span>
+                  }
+                </span>
+                <span>Panier</span>
+              </a>
+              <button class="mobile-nav-item" (click)="contactWhatsApp()">
+                <mat-icon>chat</mat-icon>
+                <span>Contactez-nous</span>
               </button>
             </div>
-          </div>
-          <div class="mobile-nav">
-            @for (item of navItems; track item.route) {
-              <a [routerLink]="item.route" routerLinkActive="active-mobile" class="mobile-nav-item">
-                <mat-icon>{{ item.icon }}</mat-icon>
-                <span>{{ item.label }}</span>
-              </a>
-            }
-          </div>
-        }
+          } @else {
+            <!-- ── MOBILE HEADER ADMIN ── -->
+            <div
+              class="mobile-header-admin"
+              [style.--cover-color]="authService.company()?.coverColor"
+            >
+              <div class="mobile-logo">
+                <div class="shop-logo">
+                  {{ authService.company()?.logo ?? "🏪" }}
+                </div>
+                <div class="shop-meta">
+                  <h1 class="shop-name">
+                    {{ authService.company()?.name ?? "Boutique" }}
+                  </h1>
+                  @if (authService.company()?.description) {
+                    <p class="shop-desc">
+                      {{ authService.company()?.description }}
+                    </p>
+                  } @else {
+                    <span class="logo-tagline">Boutique en ligne</span>
+                  }
+                  @if (authService.company()?.address) {
+                    <div class="shop-location">
+                      <mat-icon>location_on</mat-icon>
+                      <span>{{ authService.company()?.address }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+              <div class="mobile-actions">
+                @if (authService.isLoggedIn()) {
+                  <button
+                    class="mobile-logout-btn"
+                    (click)="authService.logout()"
+                  >
+                    <mat-icon>logout</mat-icon>
+                  </button>
+                } @else {
+                  <a routerLink="/login" class="mobile-login-btn">
+                    <span>Connexion</span>
+                    <mat-icon>login</mat-icon>
+                  </a>
+                }
+              </div>
+            </div>
+            <div class="mobile-nav">
+              @for (item of navItems; track item.route) {
+                <a
+                  [routerLink]="item.route"
+                  routerLinkActive="active-mobile"
+                  class="mobile-nav-item"
+                >
+                  <mat-icon>{{ item.icon }}</mat-icon>
+                  <span>{{ item.label }}</span>
+                </a>
+              }
+            </div>
+          }
+        </div>
+      </header>
+
+      <div class="page-container" [class.public-page]="isPublicRoute()">
+        <router-outlet />
       </div>
-    </header>
-
-    <div class="page-container" [class.public-page]="isPublicRoute()">
-      <router-outlet />
-    </div>
-
-  </main>
-</div>
+    </main>
+  </div>
 }

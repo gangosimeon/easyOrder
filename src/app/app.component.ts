@@ -1,10 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CartService } from './core/services/cart.service';
+import { AuthService } from './core/services/auth.service';
 
 interface NavItem {
   label: string;
@@ -21,7 +22,8 @@ interface NavItem {
 })
 export class AppComponent {
   private router = inject(Router);
-  readonly cartService = inject(CartService);
+  readonly cartService  = inject(CartService);
+  readonly authService  = inject(AuthService);
   readonly cartCount = toSignal(this.cartService.items$.pipe(map(items => items.length)), { initialValue: 0 });
 
   readonly isPublicRoute = signal(
@@ -30,6 +32,12 @@ export class AppComponent {
 
   readonly isAuthRoute = signal(
     window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register')
+  );
+
+  readonly coverColor = computed(() =>
+    this.isPublicRoute()
+      ? this.cartService.company()?.coverColor
+      : this.authService.company()?.coverColor
   );
 
   readonly navItems: NavItem[] = [
