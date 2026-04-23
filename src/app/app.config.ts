@@ -3,7 +3,7 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
-import { shopMockInterceptor } from './mocks/shop-mock.interceptor';
+import { shopMockInterceptor } from './core/interceptors/shop-mock.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CartService } from './services/cart.service';
+import { CartService } from './core/services/cart.service';
 
 interface NavItem {
   label: string;
