@@ -4,10 +4,15 @@
 }
 
 /* ===== SIDEBAR ===== */
+.header-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,.35), rgba(0,0,0,.1));
+  pointer-events: none;
+}
 .sidebar {
-  width: 240px;
+  width: 340px;
   min-height: 100vh;
-  background: var(--bg-sidebar);
+  background: var(--cover-color, var(--bg-sidebar));
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -15,7 +20,25 @@
   z-index: 100;
   box-shadow: 4px 0 24px rgba(0,0,0,.2);
 }
-
+.shop-logo {
+  font-size: 52px; width: 80px; height: 80px; flex-shrink: 0;
+  background: rgba(255,255,255,.18); border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+}
+.shop-meta { flex: 1; min-width: 0; }
+.shop-name {
+  font-family: var(--font-display); font-weight: 900; font-size: 26px;
+  color: white; margin: 0 0 6px; line-height: 1.2;
+  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.shop-desc {
+  font-size: 14px; color: rgba(255,255,255,.8); margin: 0 0 8px; line-height: 1.5;
+}
+.shop-location {
+  display: flex; align-items: center; gap: 4px; font-size: 13px; color: rgba(255,255,255,.7);
+  mat-icon { font-size: 15px; width: 15px; height: 15px; }
+}
 .sidebar-logo {
   display: flex;
   align-items: center;
@@ -133,14 +156,31 @@
 /* ===== MAIN ===== */
 .main-content {
   flex: 1;
-  margin-left: 240px;
+  margin-left: 340px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .mobile-header { display: none; }
+.mobile-header-admin{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 
+
+  .mobile-actions.btn{
+    display: flex;
+    align-items: center;
+
+    span{
+      color: rgba(255,255,255,.5);
+      font-size: 11px;
+      font-family: var(--font-display); font-weight: 700;
+    }
+  }
+}
 .page-container { flex: 1; padding: 32px; }
 .page-container.public-page { padding: 0; overflow: hidden; }
 
@@ -152,7 +192,7 @@
   .mobile-header {
     display: flex;
     flex-direction: column;
-    background: var(--bg-sidebar);
+    background: var(--cover-color, var(--bg-sidebar));
     padding: 12px 16px 0;
     position: sticky; top: 0; z-index: 50;
     box-shadow: 0 2px 12px rgba(0,0,0,.2);
@@ -170,12 +210,13 @@
         flex: 1;
         display: flex; flex-direction: column; align-items: center; gap: 4px;
         padding: 10px 8px;
-        color: rgba(255,255,255,.5);
         background: transparent;
         text-decoration: none;
-        font-size: 11px;
+        font-size:  13px;
         font-family: var(--font-display); font-weight: 700;
         border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        background: rgba(255,255,255,.2); border: 1.5px solid rgba(255,255,255,.4);
+        color: white;
         transition: var(--transition);
         /* reset button defaults */
         border: none;

@@ -10,6 +10,7 @@ export interface Product {
   unit?: string;
   stock?: number;
   createdAt: Date;
+  inStock: boolean;
 }
 
 export const PRODUCT_UNITS = [

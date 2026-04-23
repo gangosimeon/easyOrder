@@ -12,7 +12,7 @@ import { CartService } from '../services/cart.service';
 import { Annonce, ANNONCE_TYPE_CONFIG } from '../models/annonce.model';
 import { Category } from '../models/category.model';
 import { Product } from '../models/product.model';
-
+import { MatRippleModule } from '@angular/material/core';
 registerLocaleData(localeFr);
 
 @Component({
@@ -23,6 +23,7 @@ registerLocaleData(localeFr);
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatRippleModule,
   ],
   templateUrl: './public-shop.component.html',
   styleUrls: ['./public-shop.component.scss'],
@@ -102,7 +103,7 @@ export class PublicShopComponent implements OnInit {
     this.shopService.getShop(slug).subscribe({
       next: data => {
         this.shopData.set(data);
-        this.cartService.setCompany({ name: data.company.name, phone: data.company.phone, slug: data.company.slug });
+        this.cartService.setCompany({ name: data.company.name, phone: data.company.phone, slug: data.company.slug, coverColor: data.company.coverColor, description: data.company.description, address: data.company.address, logo: data.company.logo });
         this.cartService.setCategories(data.categories);
         this.loading.set(false);
       },

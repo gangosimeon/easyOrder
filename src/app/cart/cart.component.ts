@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CartService, CartItem } from '../services/cart.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-cart',
@@ -15,8 +16,10 @@ import { CartService, CartItem } from '../services/cart.service';
 export class CartComponent {
   private router = inject(Router);
   readonly cartService = inject(CartService);
-
+  private snackBar    = inject(MatSnackBar);
   readonly cartItems = toSignal(this.cartService.items$, { initialValue: [] });
+
+  readonly company = this.cartService.company;
 
   getTotal(): number {
     return this.cartItems().reduce(
@@ -46,7 +49,12 @@ export class CartComponent {
     msg += `Merci de me confirmer la disponibilité 🙏`;
     return msg;
   }
-
+  clearCart(): void {
+    if (confirm('Vider tout le panier ?')) {
+      this.cartService.clearCart();
+      this.snack('🧹 Panier vidé');
+    }
+  }
   orderViaWhatsApp(): void {
     const company = this.cartService.company();
     const items = this.cartItems();
@@ -76,5 +84,10 @@ export class CartComponent {
 
   formatPrice(price: number): string {
     return new Intl.NumberFormat('fr-FR').format(price) + ' FCFA';
+  }
+
+  
+  private snack(msg: string): void {
+    this.snackBar.open(msg, '', { duration: 2000, horizontalPosition: 'center', verticalPosition: 'top' });
   }
 }

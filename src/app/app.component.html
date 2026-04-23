@@ -1,16 +1,30 @@
 <div class="app-layout">
 
   <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-
+  <aside class="sidebar" [style.--cover-color]="cartService.company()?.coverColor">
+  <div class="header-bg"></div>
     @if (isPublicRoute()) {
       <!-- ── SIDEBAR PUBLIQUE ── -->
       <div class="sidebar-logo">
-        <div class="logo-icon">🛒</div>
-        <div class="logo-text">
+        <div class="shop-logo">{{ cartService.company()?.logo ?? '🏪' }}</div>
+        <div class="shop-meta">
+          <h1 class="shop-name">{{ cartService.company()?.name  ?? 'Boutique'}}</h1>
+          @if (cartService.company()?.description) {
+            <p class="shop-desc">{{ cartService.company()?.description }}</p>
+          }@else {
+            <span class="logo-tagline">Boutique en ligne</span>
+          }
+          @if (cartService.company()?.address) {
+            <div class="shop-location">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ cartService.company()?.address }}</span>
+            </div>
+          }
+        </div>
+        <!-- <div class="logo-text">
           <span class="logo-name">{{ cartService.company()?.name ?? 'Boutique' }}</span>
           <span class="logo-tagline">Boutique en ligne</span>
-        </div>
+        </div> -->
       </div>
 
       <nav class="sidebar-nav">
@@ -78,52 +92,75 @@
   <main class="main-content">
 
     <!-- Mobile Header -->
-    <header class="mobile-header">
-
-      @if (isPublicRoute()) {
-        <!-- ── MOBILE HEADER PUBLIC ── -->
-        <div class="mobile-logo">
-          <span>🛒</span>
-          <span class="mobile-title">{{ cartService.company()?.name ?? 'Boutique' }}</span>
-        </div>
-        <div class="mobile-nav">
-          <a [routerLink]="['/shop', cartService.company()?.slug]"
-            routerLinkActive="active-mobile" class="mobile-nav-item"
-            (click)="cartService.selectCategory(null)">
-            <mat-icon>store</mat-icon>
-            <span>Boutique</span>
-          </a>
-          <a routerLink="/cart" routerLinkActive="active-mobile" class="mobile-nav-item">
-            <span class="mobile-cart-icon">
-              <mat-icon>shopping_cart</mat-icon>
-              @if (cartCount() > 0) {
-                <span class="mobile-badge">{{ cartCount() }}</span>
-              }
-            </span>
-            <span>Panier</span>
-          </a>
-          <button class="mobile-nav-item" (click)="contactWhatsApp()">
-            <mat-icon>chat</mat-icon>
-            <span>Contactez-nous</span>
-          </button>
-        </div>
-
-      } @else {
-        <!-- ── MOBILE HEADER ADMIN ── -->
-        <div class="mobile-logo">
-          <span>🛒</span>
-          <span class="mobile-title">BurkinaShop</span>
-        </div>
-        <div class="mobile-nav">
-          @for (item of navItems; track item.route) {
-            <a [routerLink]="item.route" routerLinkActive="active-mobile" class="mobile-nav-item">
-              <mat-icon>{{ item.icon }}</mat-icon>
-              <span>{{ item.label }}</span>
+    <header class="mobile-header" [style.--cover-color]="cartService.company()?.coverColor">
+      <div class="header-bg"></div>
+      <div class="header-content">
+        @if (isPublicRoute()) {
+          <!-- ── MOBILE HEADER PUBLIC ── -->
+           <div class="mobile-logo">
+           <div class="shop-logo">{{ cartService.company()?.logo ?? '🏪' }}</div>
+          <div class="shop-meta">
+            <h1 class="shop-name">{{ cartService.company()?.name  ?? 'Boutique'}}</h1>
+            @if (cartService.company()?.description) {
+              <p class="shop-desc">{{ cartService.company()?.description }}</p>
+            }@else {
+              <span class="logo-tagline">Boutique en ligne</span>
+            }
+            @if (cartService.company()?.address) {
+              <div class="shop-location">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ cartService.company()?.address }}</span>
+              </div>
+            }
+          </div>
+          </div>
+          
+          <div class="mobile-nav">
+            <a [routerLink]="['/shop', cartService.company()?.slug]"
+              routerLinkActive="active-mobile" class="mobile-nav-item"
+              (click)="cartService.selectCategory(null)">
+              <mat-icon>store</mat-icon>
+              <span>Produits</span>
             </a>
-          }
-        </div>
-      }
+            <a routerLink="/cart" routerLinkActive="active-mobile" class="mobile-nav-item">
+              <span class="mobile-cart-icon">
+                <mat-icon>shopping_cart</mat-icon>
+                @if (cartCount() > 0) {
+                  <span class="mobile-badge">{{ cartCount() }}</span>
+                }
+              </span>
+              <span>Panier</span>
+            </a>
+            <button class="mobile-nav-item" (click)="contactWhatsApp()">
+              <mat-icon>chat</mat-icon>
+              <span>Contactez-nous</span>
+            </button>
+          </div>
 
+        } @else {
+          <!-- ── MOBILE HEADER ADMIN ── -->
+          <div class="mobile-header-admin" [style.--cover-color]="cartService.company()?.coverColor">
+            <div class="mobile-logo">
+              <span>🛒</span>
+              <span class="mobile-title">BurkinaShop</span>
+            </div>
+            <div class="mobile-actions">
+              <button mat-icon-button class="mobile-actions btn" (click)="contactWhatsApp()">
+                <span>Se connecter</span>
+                <mat-icon>login</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="mobile-nav">
+            @for (item of navItems; track item.route) {
+              <a [routerLink]="item.route" routerLinkActive="active-mobile" class="mobile-nav-item">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                <span>{{ item.label }}</span>
+              </a>
+            }
+          </div>
+        }
+      </div>
     </header>
 
     <div class="page-container" [class.public-page]="isPublicRoute()">

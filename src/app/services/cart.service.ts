@@ -12,6 +12,10 @@ export interface CompanyRef {
   name: string;
   phone: string;
   slug: string;
+  coverColor: string;
+  description?: string;
+  address?: string;
+  logo?: string;   
 }
 
 @Injectable({ providedIn: 'root' })

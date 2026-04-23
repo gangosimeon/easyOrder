@@ -93,43 +93,72 @@
           <h2>{{ group.category.name }}</h2>
           <span class="cat-count">{{ group.products.length }}</span>
         </div>
-        <div class="products-grid">
-          @for (product of group.products; track product.id) {
-            <div class="product-card" [class.in-cart]="cartItemIds().has(product.id)" (click)="toggleProduct(product)">
 
-              @if (product.promotion) {
-                <div class="promo-badge">-{{ product.promotion }}%</div>
-              }
+        <!-- PRODUITS -->
+        <div class="products-section">
+          <div class="products-grid">
+            @for (product of group.products; track product.id) {
+              <div class="product-card"
+                  [class.selected]="cartItemIds().has(product.id)"
+                  [class.out-of-stock]="product.inStock === false"
+                  (click)="product.inStock !== false && toggleProduct(product)"
+                  matRipple [matRippleDisabled]="product.inStock === false">
 
-              <div class="product-image">{{ product.image }}</div>
-
-              <div class="product-info">
-                <p class="product-name">{{ product.name }}</p>
-                @if (product.unit) {
-                  <span class="product-unit">/ {{ product.unit }}</span>
+                <!-- Badge promo -->
+                @if (product.promotion) {
+                  <div class="promo-badge">-{{ product.promotion }}%</div>
                 }
-                <div class="product-pricing">
-                  <span class="price-current">{{ formatPrice(product.price) }}</span>
-                  @if (product.originalPrice) {
-                    <span class="price-original">{{ formatPrice(product.originalPrice) }}</span>
+
+                <!-- Check indicator -->
+                <div class="check-indicator" [class.visible]="cartItemIds().has(product.id)">
+                  <mat-icon>check_circle</mat-icon>
+                </div>
+
+                <!-- Image -->
+                <div class="product-img">
+                  <img [src]="product.image" [alt]="product.name" />
+                  <!-- <span class="product-emoji">{{ product.image }}</span> -->
+                  @if (product.inStock === false) {
+                    <div class="out-badge">Épuisé</div>
+                  }
+                </div>
+
+                <!-- Info -->
+                <div class="product-info">
+                  <p class="product-name">{{ product.name }}</p>
+                  <div class="price-row">
+                    <span class="price-main" [style.color]="company()!.coverColor || 'var(--primary)'">
+                      {{ formatPrice(product.price) }}
+                    </span>
+                    @if (product.originalPrice) {
+                      <span class="price-old">{{ formatPrice(product.originalPrice) }}</span>
+                    }
+                  </div>
+                  @if (product.unit) {
+                    <span class="product-unit">/ {{ product.unit }}</span>
+                  }
+                </div>
+
+                <!-- Add/Remove pill -->
+                <div class="add-pill" [class.in-cart]="cartItemIds().has(product.id)">
+                  @if (cartItemIds().has(product.id)) {
+                    <mat-icon>remove_shopping_cart</mat-icon>
+                    <span>Retirer</span>
+                  } @else {
+                    <mat-icon>add_shopping_cart</mat-icon>
+                    <span>Ajouter</span>
                   }
                 </div>
               </div>
-
-              <div class="product-action">
-                @if (cartItemIds().has(product.id)) {
-                  <div class="action-check">
-                    <mat-icon>check_circle</mat-icon>
-                  </div>
-                } @else {
-                  <div class="action-add">
-                    <mat-icon>add_circle_outline</mat-icon>
-                  </div>
-                }
+            } @empty {
+              <div class="empty-products">
+                <span>🛒</span>
+                <p>Aucun produit dans cette catégorie.</p>
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
+
       </div>
     }
   </section>
@@ -179,3 +208,6 @@
     </div>
   }
 }
+
+
+

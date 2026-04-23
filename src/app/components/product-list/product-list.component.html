@@ -81,7 +81,8 @@
 
         <div class="product-image"
              [style.background]="(getCategoryFor(product)?.color ?? '#ccc') + '15'">
-          <span class="product-emoji">{{ product.image }}</span>
+          <!-- <span class="product-emoji">{{ product.image }}</span> -->
+          <img [src]="product.image" [alt]="product.name" />
           @if (selectedCategoryId() === 'all') {
             <div class="cat-badge"
                  [style.background]="getCategoryFor(product)?.color ?? '#ccc'">
