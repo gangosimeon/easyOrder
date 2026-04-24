@@ -344,6 +344,7 @@
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -353,6 +354,7 @@
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -401,6 +403,31 @@
       height: 12px;
     }
   }
+
+  .instock-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(46, 125, 50, 0.1);
+    color: #2e7d32;
+    margin-left: auto;
+    mat-icon { font-size: 12px; width: 12px; height: 12px; }
+
+    &.unavailable {
+      background: rgba(198, 40, 40, 0.08);
+      color: #c62828;
+    }
+  }
+}
+
+.out-of-stock {
+  opacity: 0.65;
+  .product-image { filter: grayscale(40%); }
 }
 
 @media (max-width: 768px) {

@@ -1,5 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 
 export interface Company {
   id: string;
@@ -22,65 +25,88 @@ export interface RegisterPayload {
   coverColor: string;
 }
 
-const MOCK_CREDENTIALS = { phone: '22677938688', password: 'password123' };
+export interface AuthResult {
+  success: boolean;
+  error?: string;
+}
 
-const MOCK_COMPANY: Company = {
-  id: 'company-1',
-  name: 'Boutique Kaboré & Fils',
-  slug: 'kabore-et-fils',
-  phone: '22677938688',
-  description: 'Votre boutique de confiance à Ouagadougou',
-  logo: '🏪',
-  address: 'Secteur 15, Ouagadougou',
-  coverColor: '#a04343',
-};
+interface ApiAuthResponse {
+  user: Company;
+  token: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private http   = inject(HttpClient);
+  private router = inject(Router);
+
   private _isLoggedIn = signal(false);
   private _company    = signal<Company | null>(null);
 
   readonly isLoggedIn = this._isLoggedIn.asReadonly();
   readonly company    = this._company.asReadonly();
 
-  constructor(private router: Router) {
+  constructor() {
     const stored = sessionStorage.getItem('bs_auth');
-    if (stored) {
+    const token  = sessionStorage.getItem('bs_token');
+    if (stored && token) {
       try {
         this._company.set(JSON.parse(stored));
         this._isLoggedIn.set(true);
-      } catch { /* session corrompue, on ignore */ }
+      } catch { /* session corrompue */ }
     }
   }
 
-  login(phone: string, password: string): { success: boolean; error?: string } {
-    if (phone === MOCK_CREDENTIALS.phone && password === MOCK_CREDENTIALS.password) {
-      this._company.set(MOCK_COMPANY);
-      this._isLoggedIn.set(true);
-      sessionStorage.setItem('bs_auth', JSON.stringify(MOCK_COMPANY));
-      return { success: true };
-    }
-    return { success: false, error: 'Numéro ou mot de passe incorrect.' };
+  login(phone: string, password: string): Observable<AuthResult> {
+    return this.http.post<ApiAuthResponse>('/api/auth/login', { phone, password }).pipe(
+      tap(({ user, token }) => {
+        sessionStorage.setItem('bs_token', token);
+        sessionStorage.setItem('bs_auth', JSON.stringify(user));
+        this._company.set(user);
+        this._isLoggedIn.set(true);
+      }),
+      map(() => ({ success: true } as AuthResult)),
+      catchError(err => of({
+        success: false,
+        error: (err.error as { message?: string })?.message ?? 'Numéro ou mot de passe incorrect.',
+      } as AuthResult))
+    );
   }
 
-  register(data: RegisterPayload): { success: boolean; company: Company } {
-    const slug = data.name
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s]/g, '')
-      .trim()
-      .replace(/\s+/g, '-');
+  register(data: RegisterPayload): Observable<AuthResult> {
+    return this.http.post<ApiAuthResponse>('/api/auth/register', data).pipe(
+      tap(({ user, token }) => {
+        sessionStorage.setItem('bs_token', token);
+        sessionStorage.setItem('bs_auth', JSON.stringify(user));
+        this._company.set(user);
+        this._isLoggedIn.set(true);
+      }),
+      map(() => ({ success: true } as AuthResult)),
+      catchError(err => of({
+        success: false,
+        error: (err.error as { message?: string })?.message ?? 'Erreur lors de l\'inscription.',
+      } as AuthResult))
+    );
+  }
 
-    const company: Company = { id: 'company-' + Date.now(), slug, ...data };
-    this._company.set(company);
-    this._isLoggedIn.set(true);
-    sessionStorage.setItem('bs_auth', JSON.stringify(company));
-    return { success: true, company };
+  updateProfile(data: Partial<Omit<Company, 'id' | 'phone' | 'slug'>>): Observable<AuthResult> {
+    return this.http.put<Company>('/api/auth/me', data).pipe(
+      tap(user => {
+        sessionStorage.setItem('bs_auth', JSON.stringify(user));
+        this._company.set(user);
+      }),
+      map(() => ({ success: true } as AuthResult)),
+      catchError(err => of({
+        success: false,
+        error: (err.error as { message?: string })?.message ?? 'Erreur lors de la mise à jour.',
+      } as AuthResult))
+    );
   }
 
   logout(): void {
     this._isLoggedIn.set(false);
     this._company.set(null);
+    sessionStorage.removeItem('bs_token');
     sessionStorage.removeItem('bs_auth');
     this.router.navigate(['/login']);
   }

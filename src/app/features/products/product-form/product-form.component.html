@@ -9,14 +9,70 @@
     <button class="close-btn" (click)="onCancel()"><mat-icon>close</mat-icon></button>
   </div>
 
-  <!-- Emoji Picker -->
-  <div class="emoji-section">
-    <div class="selected-emoji-display">{{ selectedEmoji() }}</div>
-    <div class="emoji-grid">
-      @for (emoji of productEmojis; track emoji) {
-        <button type="button" class="emoji-btn"
-                [class.selected]="selectedEmoji() === emoji"
-                (click)="selectEmoji(emoji)" matRipple>{{ emoji }}</button>
+  <!-- Image section -->
+  <div class="image-section">
+    <!-- Input file caché -->
+    <input #fileInputRef type="file" accept="image/*" class="hidden-input" (change)="onFileSelected($event)" />
+
+    <div class="image-mode-tabs">
+      <button type="button" class="mode-tab" [class.active]="imageMode() === 'emoji'" (click)="setImageMode('emoji')">
+        <mat-icon>emoji_emotions</mat-icon> Sticker
+      </button>
+      <button type="button" class="mode-tab" [class.active]="imageMode() === 'url'" (click)="setImageMode('url')">
+        <mat-icon>link</mat-icon> URL
+      </button>
+      <button type="button" class="mode-tab" [class.active]="imageMode() === 'upload'" (click)="setImageMode('upload')">
+        <mat-icon>add_photo_alternate</mat-icon> Photo
+      </button>
+    </div>
+
+    <div class="image-content">
+      <!-- Aperçu -->
+      <div class="image-preview">
+        @if (imageMode() === 'upload' && uploadedImage()) {
+          <img [src]="uploadedImage()" alt="Aperçu" class="url-thumb" />
+        } @else if (imageMode() === 'url' && imageUrl()) {
+          <img [src]="imageUrl()" alt="Aperçu" class="url-thumb" (error)="imgError($event)" />
+        } @else if (imageMode() === 'emoji') {
+          <span class="emoji-display">{{ selectedEmoji() }}</span>
+        } @else {
+          <mat-icon class="img-placeholder">image</mat-icon>
+        }
+      </div>
+
+      <!-- Contenu selon le mode -->
+      @if (imageMode() === 'emoji') {
+        <div class="emoji-grid">
+          @for (emoji of productEmojis; track emoji) {
+            <button type="button" class="emoji-btn"
+                    [class.selected]="selectedEmoji() === emoji"
+                    (click)="selectEmoji(emoji)" matRipple>{{ emoji }}</button>
+          }
+        </div>
+      } @else if (imageMode() === 'url') {
+        <div class="url-input-wrap">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>URL de l'image</mat-label>
+            <input matInput type="url" [value]="imageUrl()" (input)="setImageUrl($event)"
+                   placeholder="https://example.com/image.jpg" />
+            <mat-icon matSuffix>link</mat-icon>
+          </mat-form-field>
+          <p class="url-hint">Colle le lien d'une image web (Unsplash, Google Images…)</p>
+        </div>
+      } @else {
+        <div class="upload-zone">
+          <button type="button" class="upload-btn" (click)="triggerUpload()" matRipple>
+            <mat-icon>upload_file</mat-icon>
+            <span>{{ uploadedImage() ? 'Changer l\'image' : 'Choisir une image' }}</span>
+          </button>
+          <button type="button" class="upload-btn camera" (click)="triggerUpload()" matRipple>
+            <mat-icon>photo_camera</mat-icon>
+            <span>Prendre une photo</span>
+          </button>
+          @if (uploadedImage()) {
+            <p class="upload-ok"><mat-icon>check_circle</mat-icon> Image chargée</p>
+          }
+        </div>
       }
     </div>
   </div>
@@ -86,6 +142,17 @@
       </div>
     }
 
+    <!-- Disponibilité -->
+    <div class="promo-toggle">
+      <div class="toggle-label">
+        <mat-icon [style.color]="form.get('inStock')?.value ? '#2e7d32' : '#c62828'">
+          {{ form.get('inStock')?.value ? 'check_circle' : 'cancel' }}
+        </mat-icon>
+        <span>{{ form.get('inStock')?.value ? 'En stock' : 'Rupture de stock' }}</span>
+      </div>
+      <mat-slide-toggle formControlName="inStock" color="primary" />
+    </div>
+
     <mat-form-field appearance="outline">
       <mat-label>Stock disponible (optionnel)</mat-label>
       <input matInput type="number" formControlName="stock" placeholder="50" min="0" />
@@ -102,7 +169,7 @@
       <button type="submit" mat-raised-button class="btn-save"
               [disabled]="form.invalid" [style.background]="data.category.color">
         <mat-icon>{{ data.mode === 'add' ? 'add_shopping_cart' : 'save' }}</mat-icon>
-        {{ data.mode === 'add' ? 'Ajouter' : 'Enregistrer' }}
+        {{ data.mode === 'add' ? 'Ajouter' : 'Mettre à jour' }}
       </button>
     </div>
   </form>

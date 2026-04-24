@@ -13,6 +13,7 @@ import { Category }            from '../../../models/category.model';
 import { CategoryService }     from '../../../core/services/category.service';
 import { ProductService }      from '../../../core/services/product.service';
 import { CategoryFormComponent, CategoryFormData } from '../category-form/category-form.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-category-list',
@@ -66,24 +67,34 @@ export class CategoryListComponent {
       width: '520px', maxWidth: '95vw',
       data: { mode: 'edit', category: cat } satisfies CategoryFormData,
     }).afterClosed().subscribe(result => {
-      if (result) {
+      if (!result) return;
+      this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(
+        ConfirmDialogComponent,
+        { data: { title: 'Modifier la catégorie', message: `Confirmer les modifications de "${cat.name}" ?`, confirmLabel: 'Confirmer', icon: 'save', color: result.color ?? cat.color }, width: '380px', autoFocus: false }
+      ).afterClosed().subscribe(ok => {
+        if (!ok) return;
         this.categoryService.update(cat.id, result);
         this.snack('✅ Catégorie modifiée !');
-      }
+      });
     });
   }
 
   deleteCategory(cat: Category, e: MouseEvent): void {
     e.stopPropagation();
     const n = this.countFor(cat.id);
-    const msg = n > 0
-      ? `Supprimer "${cat.name}" et ses ${n} produit(s) ?`
-      : `Supprimer "${cat.name}" ?`;
-    if (confirm(msg)) {
+    const message = n > 0
+      ? `Supprimer "${cat.name}" et ses ${n} produit(s) associés ? Cette action est irréversible.`
+      : `Supprimer "${cat.name}" ? Cette action est irréversible.`;
+    const ref = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(
+      ConfirmDialogComponent,
+      { data: { title: 'Supprimer la catégorie', message, color: cat.color, confirmLabel: 'Confirmer' }, width: '380px', autoFocus: false }
+    );
+    ref.afterClosed().subscribe(ok => {
+      if (!ok) return;
       this.productService.deleteByCategory(cat.id);
       this.categoryService.delete(cat.id);
       this.snack('🗑️ Catégorie supprimée');
-    }
+    });
   }
 
   goToProducts(categoryId: string): void {

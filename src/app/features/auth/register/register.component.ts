@@ -101,22 +101,21 @@ export class RegisterComponent {
     this.loading.set(true);
 
     const v = this.form.value;
-    setTimeout(() => {
-      const result = this.auth.register({
-        name:        v.name!,
-        phone:       v.phone!,
-        password:    v.password!,
-        description: v.description ?? '',
-        logo:        this.activeLogo,
-        address:     v.address ?? '',
-        coverColor:  this.selectedColor(),
-      });
+    this.auth.register({
+      name:        v.name!,
+      phone:       v.phone!,
+      password:    v.password!,
+      description: v.description ?? '',
+      logo:        this.activeLogo,
+      address:     v.address ?? '',
+      coverColor:  this.selectedColor(),
+    }).subscribe(result => {
       this.loading.set(false);
       if (result.success) {
         this.router.navigate(['/categories']);
-        console.log('Inscription réussie');
+      } else {
+        this.errorMsg.set(result.error ?? 'Erreur lors de l\'inscription');
       }
-      console.log("User data ", result);
-    }, 900);
+    });
   }
 }

@@ -1,0 +1,132 @@
+<div class="profile-page">
+
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon class="title-icon">manage_accounts</mat-icon> Mon Profil
+    </h1>
+    <p class="page-subtitle">Modifiez les informations de votre boutique</p>
+  </div>
+
+  <div class="profile-card">
+
+    <!-- Logo + Couleur -->
+    <div class="visual-section" [style.--cover]="selectedColor()">
+      <div class="cover-preview">
+        <div class="logo-preview">
+          @if (logoMode() === 'upload' && uploadedLogo()) {
+            <img [src]="uploadedLogo()" alt="logo" class="logo-img" />
+          } @else {
+            {{ selectedLogo() }}
+          }
+        </div>
+        <p class="shop-name-preview">{{ form.get('name')?.value || 'Votre boutique' }}</p>
+      </div>
+
+      <!-- Input file caché -->
+      <input #logoFileRef type="file" accept="image/*" class="hidden-input" (change)="onLogoFileSelected($event)" />
+
+      <div class="pickers-row">
+        <!-- Logo -->
+        <div class="picker-block">
+          <div class="logo-mode-header">
+            <p class="picker-label"><mat-icon>storefront</mat-icon> Logo</p>
+            <div class="logo-mode-tabs">
+              <button type="button" class="mode-tab-sm" [class.active]="logoMode() === 'emoji'" (click)="setLogoMode('emoji')">
+                <mat-icon>emoji_emotions</mat-icon> Icône
+              </button>
+              <button type="button" class="mode-tab-sm" [class.active]="logoMode() === 'upload'" (click)="setLogoMode('upload')">
+                <mat-icon>add_photo_alternate</mat-icon> Photo
+              </button>
+            </div>
+          </div>
+
+          @if (logoMode() === 'emoji') {
+            <div class="logo-grid">
+              @for (logo of shopLogos; track logo) {
+                <button type="button" class="logo-btn" matRipple
+                        [class.selected]="selectedLogo() === logo"
+                        (click)="selectLogo(logo)">{{ logo }}</button>
+              }
+            </div>
+          } @else {
+            <div class="logo-upload-zone">
+              <button type="button" class="logo-upload-btn" (click)="triggerLogoUpload()" matRipple>
+                <mat-icon>upload_file</mat-icon>
+                <span>{{ uploadedLogo() ? 'Changer la photo' : 'Choisir / Prendre une photo' }}</span>
+              </button>
+              @if (uploadedLogo()) {
+                <p class="upload-ok-sm"><mat-icon>check_circle</mat-icon> Photo chargée</p>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Couleur -->
+        <div class="picker-block">
+          <p class="picker-label"><mat-icon>palette</mat-icon> Couleur</p>
+          <div class="color-grid">
+            @for (color of coverColors; track color) {
+              <button type="button" class="color-dot" matRipple
+                      [style.background]="color"
+                      [class.selected]="selectedColor() === color"
+                      (click)="selectColor(color)">
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="profile-form">
+
+      <!-- Téléphone (readonly) -->
+      <div class="readonly-field">
+        <mat-icon>phone</mat-icon>
+        <div>
+          <span class="readonly-label">Numéro de téléphone</span>
+          <span class="readonly-value">{{ company()?.phone }}</span>
+        </div>
+        <span class="readonly-badge">Non modifiable</span>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nom de la boutique</mat-label>
+        <input matInput formControlName="name" placeholder="Ex: Boutique Kaboré" />
+        <mat-icon matSuffix>store</mat-icon>
+        @if (form.get('name')?.hasError('required')) {
+          <mat-error>Le nom est requis</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Description (optionnel)</mat-label>
+        <textarea matInput formControlName="description" rows="3"
+                  placeholder="Décrivez votre boutique…"></textarea>
+        <mat-icon matSuffix>description</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Adresse (optionnel)</mat-label>
+        <input matInput formControlName="address" placeholder="Ex: Secteur 15, Ouagadougou" />
+        <mat-icon matSuffix>location_on</mat-icon>
+      </mat-form-field>
+
+      @if (errorMsg()) {
+        <div class="error-banner"><mat-icon>error</mat-icon> {{ errorMsg() }}</div>
+      }
+
+      <button type="submit" mat-raised-button class="btn-save"
+              [disabled]="form.invalid || loading()"
+              [style.background]="selectedColor()">
+        @if (loading()) {
+          <mat-icon class="spin">sync</mat-icon>
+        } @else {
+          <mat-icon>save</mat-icon>
+        }
+        {{ loading() ? 'Enregistrement…' : 'Enregistrer les modifications' }}
+      </button>
+    </form>
+
+  </div>
+</div>

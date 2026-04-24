@@ -41,14 +41,13 @@ export class LoginComponent {
     this.loading.set(true);
 
     const { phone, password } = this.form.value;
-    setTimeout(() => {
-      const result = this.auth.login(phone!, password!);
+    this.auth.login(phone!, password!).subscribe(result => {
       this.loading.set(false);
       if (result.success) {
         this.router.navigate(['/categories']);
       } else {
         this.errorMsg.set(result.error ?? 'Erreur de connexion');
       }
-    }, 700);
+    });
   }
 }

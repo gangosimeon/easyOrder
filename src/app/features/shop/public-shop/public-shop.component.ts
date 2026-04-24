@@ -121,13 +121,13 @@ export class PublicShopComponent implements OnInit {
   toggleProduct(product: Product): void {
     if (this.cartItems().some(i => i.product.id === product.id)) {
       this.cartService.removeProduct(product.id);
-      this.snackBar.open(`${product.name} retiré du panier`, '', { duration: 1500 });
+      // this.snackBar.open(`${product.name} retiré du panier`, '', { duration: 1500 });
     } else {
       this.cartService.addProduct(product);
-      this.snackBar.open(`✅ ${product.name} ajouté au panier !`, '', {
-        duration: 1800,
-        panelClass: ['snack-success'],
-      });
+      // this.snackBar.open(`✅ ${product.name} ajouté au panier !`, '', {
+      //   duration: 1800,
+      //   panelClass: ['snack-success'],
+      // });
     }
   }
 

@@ -3,18 +3,21 @@ import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { CartService, CartItem } from '../../../core/services/cart.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CartService, CartItem } from '../../../core/services/cart.service';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule],
+  imports: [MatIconModule, MatButtonModule, MatDialogModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent {
-  private router = inject(Router);
+  private router  = inject(Router);
+  private dialog  = inject(MatDialog);
   readonly cartService = inject(CartService);
   private snackBar    = inject(MatSnackBar);
   readonly cartItems = toSignal(this.cartService.items$, { initialValue: [] });
@@ -29,31 +32,35 @@ export class CartComponent {
   }
 
   generateWhatsAppMessage(items: CartItem[], companyName: string): string {
-    let msg = `🛍️ Bonjour, je souhaite commander chez *${companyName}* :\n\n`;
+    let msg = `Bonjour, je souhaite commander chez *${companyName}* :\n\n`;
 
     let total = 0;
 
     for (const item of items) {
       const productTotal = item.product.price * item.quantity;
       total += productTotal;
-      msg += `📦 *${item.product.name}*\n`;
-      msg += `   ➤ Quantité : ${item.quantity}x\n`;
-      msg += `   ➤ Prix : ${this.formatPrice(productTotal)}\n`;
+      msg += `*${item.product.name}*\n`;
+      msg += `    Quantité : ${item.quantity}x\n`;
+      msg += `    Prix : ${this.formatPrice(productTotal)}\n`;
 
       if (item.product.image) {
-        msg += `   📷 Image : ${item.product.image}\n`;
+        msg += `    Image : ${item.product.image}\n`;
       }
       msg += `\n`;
     }
-    msg += `💰 *TOTAL : ${this.formatPrice(total)}*\n\n`;
+    msg += ` *TOTAL : ${this.formatPrice(total)}*\n\n`;
     msg += `Merci de me confirmer la disponibilité 🙏`;
     return msg;
   }
   clearCart(): void {
-    if (confirm('Vider tout le panier ?')) {
+    this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(
+      ConfirmDialogComponent,
+      { data: { title: 'Vider le panier', message: 'Supprimer tous les articles du panier ?', confirmLabel: 'Confirmer', icon: 'delete_sweep', color: '#c62828' }, width: '360px', autoFocus: false }
+    ).afterClosed().subscribe(ok => {
+      if (!ok) return;
       this.cartService.clearCart();
-      this.snack('🧹 Panier vidé');
-    }
+      // this.snack('Panier vidé');
+    });
   }
   orderViaWhatsApp(): void {
     const company = this.cartService.company();

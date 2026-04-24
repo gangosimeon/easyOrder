@@ -41,9 +41,10 @@ export class AppComponent {
   );
 
   readonly navItems: NavItem[] = [
-    { label: 'Catégories', icon: 'category',    route: '/categories' },
-    { label: 'Produits',   icon: 'inventory_2', route: '/products'   },
-    { label: 'Annonces',   icon: 'campaign',    route: '/annonces'   },
+    { label: 'Catégories', icon: 'category',       route: '/categories' },
+    { label: 'Produits',   icon: 'inventory_2',    route: '/products'   },
+    { label: 'Annonces',   icon: 'campaign',       route: '/annonces'   },
+    { label: 'Mon Profil', icon: 'manage_accounts', route: '/profile'   },
   ];
 
   constructor() {

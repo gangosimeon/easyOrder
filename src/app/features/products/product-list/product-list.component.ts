@@ -16,6 +16,7 @@ import { Category }              from '../../../models/category.model';
 import { ProductService }        from '../../../core/services/product.service';
 import { CategoryService }       from '../../../core/services/category.service';
 import { ProductFormComponent, ProductFormData } from '../product-form/product-form.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-product-list',
@@ -104,16 +105,29 @@ export class ProductListComponent implements OnInit {
       width: '540px', maxWidth: '95vw',
       data: { mode: 'edit', product, category } satisfies ProductFormData,
     }).afterClosed().subscribe(result => {
-      if (result) { this.productService.update(product.id, result); this.snack('✅ Produit modifié !'); }
+      if (!result) return;
+      this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(
+        ConfirmDialogComponent,
+        { data: { title: 'Modifier le produit', message: `Confirmer les modifications de "${product.name}" ?`, confirmLabel: 'Confirmer', icon: 'save', color: '#1976d2' }, width: '380px', autoFocus: false }
+      ).afterClosed().subscribe(ok => {
+        if (!ok) return;
+        this.productService.update(product.id, result);
+        this.snack('✅ Produit modifié !');
+      });
     });
   }
 
   deleteProduct(product: Product, e: MouseEvent): void {
     e.stopPropagation();
-    if (confirm(`Supprimer "${product.name}" ?`)) {
+    const ref = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(
+      ConfirmDialogComponent,
+      { data: { title: 'Supprimer le produit', message: `Supprimer "${product.name}" ? Cette action est irréversible.`, confirmLabel: 'Confirmer' }, width: '380px', autoFocus: false }
+    );
+    ref.afterClosed().subscribe(ok => {
+      if (!ok) return;
       this.productService.delete(product.id);
       this.snack('🗑️ Produit supprimé');
-    }
+    });
   }
 
   private snack(msg: string): void {

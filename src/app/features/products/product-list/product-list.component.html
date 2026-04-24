@@ -62,7 +62,7 @@
   <!-- Products -->
   <div class="products-grid">
     @for (product of filteredProducts(); track product.id) {
-      <div class="product-card card-item">
+      <div class="product-card card-item" [class.out-of-stock]="!product.inStock">
 
         @if (product.promotion) {
           <div class="promo-badge">
@@ -118,6 +118,10 @@
                 <mat-icon>warehouse</mat-icon> {{ product.stock }}
               </span>
             }
+            <span class="instock-badge" [class.unavailable]="!product.inStock">
+              <mat-icon>{{ product.inStock ? 'check_circle' : 'cancel' }}</mat-icon>
+              {{ product.inStock ? 'En stock' : 'Rupture' }}
+            </span>
           </div>
         </div>
       </div>
