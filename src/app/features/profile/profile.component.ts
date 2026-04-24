@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, inject, signal, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, signal, computed, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatFormFieldModule }       from '@angular/material/form-field';
 import { MatInputModule }           from '@angular/material/input';
@@ -28,6 +28,12 @@ export class ProfileComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   readonly company     = this.auth.company;
+  readonly shopUrl     = computed(() => {
+    const slug = this.company()?.slug;
+    if (!slug) return '';
+    return `${window.location.origin}/shop/${slug}`;
+  });
+  linkCopied = signal(false);
   readonly coverColors = COVER_COLORS;
   readonly shopLogos   = SHOP_LOGOS;
 
@@ -90,6 +96,22 @@ export class ProfileComponent implements OnInit {
       };
       reader.readAsDataURL(file);
     });
+  }
+
+  shareWhatsApp(): void {
+    const url = this.shopUrl();
+    const text = `Découvrez ma boutique en ligne ${this.company()?.name ?? ''} : ${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  shareFacebook(): void {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.shopUrl())}`, '_blank');
+  }
+
+  async copyLink(): Promise<void> {
+    await navigator.clipboard.writeText(this.shopUrl());
+    this.linkCopied.set(true);
+    setTimeout(() => this.linkCopied.set(false), 2000);
   }
 
   get activeLogo(): string {

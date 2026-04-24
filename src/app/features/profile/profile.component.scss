@@ -300,7 +300,139 @@
   to { transform: rotate(360deg); }
 }
 
+.share-card {
+  margin-top: 20px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.share-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  .share-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: var(--primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .share-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--text-primary);
+    margin: 0 0 4px;
+  }
+
+  .share-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+.slug-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .slug-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--background);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    min-width: 0;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .slug-url {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .btn-copy {
+    height: 42px;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+    mat-icon { font-size: 15px; width: 15px; height: 15px; }
+  }
+}
+
+.share-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  .btn-whatsapp {
+    flex: 1;
+    min-width: 160px;
+    height: 44px;
+    background: #25d366 !important;
+    color: white !important;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    &:hover { background: #1ebe5a !important; }
+  }
+
+  .btn-facebook {
+    flex: 1;
+    min-width: 160px;
+    height: 44px;
+    background: #1877f2 !important;
+    color: white !important;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    &:hover { background: #1465d4 !important; }
+  }
+}
+
 @media (max-width: 600px) {
   .profile-page { padding: 16px; }
   .pickers-row  { flex-direction: column; }
+  .slug-row     { flex-direction: column; align-items: stretch; }
+  .btn-copy     { width: 100%; justify-content: center; }
 }

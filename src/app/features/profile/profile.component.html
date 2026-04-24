@@ -1,4 +1,40 @@
 <div class="profile-page">
+ <!-- Section partage boutique -->
+  @if (shopUrl()) {
+    <div class="share-card">
+      <div class="share-header">
+        <mat-icon class="share-icon">link</mat-icon>
+        <div>
+          <h2 class="share-title">Lien de votre boutique</h2>
+          <p class="share-sub">Partagez ce lien pour que vos clients accèdent à votre vitrine</p>
+        </div>
+      </div>
+
+      <div class="slug-row">
+        <div class="slug-box">
+          <mat-icon>storefront</mat-icon>
+          <span class="slug-url">{{ shopUrl() }}</span>
+        </div>
+        <button type="button" class="btn-copy" mat-stroked-button matRipple (click)="copyLink()">
+          @if (linkCopied()) {
+            <mat-icon>check</mat-icon>
+          } @else {
+            <mat-icon>content_copy</mat-icon>
+          }
+          {{ linkCopied() ? 'Copié !' : 'Copier' }}
+        </button>
+      </div>
+
+      <div class="share-actions">
+        <button type="button" class="btn-whatsapp" mat-raised-button matRipple (click)="shareWhatsApp()">
+          <mat-icon>chat</mat-icon> Partager sur WhatsApp
+        </button>
+        <button type="button" class="btn-facebook" mat-raised-button matRipple (click)="shareFacebook()">
+          <mat-icon>thumb_up</mat-icon> Partager sur Facebook
+        </button>
+      </div>
+    </div>
+  }
 
   <div class="page-header">
     <h1 class="page-title">
@@ -129,4 +165,6 @@
     </form>
 
   </div>
+
+ 
 </div>
