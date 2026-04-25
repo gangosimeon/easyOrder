@@ -82,7 +82,11 @@
         <!-- ── SIDEBAR ADMIN ── -->
         <div class="sidebar-logo">
           <div class="shop-logo">
-            {{ authService.company()?.logo ?? "🏪" }}
+          @if (isUrl(authService.company()?.logo)) {
+            <img [src]="authService.company()?.logo" [alt]="authService.company()?.name" (error)="onImgError($event)" />
+          } @else {
+            <span class="product-emoji">{{ authService.company()?.logo || '🏪' }}</span>
+          }
           </div>
           <div class="shop-meta">
             <h1 class="shop-name">

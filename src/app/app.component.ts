@@ -71,4 +71,19 @@ export class AppComponent {
     const msg = encodeURIComponent('Bonjour, je viens de votre boutique en ligne');
     window.open(`https://wa.me/${company.phone}?text=${msg}`, '_blank');
   }
+  
+  isUrl(value?: string): boolean {
+    return !!value && (value.startsWith('http') || value.startsWith('data:'));
+  }
+  onImgError(event: Event): void {
+    const el = event.target as HTMLImageElement;
+    el.style.display = 'none';
+    const parent = el.parentElement;
+    if (parent) {
+      const span = document.createElement('span');
+      span.className = 'product-emoji';
+      span.textContent = '🛍️';
+      parent.appendChild(span);
+    }
+  }
 }
