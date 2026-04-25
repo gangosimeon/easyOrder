@@ -2,6 +2,7 @@ import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Annonce } from '../../models/annonce.model';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 function parseAnnonce(a: Annonce): Annonce {
   return {
@@ -18,7 +19,7 @@ export class AnnonceService {
   private auth = inject(AuthService);
 
   private _annonces = signal<Annonce[]>([]);
-
+  private readonly apiUrl = environment.apiUrl;
   readonly annonces     = this._annonces.asReadonly();
   readonly actives      = computed(() => this._annonces().filter(a => a.active));
   readonly epinglees    = computed(() => this._annonces().filter(a => a.epinglee && a.active));
@@ -36,20 +37,20 @@ export class AnnonceService {
   }
 
   private loadAll(): void {
-    this.http.get<Annonce[]>('/api/annonces').subscribe({
+    this.http.get<Annonce[]>(`${this.apiUrl}/annonces`).subscribe({
       next: list => this._annonces.set(list.map(parseAnnonce)),
       error: ()  => this._annonces.set([]),
     });
   }
 
   add(data: Omit<Annonce, 'id' | 'createdAt'>): void {
-    this.http.post<Annonce>('/api/annonces', data).subscribe({
+    this.http.post<Annonce>(`${this.apiUrl}/annonces`, data).subscribe({
       next: ann => this._annonces.update(list => [parseAnnonce(ann), ...list]),
     });
   }
 
   update(id: string, changes: Partial<Annonce>): void {
-    this.http.put<Annonce>(`/api/annonces/${id}`, changes).subscribe({
+    this.http.put<Annonce>(`${this.apiUrl}/annonces/${id}`, changes).subscribe({
       next: ann => this._annonces.update(list =>
         list.map(a => a.id === id ? parseAnnonce(ann) : a)
       ),
@@ -57,7 +58,7 @@ export class AnnonceService {
   }
 
   toggleActive(id: string): void {
-    this.http.patch<Annonce>(`/api/annonces/${id}/toggle-active`, {}).subscribe({
+    this.http.patch<Annonce>(`${this.apiUrl}/annonces/${id}/toggle-active`, {}).subscribe({
       next: ann => this._annonces.update(list =>
         list.map(a => a.id === id ? parseAnnonce(ann) : a)
       ),
@@ -65,7 +66,7 @@ export class AnnonceService {
   }
 
   toggleEpinglee(id: string): void {
-    this.http.patch<Annonce>(`/api/annonces/${id}/toggle-epinglee`, {}).subscribe({
+    this.http.patch<Annonce>(`${this.apiUrl}/annonces/${id}/toggle-epinglee`, {}).subscribe({
       next: ann => this._annonces.update(list =>
         list.map(a => a.id === id ? parseAnnonce(ann) : a)
       ),
@@ -73,7 +74,7 @@ export class AnnonceService {
   }
 
   delete(id: string): void {
-    this.http.delete(`/api/annonces/${id}`).subscribe({
+    this.http.delete(`${this.apiUrl}/annonces/${id}`).subscribe({
       next: () => this._annonces.update(list => list.filter(a => a.id !== id)),
     });
   }

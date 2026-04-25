@@ -2,6 +2,7 @@ import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { Product } from '../../models/product.model';
+import { environment } from '../../../environments/environment';
 
 function parseProduct(p: Product): Product {
   return { ...p, createdAt: new Date(p.createdAt) };
@@ -14,6 +15,7 @@ export class ProductService {
 
   private _products = signal<Product[]>([]);
 
+  private readonly apiUrl = environment.apiUrl;
   readonly products = this._products.asReadonly();
 
   readonly countByCategory = computed(() => {
@@ -35,7 +37,7 @@ export class ProductService {
   }
 
   private loadAll(): void {
-    this.http.get<Product[]>('/api/products').subscribe({
+    this.http.get<Product[]>(`${this.apiUrl}/products`).subscribe({
       next: prods => this._products.set(prods.map(parseProduct)),
       error: ()   => this._products.set([]),
     });
@@ -50,13 +52,13 @@ export class ProductService {
   }
 
   add(data: Omit<Product, 'id' | 'createdAt'>): void {
-    this.http.post<Product>('/api/products', data).subscribe({
+    this.http.post<Product>(`${this.apiUrl}/products`, data).subscribe({
       next: prod => this._products.update(list => [...list, parseProduct(prod)]),
     });
   }
 
   update(id: string, changes: Partial<Product>): void {
-    this.http.put<Product>(`/api/products/${id}`, changes).subscribe({
+    this.http.put<Product>(`${this.apiUrl}/products/${id}`, changes).subscribe({
       next: prod => this._products.update(list =>
         list.map(p => p.id === id ? parseProduct(prod) : p)
       ),
@@ -64,7 +66,7 @@ export class ProductService {
   }
 
   delete(id: string): void {
-    this.http.delete(`/api/products/${id}`).subscribe({
+    this.http.delete(`${this.apiUrl}/products/${id}`).subscribe({
       next: () => this._products.update(list => list.filter(p => p.id !== id)),
     });
   }

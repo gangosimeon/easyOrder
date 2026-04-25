@@ -2,6 +2,7 @@ import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Category } from '../../models/category.model';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 function parseCategory(c: Category): Category {
   return { ...c, createdAt: new Date(c.createdAt) };
@@ -14,6 +15,7 @@ export class CategoryService {
 
   private _categories = signal<Category[]>([]);
 
+  private readonly apiUrl = environment.apiUrl;
   readonly categories = this._categories.asReadonly();
   readonly count      = computed(() => this._categories().length);
 
@@ -28,7 +30,7 @@ export class CategoryService {
   }
 
   private loadAll(): void {
-    this.http.get<Category[]>('/api/categories').subscribe({
+    this.http.get<Category[]>(`${this.apiUrl}/categories`).subscribe({
       next: cats => this._categories.set(cats.map(parseCategory)),
       error: ()  => this._categories.set([]),
     });
@@ -39,13 +41,13 @@ export class CategoryService {
   }
 
   add(data: Omit<Category, 'id' | 'createdAt'>): void {
-    this.http.post<Category>('/api/categories', data).subscribe({
+    this.http.post<Category>(`${this.apiUrl}/categories`, data).subscribe({
       next: cat => this._categories.update(list => [...list, parseCategory(cat)]),
     });
   }
 
   update(id: string, changes: Partial<Category>): void {
-    this.http.put<Category>(`/api/categories/${id}`, changes).subscribe({
+    this.http.put<Category>(`${this.apiUrl}/categories/${id}`, changes).subscribe({
       next: cat => this._categories.update(list =>
         list.map(c => c.id === id ? parseCategory(cat) : c)
       ),
@@ -53,7 +55,7 @@ export class CategoryService {
   }
 
   delete(id: string): void {
-    this.http.delete(`/api/categories/${id}`).subscribe({
+    this.http.delete(`${this.apiUrl}/categories/${id}`).subscribe({
       next: () => this._categories.update(list => list.filter(c => c.id !== id)),
     });
   }

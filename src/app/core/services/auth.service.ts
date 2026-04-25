@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { tap, map, catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface Company {
   id: string;
@@ -43,6 +44,7 @@ export class AuthService {
   private _isLoggedIn = signal(false);
   private _company    = signal<Company | null>(null);
 
+  private readonly apiUrl = environment.apiUrl;
   readonly isLoggedIn = this._isLoggedIn.asReadonly();
   readonly company    = this._company.asReadonly();
 
@@ -58,7 +60,7 @@ export class AuthService {
   }
 
   login(phone: string, password: string): Observable<AuthResult> {
-    return this.http.post<ApiAuthResponse>('/api/auth/login', { phone, password }).pipe(
+    return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/login`, { phone, password }).pipe(
       tap(({ user, token }) => {
         sessionStorage.setItem('bs_token', token);
         sessionStorage.setItem('bs_auth', JSON.stringify(user));
@@ -74,7 +76,7 @@ export class AuthService {
   }
 
   register(data: RegisterPayload): Observable<AuthResult> {
-    return this.http.post<ApiAuthResponse>('/api/auth/register', data).pipe(
+    return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/register`, data).pipe(
       tap(({ user, token }) => {
         sessionStorage.setItem('bs_token', token);
         sessionStorage.setItem('bs_auth', JSON.stringify(user));
@@ -90,7 +92,7 @@ export class AuthService {
   }
 
   updateProfile(data: Partial<Omit<Company, 'id' | 'phone' | 'slug'>>): Observable<AuthResult> {
-    return this.http.put<Company>('/api/auth/me', data).pipe(
+    return this.http.put<Company>(`${this.apiUrl}/auth/me`, data).pipe(
       tap(user => {
         sessionStorage.setItem('bs_auth', JSON.stringify(user));
         this._company.set(user);
