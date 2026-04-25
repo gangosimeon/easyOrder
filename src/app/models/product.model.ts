@@ -14,7 +14,7 @@ export interface Product {
 }
 
 export const PRODUCT_UNITS = [
-  'pièce','kg','g','litre','cl','sachet','boîte','paquet','lot','douzaine',
+  'pièce','kg','g','litre','cl','sachet','boîte','paquet','lot','douzaine','complet',
 ];
 
 export const PRODUCT_EMOJIS = [
