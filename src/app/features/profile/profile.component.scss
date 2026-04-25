@@ -418,9 +418,9 @@
       font-size: 11px;
       color: var(--primary);
       font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      word-break: break-all;
+      overflow-wrap: anywhere;
+      white-space: normal;
       @media (min-width: 480px) { font-size: 12px; }
     }
   }
