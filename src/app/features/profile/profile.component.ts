@@ -7,6 +7,7 @@ import { MatIconModule }            from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRippleModule }          from '@angular/material/core';
 import { AuthService }              from '../../core/services/auth.service';
+import { UploadService }            from '../../core/services/upload.service';
 import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
 
 @Component({
@@ -23,9 +24,10 @@ import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
 export class ProfileComponent implements OnInit {
   @ViewChild('logoFileRef') logoFileRef!: ElementRef<HTMLInputElement>;
 
-  private auth     = inject(AuthService);
-  private fb       = inject(FormBuilder);
-  private snackBar = inject(MatSnackBar);
+  private auth          = inject(AuthService);
+  private fb            = inject(FormBuilder);
+  private snackBar      = inject(MatSnackBar);
+  private uploadService = inject(UploadService);
 
   readonly company     = this.auth.company;
   readonly shopUrl     = computed(() => {
@@ -43,6 +45,8 @@ export class ProfileComponent implements OnInit {
   uploadedLogo  = signal<string>('');
   selectedColor = signal<string>('#a04343');
   loading       = signal<boolean>(false);
+  logoUploading = signal<boolean>(false);
+  logoUploadErr = signal<string>('');
   errorMsg      = signal<string | null>(null);
 
   ngOnInit(): void {
@@ -68,33 +72,23 @@ export class ProfileComponent implements OnInit {
   selectColor(color: string): void            { this.selectedColor.set(color); }
   triggerLogoUpload(): void                   { this.logoFileRef.nativeElement.click(); }
 
-  async onLogoFileSelected(event: Event): Promise<void> {
+  onLogoFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
-    const base64 = await this.resizeImage(file);
-    this.uploadedLogo.set(base64);
     (event.target as HTMLInputElement).value = '';
-  }
 
-  private resizeImage(file: File, maxSize = 300, quality = 0.82): Promise<string> {
-    return new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-          let { width, height } = img;
-          if (width > maxSize || height > maxSize) {
-            if (width > height) { height = Math.round(height * maxSize / width); width = maxSize; }
-            else                { width  = Math.round(width  * maxSize / height); height = maxSize; }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = width; canvas.height = height;
-          canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
-        };
-        img.src = e.target!.result as string;
-      };
-      reader.readAsDataURL(file);
+    this.logoUploading.set(true);
+    this.logoUploadErr.set('');
+
+    this.uploadService.upload(file).subscribe({
+      next: url => {
+        this.uploadedLogo.set(url);
+        this.logoUploading.set(false);
+      },
+      error: () => {
+        this.logoUploadErr.set('Échec de l\'upload, réessayez.');
+        this.logoUploading.set(false);
+      },
     });
   }
 

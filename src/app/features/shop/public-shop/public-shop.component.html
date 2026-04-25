@@ -116,8 +116,11 @@
 
                 <!-- Image -->
                 <div class="product-img">
-                  <img [src]="product.image" [alt]="product.name" />
-                  <!-- <span class="product-emoji">{{ product.image }}</span> -->
+                  @if (isUrl(product.image)) {
+                    <img [src]="product.image" [alt]="product.name" />
+                  } @else {
+                    <span class="product-emoji">{{ product.image || '🛍️' }}</span>
+                  }
                   @if (product.inStock === false) {
                     <div class="out-badge">Épuisé</div>
                   }

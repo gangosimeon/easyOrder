@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild, signal } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { CommonModule }           from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { MatSlideToggleModule }   from '@angular/material/slide-toggle';
 import { MatRippleModule }        from '@angular/material/core';
 import { Product, PRODUCT_UNITS, PRODUCT_EMOJIS } from '../../../models/product.model';
 import { Category }               from '../../../models/category.model';
+import { UploadService }          from '../../../core/services/upload.service';
 
 export interface ProductFormData {
   product?: Product;
@@ -38,10 +39,14 @@ export class ProductFormComponent implements OnInit {
 
   @ViewChild('fileInputRef') fileInputRef!: ElementRef<HTMLInputElement>;
 
+  private uploadService = inject(UploadService);
+
   imageMode      = signal<'emoji' | 'url' | 'upload'>('emoji');
   selectedEmoji  = signal<string>('🛍️');
   imageUrl       = signal<string>('');
   uploadedImage  = signal<string>('');
+  uploading      = signal<boolean>(false);
+  uploadError    = signal<string>('');
   hasPromo       = signal<boolean>(!!this.data.product?.promotion);
 
   constructor(
@@ -77,33 +82,23 @@ export class ProductFormComponent implements OnInit {
 
   triggerUpload(): void { this.fileInputRef.nativeElement.click(); }
 
-  async onFileSelected(event: Event): Promise<void> {
+  onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
-    const base64 = await this.resizeImage(file);
-    this.uploadedImage.set(base64);
     (event.target as HTMLInputElement).value = '';
-  }
 
-  private resizeImage(file: File, maxSize = 600, quality = 0.78): Promise<string> {
-    return new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-          let { width, height } = img;
-          if (width > maxSize || height > maxSize) {
-            if (width > height) { height = Math.round(height * maxSize / width); width = maxSize; }
-            else                { width  = Math.round(width  * maxSize / height); height = maxSize; }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = width; canvas.height = height;
-          canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
-        };
-        img.src = e.target!.result as string;
-      };
-      reader.readAsDataURL(file);
+    this.uploading.set(true);
+    this.uploadError.set('');
+
+    this.uploadService.upload(file).subscribe({
+      next: url => {
+        this.uploadedImage.set(url);
+        this.uploading.set(false);
+      },
+      error: () => {
+        this.uploadError.set('Échec de l\'upload, réessayez.');
+        this.uploading.set(false);
+      },
     });
   }
   selectEmoji(e: string): void              { this.selectedEmoji.set(e); }

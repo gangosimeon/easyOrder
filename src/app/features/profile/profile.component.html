@@ -86,12 +86,20 @@
             </div>
           } @else {
             <div class="logo-upload-zone">
-              <button type="button" class="logo-upload-btn" (click)="triggerLogoUpload()" matRipple>
-                <mat-icon>upload_file</mat-icon>
-                <span>{{ uploadedLogo() ? 'Changer la photo' : 'Choisir / Prendre une photo' }}</span>
+              <button type="button" class="logo-upload-btn" (click)="triggerLogoUpload()" [disabled]="logoUploading()" matRipple>
+                @if (logoUploading()) {
+                  <mat-icon class="spin">sync</mat-icon>
+                  <span>Envoi en cours…</span>
+                } @else {
+                  <mat-icon>upload_file</mat-icon>
+                  <span>{{ uploadedLogo() ? 'Changer la photo' : 'Choisir / Prendre une photo' }}</span>
+                }
               </button>
-              @if (uploadedLogo()) {
+              @if (uploadedLogo() && !logoUploading()) {
                 <p class="upload-ok-sm"><mat-icon>check_circle</mat-icon> Photo chargée</p>
+              }
+              @if (logoUploadErr()) {
+                <p class="upload-ok-sm" style="color:#c62828"><mat-icon>error</mat-icon> {{ logoUploadErr() }}</p>
               }
             </div>
           }
@@ -153,7 +161,7 @@
       }
 
       <button type="submit" mat-raised-button class="btn-save"
-              [disabled]="form.invalid || loading()"
+              [disabled]="form.invalid || loading() || logoUploading()"
               [style.background]="selectedColor()">
         @if (loading()) {
           <mat-icon class="spin">sync</mat-icon>

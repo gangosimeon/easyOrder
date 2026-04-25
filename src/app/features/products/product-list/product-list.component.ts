@@ -130,6 +130,22 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  isUrl(value: string): boolean {
+    return !!value && (value.startsWith('http') || value.startsWith('data:'));
+  }
+
+  onImgError(event: Event): void {
+    const el = event.target as HTMLImageElement;
+    el.style.display = 'none';
+    const parent = el.parentElement;
+    if (parent) {
+      const span = document.createElement('span');
+      span.className = 'product-emoji';
+      span.textContent = '🛍️';
+      parent.appendChild(span);
+    }
+  }
+
   private snack(msg: string): void {
     this.snackBar.open(msg, 'OK', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'bottom' });
   }

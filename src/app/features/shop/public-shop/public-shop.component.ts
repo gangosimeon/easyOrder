@@ -145,4 +145,8 @@ export class PublicShopComponent implements OnInit {
   formatPrice(price: number): string {
     return new Intl.NumberFormat('fr-FR').format(price) + ' FCFA';
   }
+
+  isUrl(value: string): boolean {
+    return !!value && (value.startsWith('http') || value.startsWith('data:'));
+  }
 }

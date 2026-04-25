@@ -81,8 +81,11 @@
 
         <div class="product-image"
              [style.background]="(getCategoryFor(product)?.color ?? '#ccc') + '15'">
-          <!-- <span class="product-emoji">{{ product.image }}</span> -->
-          <img [src]="product.image" [alt]="product.name" />
+          @if (isUrl(product.image)) {
+            <img [src]="product.image" [alt]="product.name" (error)="onImgError($event)" />
+          } @else {
+            <span class="product-emoji">{{ product.image || '🛍️' }}</span>
+          }
           @if (selectedCategoryId() === 'all') {
             <div class="cat-badge"
                  [style.background]="getCategoryFor(product)?.color ?? '#ccc'">

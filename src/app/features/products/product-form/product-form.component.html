@@ -61,16 +61,24 @@
         </div>
       } @else {
         <div class="upload-zone">
-          <button type="button" class="upload-btn" (click)="triggerUpload()" matRipple>
-            <mat-icon>upload_file</mat-icon>
-            <span>{{ uploadedImage() ? 'Changer l\'image' : 'Choisir une image' }}</span>
+          <button type="button" class="upload-btn" (click)="triggerUpload()" [disabled]="uploading()" matRipple>
+            @if (uploading()) {
+              <mat-icon class="spin">sync</mat-icon>
+              <span>Envoi en cours…</span>
+            } @else {
+              <mat-icon>upload_file</mat-icon>
+              <span>{{ uploadedImage() ? 'Changer l\'image' : 'Choisir une image' }}</span>
+            }
           </button>
-          <button type="button" class="upload-btn camera" (click)="triggerUpload()" matRipple>
+          <button type="button" class="upload-btn camera" (click)="triggerUpload()" [disabled]="uploading()" matRipple>
             <mat-icon>photo_camera</mat-icon>
             <span>Prendre une photo</span>
           </button>
-          @if (uploadedImage()) {
+          @if (uploadedImage() && !uploading()) {
             <p class="upload-ok"><mat-icon>check_circle</mat-icon> Image chargée</p>
+          }
+          @if (uploadError()) {
+            <p class="upload-err"><mat-icon>error</mat-icon> {{ uploadError() }}</p>
           }
         </div>
       }
@@ -167,7 +175,7 @@
     <div class="form-actions">
       <button type="button" mat-stroked-button (click)="onCancel()" class="btn-cancel">Annuler</button>
       <button type="submit" mat-raised-button class="btn-save"
-              [disabled]="form.invalid" [style.background]="data.category.color">
+              [disabled]="form.invalid || uploading()" [style.background]="data.category.color">
         <mat-icon>{{ data.mode === 'add' ? 'add_shopping_cart' : 'save' }}</mat-icon>
         {{ data.mode === 'add' ? 'Ajouter' : 'Mettre à jour' }}
       </button>

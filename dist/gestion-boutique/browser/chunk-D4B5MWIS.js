@@ -1,0 +1,1 @@
+import{a,b,c}from"./chunk-XGE474JK.js";import"./chunk-YAZ72HUO.js";import"./chunk-W5IM7UFB.js";import"./chunk-B2PFKOOM.js";import"./chunk-XFOIQSY2.js";import"./chunk-QGW4U75O.js";import"./chunk-WOGFPHJV.js";import"./chunk-E2J4MDP7.js";import"./chunk-YZAZUSZB.js";export{a as COVER_COLORS,c as RegisterComponent,b as SHOP_LOGOS};
