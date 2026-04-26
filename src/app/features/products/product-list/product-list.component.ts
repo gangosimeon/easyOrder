@@ -17,6 +17,7 @@ import { ProductService }        from '../../../core/services/product.service';
 import { CategoryService }       from '../../../core/services/category.service';
 import { ProductFormComponent, ProductFormData } from '../product-form/product-form.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { ProductDetailModalComponent } from '../../../shared/product-detail-modal/product-detail-modal.component';
 
 @Component({
   selector: 'app-product-list',
@@ -25,6 +26,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confi
     RouterLink, FormsModule,
     MatDialogModule, MatIconModule, MatButtonModule,
     MatRippleModule, MatSnackBarModule, MatTooltipModule,
+    ProductDetailModalComponent,
   ],
   templateUrl: './product-list.component.html',
   styleUrls:  ['./product-list.component.scss'],
@@ -38,8 +40,23 @@ export class ProductListComponent implements OnInit {
   private router          = inject(Router);
   private destroyRef = inject(DestroyRef);
   // Signals locaux
-  selectedCategoryId = signal<string>('all');
-  searchQuery        = signal<string>('');
+  selectedCategoryId      = signal<string>('all');
+  searchQuery             = signal<string>('');
+  selectedDetailProduct   = signal<Product | null>(null);
+
+  openProductDetail(product: Product, e: MouseEvent): void {
+    e.stopPropagation();
+    this.selectedDetailProduct.set(product);
+  }
+
+  closeProductDetail(): void {
+    this.selectedDetailProduct.set(null);
+  }
+
+  readonly selectedDetailCategory = computed(() => {
+    const p = this.selectedDetailProduct();
+    return p ? this.getCategoryFor(p) : undefined;
+  });
 
   // Signals dérivés des services
   readonly categories = this.categoryService.categories;

@@ -1,0 +1,100 @@
+@if (product) {
+  <!-- Backdrop -->
+  <div class="pd-backdrop" (click)="close()"></div>
+
+  <!-- Sheet / Modal -->
+  <div class="pd-sheet" (click)="stopProp($event)" role="dialog" aria-modal="true">
+
+    <!-- Hero image -->
+    <div class="pd-hero" [style.background]="accentColor + '22'">
+      @if (isUrl(product.image)) {
+        <img [src]="product.image" [alt]="product.name" class="pd-img" />
+      } @else {
+        <span class="pd-emoji">{{ product.image || '🛍️' }}</span>
+      }
+
+      <!-- Promo ribbon -->
+      @if (product.promotion) {
+        <div class="pd-promo-ribbon">
+          <mat-icon>local_offer</mat-icon>
+          -{{ product.promotion }}%
+        </div>
+      }
+
+      <!-- Stock badge -->
+      <div class="pd-stock-dot" [class.unavailable]="!product.inStock">
+        <mat-icon>{{ product.inStock ? 'check_circle' : 'cancel' }}</mat-icon>
+        {{ product.inStock ? 'En stock' : 'Épuisé' }}
+      </div>
+
+      <!-- Close button -->
+      <button class="pd-close" (click)="close()" aria-label="Fermer">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Category pill -->
+    @if (category) {
+      <div class="pd-cat-pill" [style.background]="category.color + '20'" [style.color]="category.color">
+        <mat-icon>{{ category.icon }}</mat-icon>
+        {{ category.name }}
+      </div>
+    }
+
+    <!-- Body -->
+    <div class="pd-body">
+
+      <h2 class="pd-name">{{ product.name }}</h2>
+
+      <!-- Prices -->
+      <div class="pd-prices">
+        <span class="pd-price-main" [style.color]="accentColor">
+          {{ formatPrice(product.price) }}
+        </span>
+        @if (product.originalPrice && product.originalPrice !== product.price) {
+          <span class="pd-price-old">{{ formatPrice(product.originalPrice) }}</span>
+        }
+        @if (product.unit) {
+          <span class="pd-unit">/ {{ product.unit }}</span>
+        }
+      </div>
+
+      <!-- Description -->
+      @if (product.description) {
+        <p class="pd-description">{{ product.description }}</p>
+      }
+
+      <!-- Meta chips -->
+      <div class="pd-meta">
+        @if (product.stock !== undefined) {
+          <span class="pd-chip">
+            <mat-icon>warehouse</mat-icon>
+            Stock : {{ product.stock }}
+          </span>
+        }
+        @if (product.unit) {
+          <span class="pd-chip">
+            <mat-icon>straighten</mat-icon>
+            {{ product.unit }}
+          </span>
+        }
+        @if (product.promotion) {
+          <span class="pd-chip promo">
+            <mat-icon>local_offer</mat-icon>
+            Promo {{ product.promotion }}%
+          </span>
+        }
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="pd-footer">
+      <button class="pd-btn-close" (click)="close()" [style.background]="accentColor">
+        <mat-icon>arrow_back</mat-icon>
+        Retour
+      </button>
+    </div>
+
+  </div>
+}

@@ -80,7 +80,9 @@
         </div>
 
         <div class="product-image"
-             [style.background]="(getCategoryFor(product)?.color ?? '#ccc') + '15'">
+             [style.background]="(getCategoryFor(product)?.color ?? '#ccc') + '15'"
+             style="cursor:pointer"
+             (click)="openProductDetail(product, $event)">
           @if (isUrl(product.image)) {
             <img [src]="product.image" [alt]="product.name" (error)="onImgError($event)" />
           } @else {
@@ -145,3 +147,9 @@
   </div>
 
 </div>
+
+<app-product-detail-modal
+  [product]="selectedDetailProduct()"
+  [category]="selectedDetailCategory()"
+  (closed)="closeProductDetail()">
+</app-product-detail-modal>

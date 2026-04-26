@@ -13,6 +13,7 @@ import { Annonce, ANNONCE_TYPE_CONFIG } from '../../../models/annonce.model';
 import { Category } from '../../../models/category.model';
 import { Product } from '../../../models/product.model';
 import { MatRippleModule } from '@angular/material/core';
+import { ProductDetailModalComponent } from '../../../shared/product-detail-modal/product-detail-modal.component';
 registerLocaleData(localeFr);
 
 @Component({
@@ -24,6 +25,7 @@ registerLocaleData(localeFr);
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatRippleModule,
+    ProductDetailModalComponent,
   ],
   templateUrl: './public-shop.component.html',
   styleUrls: ['./public-shop.component.scss'],
@@ -41,9 +43,24 @@ export class PublicShopComponent implements OnInit {
   readonly error = signal<string | null>(null);
   readonly shopData = signal<ShopData | null>(null);
   readonly selectedAnn = signal<Annonce | null>(null);
+  readonly selectedDetailProduct = signal<Product | null>(null);
 
   openAnn(ann: Annonce): void  { this.selectedAnn.set(ann); }
   closeAnn(): void             { this.selectedAnn.set(null); }
+
+  openProductDetail(product: Product, e: MouseEvent): void {
+    e.stopPropagation();
+    this.selectedDetailProduct.set(product);
+  }
+
+  closeProductDetail(): void {
+    this.selectedDetailProduct.set(null);
+  }
+
+  getCategoryFor(product: Product | null) {
+    if (!product) return undefined;
+    return this.categories().find(c => c.id === product.categoryId);
+  }
 
   formatDate(date: Date): string {
     return new Date(date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });

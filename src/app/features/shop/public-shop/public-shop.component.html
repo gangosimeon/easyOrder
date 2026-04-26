@@ -115,7 +115,7 @@
                 </div>
 
                 <!-- Image -->
-                <div class="product-img">
+                <div class="product-img" style="cursor:pointer" (click)="openProductDetail(product, $event)">
                   @if (isUrl(product.image)) {
                     <img [src]="product.image" [alt]="product.name" />
                   } @else {
@@ -195,6 +195,14 @@
       </div>
     </div>
   }
+
+  <!-- PRODUCT DETAIL MODAL -->
+  <app-product-detail-modal
+    [product]="selectedDetailProduct()"
+    [category]="getCategoryFor(selectedDetailProduct())"
+    [coverColor]="company()?.coverColor"
+    (closed)="closeProductDetail()">
+  </app-product-detail-modal>
 
   <!-- STICKY CART FOOTER -->
   @if (cartItemIds().size > 0) {
