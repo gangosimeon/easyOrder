@@ -102,8 +102,21 @@ export class ProductListComponent implements OnInit {
   fmt(price: number): string { return this.productService.formatPrice(price); }
 
   openAddDialog(): void {
-    const category = this.selectedCategory() ?? this.categories()[0];
-    if (!category) { this.snack('⚠️ Créez d\'abord une catégorie'); return; }
+    if (!this.categories().length) {
+      this.dialog.open<ConfirmDialogComponent, ConfirmDialogData>(ConfirmDialogComponent, {
+        width: '380px', autoFocus: false,
+        data: { title: 'Aucune catégorie', message: 'Créez d\'abord une catégorie avant d\'ajouter un produit.', confirmLabel: 'OK', icon: 'category', color: '#f57c00' },
+      });
+      return;
+    }
+    const category = this.selectedCategory();
+    if (!category) {
+      this.dialog.open<ConfirmDialogComponent, ConfirmDialogData>(ConfirmDialogComponent, {
+        width: '380px', autoFocus: false,
+        data: { title: 'Catégorie requise', message: 'Veuillez sélectionner une catégorie dans le filtre avant d\'ajouter un produit.', confirmLabel: 'OK', icon: 'category', color: '#1976d2' },
+      });
+      return;
+    }
 
     this.dialog.open(ProductFormComponent, {
       width: '540px', maxWidth: '95vw',
