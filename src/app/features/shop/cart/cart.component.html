@@ -27,7 +27,13 @@
 <!-- BOUTIQUE INFO (si disponible) -->
 @if (company()) {
   <div class="shop-badge">
-    <span class="shop-emoji">{{ company()!.logo ?? '🏪' }}</span>
+    <!-- <span class="shop-emoji">
+      @if (isUrl(cartService.company()?.logo)) {
+        <img [src]="cartService.company()?.logo" [alt]="cartService.company()?.name" (error)="onImgError($event)" />
+      } @else {
+        <span class="product-emoji">{{ cartService.company()?.logo || '🏪' }}</span>
+      }
+    </span> -->
     <div class="shop-info">
       <span class="shop-name">{{ company()!.name }}</span>
       <span class="shop-sub">Commande via WhatsApp</span>

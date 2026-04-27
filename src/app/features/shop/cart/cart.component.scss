@@ -91,7 +91,7 @@
   display: flex; align-items: center; gap: 12px;
   padding: 12px 16px; background: linear-gradient(135deg, #1A1A2E, #16213E);
 }
-// .shop-emoji { font-size: 45px; }
+.shop-emoji { font-size: 45px; }
 
 .shop-info  { flex: 1;
   .shop-name { display: block; font-family: var(--font-display); font-weight: 800; font-size: 15px; color: white; }
