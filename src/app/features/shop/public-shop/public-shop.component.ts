@@ -14,6 +14,9 @@ import { Category } from '../../../models/category.model';
 import { Product } from '../../../models/product.model';
 import { MatRippleModule } from '@angular/material/core';
 import { ProductDetailModalComponent } from '../../../shared/product-detail-modal/product-detail-modal.component';
+import { HttpClient } from '@angular/common/http';
+import { VisitorService } from '../../../core/services/visitor.service';
+import { environment } from '../../../../environments/environment';
 registerLocaleData(localeFr);
 
 @Component({
@@ -36,6 +39,8 @@ export class PublicShopComponent implements OnInit {
   private shopService = inject(PublicShopService);
   readonly cartService = inject(CartService);
   private snackBar = inject(MatSnackBar);
+  private http = inject(HttpClient);
+  private visitorService = inject(VisitorService);
 
   readonly ANNONCE_TYPE_CONFIG = ANNONCE_TYPE_CONFIG;
 
@@ -117,18 +122,27 @@ export class PublicShopComponent implements OnInit {
   ngOnInit(): void {
     this.cartService.selectCategory(null);
     const slug = this.route.snapshot.paramMap.get('slug') ?? '';
+    const source = this.route.snapshot.queryParamMap.get('source') ?? undefined;
     this.shopService.getShop(slug).subscribe({
       next: data => {
         this.shopData.set(data);
         this.cartService.setCompany({ name: data.company.name, phone: data.company.phone, slug: data.company.slug, coverColor: data.company.coverColor, description: data.company.description, address: data.company.address, logo: data.company.logo });
         this.cartService.setCategories(data.categories);
         this.loading.set(false);
+        this.trackVisit(data.company.id, source);
       },
       error: () => {
         this.error.set('Boutique introuvable ou erreur de chargement.');
         this.loading.set(false);
       },
     });
+  }
+
+  private trackVisit(shopId: string | undefined, source?: string): void {
+    if (!shopId) return; 
+    const visitorId = this.visitorService.getVisitorId();
+    this.http.post(`${environment.apiUrl}/shops/visit`, { shopId, visitorId, source })
+      .subscribe({});
   }
 
   selectCategory(id: string | null): void {

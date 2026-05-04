@@ -9,17 +9,18 @@ import { Product } from '../../models/product.model';
 // ────────────────────────────────────────────────
 // 🔧 Mettre à false pour utiliser la vraie API
 // ────────────────────────────────────────────────
-export const USE_SHOP_MOCK = true;
-
+// export const USE_SHOP_MOCK = true;
+export const USE_SHOP_MOCK = false;
 // ─── Données entreprise ───────────────────────
 const MOCK_COMPANY = {
-  name: 'Boutique Kaboré & Fils',
-  slug: 'kabore-et-fils',
-  phone: '22677938688',
+  id:          '000000000000000000000001',
+  name:        'Boutique Kaboré & Fils',
+  slug:        'kabore-et-fils',
+  phone:       '22677938688',
   description: 'Votre boutique de confiance à Ouagadougou',
-  logo: '🏪',
-  address: 'Secteur 15, Ouagadougou',
-  coverColor: '#a04343',
+  logo:        '🏪',
+  address:     'Secteur 15, Ouagadougou',
+  coverColor:  '#a04343',
 };
 
 // ─── Catégories (mêmes IDs que les services admin) ────────────────

@@ -174,5 +174,175 @@
 
   </div>
 
- 
+  <!-- ── Carte Liens de partage ── -->
+  <div class="share-card">
+    <div class="share-card-header">
+      <mat-icon>share</mat-icon>
+      <div>
+        <p class="share-card-title">Partagez votre boutique</p>
+        <p class="share-card-sub">Chaque lien encode la source automatiquement</p>
+      </div>
+    </div>
+    <div class="share-grid">
+      @for (ch of shareLinks(); track ch.key) {
+        <div class="share-item">
+          <div class="share-item-top">
+            <div class="share-icon-wrap" [style.background]="ch.color + '18'">
+              <mat-icon [style.color]="ch.color">{{ ch.icon }}</mat-icon>
+            </div>
+            <span class="share-item-label">{{ ch.label }}</span>
+          </div>
+          <div class="share-url-row">
+            <span class="share-url-text">{{ ch.url }}</span>
+            <button type="button" class="share-btn-copy"
+                    [style.border-color]="copiedChannel() === ch.key ? ch.color : ''"
+                    [style.color]="copiedChannel() === ch.key ? ch.color : ''"
+                    (click)="copyShareLink(ch.url, ch.key)" matRipple>
+              <mat-icon>{{ copiedChannel() === ch.key ? 'check' : 'content_copy' }}</mat-icon>
+            </button>
+            @if (ch.key === 'whatsapp') {
+              <button type="button" class="share-btn-send"
+                      [style.background]="ch.color"
+                      (click)="openWhatsApp(ch.url)" matRipple>
+                <mat-icon>send</mat-icon>
+              </button>
+            }
+            @if (ch.key === 'sms') {
+              <button type="button" class="share-btn-send"
+                      [style.background]="ch.color"
+                      (click)="openSms(ch.url)" matRipple>
+                <mat-icon>send</mat-icon>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- ── Bouton Voir statistiques ── -->
+  <button type="button" class="btn-stats-toggle" (click)="toggleStats()" matRipple>
+    <mat-icon>{{ statsOpen() ? 'expand_less' : 'bar_chart' }}</mat-icon>
+    {{ statsOpen() ? 'Masquer les statistiques' : 'Voir les statistiques' }}
+  </button>
+
+  <!-- ── Section Analytics ── -->
+  @if (statsOpen()) {
+    <div class="stats-section">
+
+      <div class="stats-header">
+        <mat-icon class="stats-header-icon">insights</mat-icon>
+        <div>
+          <h2 class="stats-title">Statistiques de la boutique</h2>
+          <p class="stats-sub">Activité des visiteurs sur votre vitrine</p>
+        </div>
+      </div>
+
+      @if (statsLoading()) {
+        <div class="stats-loading">
+          <div class="spinner"></div>
+          <span>Chargement…</span>
+        </div>
+      }
+
+      @if (statsError()) {
+        <div class="stats-error">
+          <mat-icon>error_outline</mat-icon>
+          {{ statsError() }}
+        </div>
+      }
+
+      @if (!statsLoading() && stats()) {
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:#6366f115">
+              <mat-icon style="color:#6366f1">visibility</mat-icon>
+            </div>
+            <span class="kpi-value">{{ stats()!.totalVisits }}</span>
+            <span class="kpi-label">Total visites</span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:#10b98115">
+              <mat-icon style="color:#10b981">people</mat-icon>
+            </div>
+            <span class="kpi-value">{{ stats()!.uniqueVisitors }}</span>
+            <span class="kpi-label">Visiteurs uniques</span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:#f59e0b15">
+              <mat-icon style="color:#f59e0b">today</mat-icon>
+            </div>
+            <span class="kpi-value">{{ stats()!.visitsToday }}</span>
+            <span class="kpi-label">Aujourd'hui</span>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:#ef444415">
+              <mat-icon style="color:#ef4444">date_range</mat-icon>
+            </div>
+            <span class="kpi-value">{{ stats()!.visitsThisMonth }}</span>
+            <span class="kpi-label">Ce mois-ci</span>
+          </div>
+        </div>
+
+        <!-- Bar chart -->
+        <div class="chart-card">
+          <p class="chart-title">
+            <mat-icon>show_chart</mat-icon>
+            Visites — 7 derniers jours
+          </p>
+          <div class="bar-chart">
+            @for (day of stats()!.visitsPerDay; track day.date) {
+              <div class="bar-col">
+                <span class="bar-count">{{ day.count }}</span>
+                <div class="bar-track">
+                  <div class="bar-fill"
+                       [style.height]="chartBarHeight(day.count)"
+                       [style.background]="selectedColor()">
+                  </div>
+                </div>
+                <span class="bar-label">{{ chartDayLabel(day.date) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Sources de trafic -->
+        <div class="chart-card sources-card">
+          <p class="chart-title">
+            <mat-icon>travel_explore</mat-icon>
+            Sources de trafic
+          </p>
+          @if (stats()!.visitsBySource.length === 0) {
+            <div class="sources-empty">
+              <mat-icon>link_off</mat-icon>
+              <span>Aucune source enregistrée pour l'instant</span>
+            </div>
+          } @else {
+            <div class="sources-list">
+              @for (s of stats()!.visitsBySource; track s.source) {
+                <div class="source-row">
+                  <div class="source-meta">
+                    <div class="source-icon-wrap" [style.background]="sourceColor(s.source) + '20'">
+                      <mat-icon [style.color]="sourceColor(s.source)">{{ sourceIcon(s.source) }}</mat-icon>
+                    </div>
+                    <span class="source-name">{{ s.source }}</span>
+                    <span class="source-count">{{ s.count }}</span>
+                  </div>
+                  <div class="source-track">
+                    <div class="source-bar"
+                         [style.width]="sourceBarWidth(s.count)"
+                         [style.background]="sourceColor(s.source)">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+    </div>
+  }
+
 </div>

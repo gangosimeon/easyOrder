@@ -8,6 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRippleModule }          from '@angular/material/core';
 import { AuthService }              from '../../core/services/auth.service';
 import { UploadService }            from '../../core/services/upload.service';
+import { ShopStatsService, ShopStats } from '../../core/services/shop-stats.service';
 import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
 
 @Component({
@@ -28,6 +29,7 @@ export class ProfileComponent implements OnInit {
   private fb            = inject(FormBuilder);
   private snackBar      = inject(MatSnackBar);
   private uploadService = inject(UploadService);
+  private statsService  = inject(ShopStatsService);
 
   readonly company     = this.auth.company;
   readonly shopUrl     = computed(() => {
@@ -35,9 +37,27 @@ export class ProfileComponent implements OnInit {
     if (!slug) return '';
     return `${window.location.origin}/shop/${slug}`;
   });
-  linkCopied = signal(false);
+  linkCopied    = signal(false);
+  copiedChannel = signal<string | null>(null);
   readonly coverColors = COVER_COLORS;
   readonly shopLogos   = SHOP_LOGOS;
+
+  readonly SHARE_CHANNELS = [
+    { key: 'whatsapp', label: 'WhatsApp',  color: '#25D366', icon: 'chat',          canShare: true  },
+    { key: 'facebook', label: 'Facebook',  color: '#1877F2', icon: 'thumb_up',      canShare: false },
+    { key: 'tiktok',   label: 'TikTok',   color: '#010101', icon: 'music_note',    canShare: false },
+    { key: 'instagram',label: 'Instagram', color: '#E1306C', icon: 'photo_camera',  canShare: false },
+    { key: 'sms',      label: 'SMS',       color: '#6366f1', icon: 'sms',           canShare: true  },
+    { key: 'direct',   label: 'Lien seul', color: '#6b7280', icon: 'link',          canShare: false },
+  ];
+
+  readonly shareLinks = computed(() => {
+    const base = this.shopUrl();
+    return this.SHARE_CHANNELS.map(ch => ({
+      ...ch,
+      url: ch.key === 'direct' ? base : `${base}?source=${ch.key}`,
+    }));
+  });
 
   form!: FormGroup;
   logoMode      = signal<'emoji' | 'upload'>('emoji');
@@ -48,6 +68,94 @@ export class ProfileComponent implements OnInit {
   logoUploading = signal<boolean>(false);
   logoUploadErr = signal<string>('');
   errorMsg      = signal<string | null>(null);
+
+  statsOpen    = signal(false);
+  stats        = signal<ShopStats | null>(null);
+  statsLoading = signal(false);
+  statsError   = signal<string | null>(null);
+  statsLoaded  = false;
+
+  readonly chartMax = computed(() => {
+    const days = this.stats()?.visitsPerDay ?? [];
+    return Math.max(1, ...days.map(d => d.count));
+  });
+
+  toggleStats(): void {
+    this.statsOpen.update(v => !v);
+    if (this.statsOpen() && !this.statsLoaded) {
+      this.loadStats();
+    }
+  }
+
+  private loadStats(): void {
+    const shopId = this.company()?.id;
+    if (!shopId) return;
+    this.statsLoading.set(true);
+    this.statsError.set(null);
+    this.statsService.getStats(shopId).subscribe({
+      next: data => {
+        this.stats.set(data);
+        this.statsLoading.set(false);
+        this.statsLoaded = true;
+      },
+      error: () => {
+        this.statsError.set('Impossible de charger les statistiques.');
+        this.statsLoading.set(false);
+      },
+    });
+  }
+
+  chartBarHeight(count: number): string {
+    return `${Math.round((count / this.chartMax()) * 100)}%`;
+  }
+
+  chartDayLabel(dateStr: string): string {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('fr-FR', { weekday: 'short' });
+  }
+
+  sourceIcon(source: string): string {
+    const map: Record<string, string> = {
+      whatsapp: 'chat',
+      facebook: 'thumb_up',
+      instagram: 'photo_camera',
+      twitter:  'tag',
+      direct:   'link',
+    };
+    return map[source.toLowerCase()] ?? 'travel_explore';
+  }
+
+  sourceColor(source: string): string {
+    const map: Record<string, string> = {
+      whatsapp: '#25D366',
+      facebook: '#1877F2',
+      instagram:'#E1306C',
+      twitter:  '#1DA1F2',
+      direct:   '#6b7280',
+    };
+    return map[source.toLowerCase()] ?? '#8b5cf6';
+  }
+
+  copyShareLink(url: string, key: string): void {
+    navigator.clipboard.writeText(url).then(() => {
+      this.copiedChannel.set(key);
+      setTimeout(() => this.copiedChannel.set(null), 2000);
+    });
+  }
+
+  openWhatsApp(url: string): void {
+    const text = encodeURIComponent(`Découvrez ma boutique en ligne ${url}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  }
+
+  openSms(url: string): void {
+    const text = encodeURIComponent(`Découvrez ma boutique en ligne : ${url}`);
+    window.open(`sms:?body=${text}`, '_self');
+  }
+
+  sourceBarWidth(count: number): string {
+    const max = Math.max(1, ...(this.stats()?.visitsBySource ?? []).map(s => s.count));
+    return `${Math.round((count / max) * 100)}%`;
+  }
 
   ngOnInit(): void {
     const c = this.company();
@@ -94,7 +202,7 @@ export class ProfileComponent implements OnInit {
 
   shareWhatsApp(): void {
     const url = this.shopUrl();
-    const text = `Découvrez ma boutique en ligne ${this.company()?.name ?? ''} : ${url}`;
+    const text = `Découvrez ma boutique en ligne ${this.company()?.name ?? ''} : ${url}?source=whatsapp`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   }
 

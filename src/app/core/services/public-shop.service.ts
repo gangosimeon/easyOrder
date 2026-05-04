@@ -7,6 +7,7 @@ import { Product } from '../../models/product.model';
 import { environment } from '../../../environments/environment';
 
 export interface CompanyInfo {
+  id: string;
   name: string;
   slug: string;
   phone: string;
