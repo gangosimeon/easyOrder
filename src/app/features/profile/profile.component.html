@@ -194,26 +194,31 @@
           </div>
           <div class="share-url-row">
             <span class="share-url-text">{{ ch.url }}</span>
-            <button type="button" class="share-btn-copy"
-                    [style.border-color]="copiedChannel() === ch.key ? ch.color : ''"
-                    [style.color]="copiedChannel() === ch.key ? ch.color : ''"
-                    (click)="copyShareLink(ch.url, ch.key)" matRipple>
-              <mat-icon>{{ copiedChannel() === ch.key ? 'check' : 'content_copy' }}</mat-icon>
-            </button>
-            @if (ch.key === 'whatsapp') {
-              <button type="button" class="share-btn-send"
-                      [style.background]="ch.color"
-                      (click)="openWhatsApp(ch.url)" matRipple>
-                <mat-icon>send</mat-icon>
+            <div class="share-btn-row">
+              <button type="button" class="share-btn-copy"
+                      [style.border-color]="copiedChannel() === ch.key ? ch.color : ''"
+                      [style.color]="copiedChannel() === ch.key ? ch.color : ''"
+                      (click)="copyShareLink(ch.url, ch.key)" matRipple>
+                <mat-icon>{{ copiedChannel() === ch.key ? 'check' : 'content_copy' }}</mat-icon>
+                <span>{{ copiedChannel() === ch.key ? 'Copié !' : 'Copier' }}</span>
               </button>
-            }
-            @if (ch.key === 'sms') {
-              <button type="button" class="share-btn-send"
-                      [style.background]="ch.color"
-                      (click)="openSms(ch.url)" matRipple>
-                <mat-icon>send</mat-icon>
-              </button>
-            }
+              @if (ch.key === 'whatsapp') {
+                <button type="button" class="share-btn-send"
+                        [style.background]="ch.color"
+                        (click)="openWhatsApp(ch.url)" matRipple>
+                  <mat-icon>send</mat-icon>
+                  <span>Envoyer</span>
+                </button>
+              }
+              @if (ch.key === 'sms') {
+                <button type="button" class="share-btn-send"
+                        [style.background]="ch.color"
+                        (click)="openSms(ch.url)" matRipple>
+                  <mat-icon>send</mat-icon>
+                  <span>SMS</span>
+                </button>
+              }
+            </div>
           </div>
         </div>
       }
