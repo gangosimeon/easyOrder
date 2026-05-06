@@ -275,6 +275,15 @@
         color: white;
       }
     }
+
+    &.duplicate {
+      background: rgba(255, 255, 255, 0.9);
+      color: #5c6bc0;
+      &:hover {
+        background: #5c6bc0;
+        color: white;
+      }
+    }
   }
 }
 
@@ -462,8 +471,8 @@
     transform: none;
   }
 }
-@media (max-width: 400px) {
-  .products-grid {
-    grid-template-columns: 1fr;
-  }
-}
+// @media (max-width: 400px) {
+//   .products-grid {
+//     grid-template-columns: 1fr;
+//   }
+// }

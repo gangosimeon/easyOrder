@@ -146,7 +146,15 @@ export class ProductListComponent implements OnInit {
       });
     });
   }
+  duplicateProduct(product: Product, e: MouseEvent): void {
+    e.stopPropagation();
+    const category = this.getCategoryFor(product);
+    if (!category) return;
 
+    const { id, ...productWithoutId } = product;
+    this.productService.add({ ...productWithoutId, name: `${product.name} (copie)` });
+    this.snack('✅ Produit dupliqué !');
+  }
   deleteProduct(product: Product, e: MouseEvent): void {
     e.stopPropagation();
     const ref = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(
