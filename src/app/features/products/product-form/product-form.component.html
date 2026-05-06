@@ -92,9 +92,6 @@
       <mat-label>Nom du produit</mat-label>
       <input matInput formControlName="name" placeholder="Ex: Riz local 5kg" />
       <mat-icon matSuffix>sell</mat-icon>
-      @if (form.get('name')?.hasError('required')) {
-        <mat-error>Le nom est requis</mat-error>
-      }
     </mat-form-field>
 
     <div class="row-2">
