@@ -57,6 +57,11 @@ export class AppComponent {
       const pathname = window.location.pathname;
       this.isPublicRoute.set(url.startsWith('/shop') || url.startsWith('/cart'));
       this.isAuthRoute.set(pathname.startsWith('/login') || pathname.startsWith('/register') || pathname === '/');
+
+      if (window.location.hostname === 'easyorder-l6ec.onrender.com') {
+        window.location.href =
+          'https://www.jecreemaboutique.com' + window.location.pathname;
+      }
     });
   }
 
