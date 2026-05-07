@@ -48,7 +48,7 @@ export class CategoryFormComponent implements OnInit {
     });
   }
 
-  selectIcon(icon: string):   void { this.selectedIcon.set(icon); }
+  selectIcon(category:{value: string, label: string}):   void { this.selectedIcon.set(category.value); this.form.get('name')?.setValue(category.label); }
   selectColor(color: string): void { this.selectedColor.set(color); }
 
   onSubmit(): void {

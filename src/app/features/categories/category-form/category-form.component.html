@@ -23,6 +23,23 @@
   <!-- Form -->
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-body">
 
+    <!-- Icône -->
+    <div class="section-label">
+      <mat-icon>emoji_symbols</mat-icon> Choisir une icône
+    </div>
+    <div class="icon-grid">
+      <!-- ✅ Angular 20 @for avec track -->
+      @for (item of categoryIcons; track item.value) {
+        <button type="button" class="icon-btn"
+                [class.selected]="selectedIcon() === item.value"
+                (click)="selectIcon(item)"
+                [title]="item.label" matRipple>
+          <mat-icon>{{ item.value }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    </div>
+
     <mat-form-field appearance="outline">
       <mat-label>Nom de la catégorie</mat-label>
       <input matInput formControlName="name" placeholder="Ex: Alimentation" />
@@ -38,22 +55,7 @@
                 placeholder="Ex: Nourriture et épicerie"></textarea>
     </mat-form-field>
 
-    <!-- Icône -->
-    <div class="section-label">
-      <mat-icon>emoji_symbols</mat-icon> Choisir une icône
-    </div>
-    <div class="icon-grid">
-      <!-- ✅ Angular 20 @for avec track -->
-      @for (item of categoryIcons; track item.value) {
-        <button type="button" class="icon-btn"
-                [class.selected]="selectedIcon() === item.value"
-                (click)="selectIcon(item.value)"
-                [title]="item.label" matRipple>
-          <mat-icon>{{ item.value }}</mat-icon>
-          <span>{{ item.label }}</span>
-        </button>
-      }
-    </div>
+
 
     <!-- Couleur -->
     <div class="section-label">
