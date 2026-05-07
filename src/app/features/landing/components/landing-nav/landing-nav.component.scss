@@ -40,6 +40,8 @@ $muted:   var(--text-secondary);
 
   &-bolt { font-size: 20px; color: $primary; }
   &-text { color: $primary; }
+
+  img { width: 32px; height: 32px; }
 }
 
 .lp-nav__links {
