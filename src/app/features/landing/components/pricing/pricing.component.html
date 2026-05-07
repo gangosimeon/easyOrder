@@ -1,0 +1,38 @@
+<section class="lp-pricing" id="pricing">
+  <div class="lp-pricing__container">
+    <div class="lp-pricing__header">
+      <span class="lp-section-label">TARIFS</span>
+      <h2 class="lp-section-title">Choisis le plan qui te convient</h2>
+    </div>
+
+    <div class="lp-pricing__grid">
+      @for (plan of plans; track plan.name) {
+        <div class="lp-pricing__plan" [class.lp-plan--popular]="plan.popular">
+          @if (plan.popular) {
+            <div class="lp-pricing__badge">Populaire</div>
+          }
+          <p class="lp-pricing__plan-name">{{ plan.name }}</p>
+          <div class="lp-pricing__plan-price">
+            <span class="lp-pricing__price-num">{{ plan.price }}</span>
+            <span class="lp-pricing__price-period">{{ plan.period }}</span>
+          </div>
+          <p class="lp-pricing__plan-desc">{{ plan.description }}</p>
+
+          <ul class="lp-pricing__features">
+            @for (f of plan.features; track f) {
+              <li class="lp-pricing__feature">
+                <mat-icon class="lp-pricing__check">check_circle</mat-icon>
+                {{ f }}
+              </li>
+            }
+          </ul>
+
+          <a class="lp-pricing__cta" [href]="plan.link"
+             [class.lp-pricing__cta--outline]="!plan.popular">
+            {{ plan.cta }}
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+</section>

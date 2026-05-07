@@ -1,0 +1,22 @@
+<section class="lp-forw" id="for-who">
+  <div class="lp-forw__container">
+    <div class="lp-forw__header">
+      <span class="lp-section-label">POUR QUI ?</span>
+      <h2 class="lp-section-title">Linkora est pour tous les vendeurs</h2>
+    </div>
+  </div>
+
+  <div class="lp-forw__scroll-track">
+    <div class="lp-forw__cards">
+      @for (p of profiles; track p.title) {
+        <div class="lp-forw__card">
+          <div class="lp-forw__card-avatar" [style.background]="p.color + '20'">
+            <mat-icon class="lp-forw__card-icon" [style.color]="p.color">{{ p.icon }}</mat-icon>
+          </div>
+          <h3 class="lp-forw__card-title">{{ p.title }}</h3>
+          <p class="lp-forw__card-desc">{{ p.description }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -7,6 +7,7 @@ import { MatButtonModule }          from '@angular/material/button';
 import { MatIconModule }            from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService }              from '../../../core/services/auth.service';
+import { LandingNavComponent } from '../../landing/components/landing-nav/landing-nav.component';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ import { AuthService }              from '../../../core/services/auth.service';
     ReactiveFormsModule, RouterLink,
     MatFormFieldModule, MatInputModule,
     MatButtonModule, MatIconModule, MatProgressSpinnerModule,
+    LandingNavComponent,
   ],
   templateUrl: './login.component.html',
   styleUrls:  ['./login.component.scss'],

@@ -31,7 +31,9 @@ export class AppComponent {
   );
 
   readonly isAuthRoute = signal(
-    window.location.pathname.startsWith('/login') || window.location.pathname.startsWith('/register')
+    window.location.pathname.startsWith('/login') ||
+    window.location.pathname.startsWith('/register') ||
+    window.location.pathname === '/'
   );
 
   readonly coverColor = computed(() =>
@@ -52,8 +54,9 @@ export class AppComponent {
       filter(e => e instanceof NavigationEnd)
     ).subscribe((e: NavigationEnd) => {
       const url = e.urlAfterRedirects;
+      const pathname = window.location.pathname;
       this.isPublicRoute.set(url.startsWith('/shop') || url.startsWith('/cart'));
-      this.isAuthRoute.set(url.startsWith('/login') || url.startsWith('/register'));
+      this.isAuthRoute.set(pathname.startsWith('/login') || pathname.startsWith('/register') || pathname === '/');
     });
   }
 

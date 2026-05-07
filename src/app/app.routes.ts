@@ -1,7 +1,13 @@
 import { Routes } from '@angular/router';
+import { GuestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'categories', pathMatch: 'full' },
+  {
+    path: '',
+    loadChildren: () =>
+      import('./features/landing/landing.routes').then(m => m.LANDING_ROUTES),
+    canActivate: [GuestGuard]
+  },
   {
     path: 'categories',
     loadComponent: () => import('./features/categories/category-list/category-list.component')

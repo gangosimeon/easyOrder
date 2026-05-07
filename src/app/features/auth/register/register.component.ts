@@ -8,6 +8,7 @@ import { MatIconModule }            from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRippleModule }          from '@angular/material/core';
 import { AuthService }              from '../../../core/services/auth.service';
+import { LandingNavComponent } from '../../landing/components/landing-nav/landing-nav.component';
 
 export const COVER_COLORS = [
   '#a04343', '#E53935', '#D81B60', '#8E24AA', '#5E35B1',
@@ -36,6 +37,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
     ReactiveFormsModule, RouterLink,
     MatFormFieldModule, MatInputModule,
     MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatRippleModule,
+    LandingNavComponent
   ],
   templateUrl: './register.component.html',
   styleUrls:  ['./register.component.scss'],

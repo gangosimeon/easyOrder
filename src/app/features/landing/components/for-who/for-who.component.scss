@@ -1,0 +1,118 @@
+$primary:       var(--primary);
+$primary-light: var(--primary-light);
+$accent:        var(--secondary);
+$text:          var(--text-primary);
+$muted:         var(--text-secondary);
+
+.lp-forw {
+  background: var(--bg-main);
+  padding: 64px 0;
+}
+
+.lp-forw__container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.lp-forw__header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.lp-section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--secondary);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.lp-section-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.25;
+}
+
+/* Horizontal scroll on mobile */
+.lp-forw__scroll-track {
+  overflow-x: auto;
+  padding: 8px 16px 24px;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+  scroll-snap-type: x mandatory;
+}
+
+.lp-forw__cards {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+}
+
+.lp-forw__card {
+  width: 220px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  transition: box-shadow .2s, transform .2s;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(232,82,26,.1);
+    transform: translateY(-3px);
+  }
+}
+
+.lp-forw__card-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lp-forw__card-icon { font-size: 26px; width: 26px; height: 26px; }
+
+.lp-forw__card-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.lp-forw__card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Desktop: grid */
+@media (min-width: 768px) {
+  .lp-section-title { font-size: 34px; }
+
+  .lp-forw__scroll-track {
+    overflow-x: visible;
+    padding: 8px 24px 8px;
+  }
+
+  .lp-forw__cards {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .lp-forw__card { width: 100%; }
+}

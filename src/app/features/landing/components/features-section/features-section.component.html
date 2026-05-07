@@ -1,0 +1,18 @@
+<section class="lp-features" id="features">
+  <div class="lp-features__container">
+    <div class="lp-features__header">
+      <span class="lp-section-label">FONCTIONNALITÉS</span>
+      <h2 class="lp-section-title">Tout ce dont tu as besoin pour vendre en ligne</h2>
+    </div>
+
+    <div class="lp-features__grid">
+      @for (f of features; track f.title) {
+        <div class="lp-features__card">
+          <mat-icon class="lp-features__icon">{{ f.icon }}</mat-icon>
+          <h3 class="lp-features__card-title">{{ f.title }}</h3>
+          <p class="lp-features__card-desc">{{ f.description }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>

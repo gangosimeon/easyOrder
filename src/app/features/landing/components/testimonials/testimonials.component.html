@@ -1,0 +1,69 @@
+<section class="lp-testi" id="testimonials">
+  <div class="lp-testi__container">
+    <div class="lp-testi__header">
+      <span class="lp-section-label">TÉMOIGNAGES</span>
+      <h2 class="lp-section-title">Ils vendent déjà avec Linkora</h2>
+    </div>
+
+    <!-- Mobile carousel -->
+    <div class="lp-testi__carousel">
+      <button class="lp-testi__nav lp-testi__nav--prev" (click)="prev()" aria-label="Précédent">‹</button>
+
+      <div class="lp-testi__cards-wrap">
+        @for (t of testimonials; track t.name; let i = $index) {
+          @if (i === currentIndex()) {
+            <div class="lp-testi__card lp-testi__card--active">
+              <div class="lp-testi__stars">
+                @for (s of range(t.stars); track s) {
+                  <mat-icon class="lp-testi__star">star</mat-icon>
+                }
+              </div>
+              <p class="lp-testi__text">"{{ t.text }}"</p>
+              <div class="lp-testi__author">
+                <div class="lp-testi__avatar" [style.background]="t.color">{{ t.initials }}</div>
+                <div>
+                  <p class="lp-testi__name">{{ t.name }}</p>
+                  <p class="lp-testi__role">{{ t.role }}</p>
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <button class="lp-testi__nav lp-testi__nav--next" (click)="next()" aria-label="Suivant">›</button>
+    </div>
+
+    <!-- Dots -->
+    <div class="lp-testi__dots">
+      @for (t of testimonials; track t.name; let i = $index) {
+        <button class="lp-testi__dot"
+                [class.lp-testi__dot--active]="i === currentIndex()"
+                (click)="currentIndex.set(i)"
+                [attr.aria-label]="'Témoignage ' + (i + 1)">
+        </button>
+      }
+    </div>
+
+    <!-- Desktop: all visible -->
+    <div class="lp-testi__grid">
+      @for (t of testimonials; track t.name) {
+        <div class="lp-testi__card">
+          <div class="lp-testi__stars">
+            @for (s of range(t.stars); track s) {
+              <mat-icon class="lp-testi__star">star</mat-icon>
+            }
+          </div>
+          <p class="lp-testi__text">"{{ t.text }}"</p>
+          <div class="lp-testi__author">
+            <div class="lp-testi__avatar" [style.background]="t.color">{{ t.initials }}</div>
+            <div>
+              <p class="lp-testi__name">{{ t.name }}</p>
+              <p class="lp-testi__role">{{ t.role }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

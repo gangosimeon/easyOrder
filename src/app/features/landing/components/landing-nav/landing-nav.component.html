@@ -1,0 +1,48 @@
+<nav class="lp-nav" [class.lp-nav--scrolled]="scrolled()">
+  <div class="lp-nav__inner">
+
+    <a class="lp-nav__logo" routerLink="/">
+      <span class="lp-nav__logo-bolt"><mat-icon>store</mat-icon></span>
+      <span class="lp-nav__logo-text">Je Crée Ma Boutique</span>
+    </a>
+
+    <ul class="lp-nav__links">
+      <li><button class="lp-nav__link" (click)="scrollTo('features')">Fonctionnalités</button></li>
+      <!-- <li><button class="lp-nav__link" (click)="scrollTo('pricing')">Tarifs</button></li> -->
+      <li><button class="lp-nav__link" (click)="scrollTo('how-it-works')">Démo</button></li>
+      <li><button class="lp-nav__link" (click)="scrollTo('for-who')">Ressources</button></li>
+      <!-- <li><button class="lp-nav__link" (click)="scrollTo('testimonials')">FAQ</button></li> -->
+    </ul>
+
+    <div class="lp-nav__actions">
+      <a class="lp-btn lp-btn--outline" routerLink="/login">Se connecter</a>
+      <a class="lp-btn lp-btn--primary" routerLink="/register">Créer ma boutique</a>
+    </div>
+
+    <button class="lp-nav__burger" (click)="toggleMenu()" aria-label="Menu">
+      @if (menuOpen()) {
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      } @else {
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      }
+    </button>
+  </div>
+
+  @if (menuOpen()) {
+    <div class="lp-nav__overlay" (click)="closeMenu()">
+      <div class="lp-nav__drawer" (click)="$event.stopPropagation()">
+        <ul class="lp-nav__drawer-links">
+          <li><button (click)="scrollTo('features')">Fonctionnalités</button></li>
+          <li><button (click)="scrollTo('how-it-works')">Démo</button></li>
+          <li><button (click)="scrollTo('pricing')">Tarifs</button></li>
+          <li><button (click)="scrollTo('for-who')">Ressources</button></li>
+          <li><button (click)="scrollTo('testimonials')">FAQ</button></li>
+        </ul>
+        <div class="lp-nav__drawer-actions">
+          <a class="lp-btn lp-btn--outline lp-btn--full" routerLink="/login" (click)="closeMenu()">Se connecter</a>
+          <a class="lp-btn lp-btn--primary lp-btn--full" routerLink="/register" (click)="closeMenu()">Créer ma boutique</a>
+        </div>
+      </div>
+    </div>
+  }
+</nav>

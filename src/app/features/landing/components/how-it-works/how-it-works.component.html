@@ -1,0 +1,25 @@
+<section class="lp-hiw" id="how-it-works">
+  <div class="lp-hiw__container">
+    <div class="lp-hiw__header">
+      <span class="lp-section-label">COMMENT ÇA MARCHE</span>
+      <h2 class="lp-section-title">3 étapes simples pour commencer à vendre</h2>
+    </div>
+
+    <div class="lp-hiw__steps">
+      @for (s of steps; track s.step; let last = $last) {
+        <div class="lp-hiw__step">
+          <div class="lp-hiw__step-icon-wrap">
+            <mat-icon class="lp-hiw__step-icon">{{ s.icon }}</mat-icon>
+            <span class="lp-hiw__step-num">{{ s.step }}</span>
+          </div>
+          <h3 class="lp-hiw__step-title">{{ s.title }}</h3>
+          <p class="lp-hiw__step-desc">{{ s.description }}</p>
+        </div>
+
+        @if (!last) {
+          <div class="lp-hiw__arrow">→</div>
+        }
+      }
+    </div>
+  </div>
+</section>
