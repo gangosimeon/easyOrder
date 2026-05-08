@@ -10,7 +10,7 @@ interface FooterSection {
 @Component({
   selector: 'app-landing-footer',
   standalone: true,
-  imports: [MatIcon],
+  imports: [],
   templateUrl: './landing-footer.component.html',
   styleUrl: './landing-footer.component.scss'
 })

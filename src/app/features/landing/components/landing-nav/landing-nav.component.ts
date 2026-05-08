@@ -5,7 +5,7 @@ import { MatIcon } from "@angular/material/icon";
 @Component({
   selector: 'app-landing-nav',
   standalone: true,
-  imports: [RouterLink, MatIcon],
+  imports: [RouterLink],
   templateUrl: './landing-nav.component.html',
   styleUrl: './landing-nav.component.scss'
 })
