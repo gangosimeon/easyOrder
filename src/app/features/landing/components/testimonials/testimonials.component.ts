@@ -21,7 +21,7 @@ export class TestimonialsComponent {
   readonly testimonials: Testimonial[] = [
     {
       stars: 5,
-      text: 'Grâce à Linkora, j\'ai reçu mes premières commandes en ligne en seulement 2 jours. L\'outil est tellement simple que j\'ai tout fait sur mon téléphone !',
+      text: 'Grâce à JeCreeMaBoutique, j\'ai reçu mes premières commandes en ligne en seulement 2 jours. L\'outil est tellement simple que j\'ai tout fait sur mon téléphone !',
       name: 'Jean K.',
       role: 'Vendeur de vêtements',
       initials: 'JK',
@@ -37,7 +37,7 @@ export class TestimonialsComponent {
     },
     {
       stars: 5,
-      text: 'Linkora m\'a permis de développer mon activité de vente en ligne facilement. Le lien partageable est mon meilleur outil de vente sur TikTok.',
+      text: 'JeCreeMaBoutique m\'a permis de développer mon activité de vente en ligne facilement. Le lien partageable est mon meilleur outil de vente sur TikTok.',
       name: 'Fatou B.',
       role: 'Vendeuse en ligne',
       initials: 'FB',

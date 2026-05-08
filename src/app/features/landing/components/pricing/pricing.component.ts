@@ -25,7 +25,7 @@ export class PricingComponent {
       name: 'Gratuit',
       price: '0',
       period: 'FCFA/mois',
-      description: 'Parfait pour démarrer et tester Linkora.',
+      description: 'Parfait pour démarrer et tester JeCreeMaBoutique.',
       popular: false,
       features: [
         '10 produits maximum',
