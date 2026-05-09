@@ -1,4 +1,4 @@
-# 🛒 OnlineShop — Application de Gestion Boutique
+# 🛒 JeCreeMaBoutique — Plateforme de création de boutiques en ligne
 ### Angular 20 | Signals | @for/@if | inject() | takeUntilDestroyed
 
 Application de gestion moderne pour une petite boutique au Burkina Faso.
