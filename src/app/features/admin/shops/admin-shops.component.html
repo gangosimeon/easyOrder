@@ -1,0 +1,318 @@
+<div class="admin-shops-page">
+
+  <!-- ── Page Header ── -->
+  <header class="page-header">
+    <div class="header-left">
+      <div class="page-icon">
+        <mat-icon>storefront</mat-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Gestion des boutiques</h1>
+        <p class="page-subtitle">Administration et suivi de toutes les boutiques</p>
+      </div>
+    </div>
+    <div class="header-right">
+      @if (totalItems() > 0) {
+        <span class="total-badge">{{ totalItems() }} boutique{{ totalItems() > 1 ? 's' : '' }}</span>
+      }
+      <div class="view-toggle" role="group" aria-label="Mode d'affichage">
+        <button mat-icon-button [class.active-view]="viewMode() === 'table'"
+          (click)="viewMode.set('table')" matTooltip="Vue tableau" aria-label="Vue tableau">
+          <mat-icon>table_rows</mat-icon>
+        </button>
+        <button mat-icon-button [class.active-view]="viewMode() === 'cards'"
+          (click)="viewMode.set('cards')" matTooltip="Vue cartes" aria-label="Vue cartes">
+          <mat-icon>grid_view</mat-icon>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Stats Grid ── -->
+  <div class="stats-grid">
+    @if (statsLoading()) {
+      @for (i of skeletonRows.slice(0, 4); track $index) {
+        <div class="stat-card-skel">
+          <div class="skel-block skel-icon-block"></div>
+          <div class="skel-text-col">
+            <div class="skel-line skel-wide"></div>
+            <div class="skel-line skel-narrow"></div>
+          </div>
+        </div>
+      }
+    } @else {
+      @for (card of statCards(); track card.label) {
+        <mat-card class="stat-card">
+          <div class="stat-icon-wrap" [style.background]="card.color + '18'">
+            <mat-icon [style.color]="card.color">{{ card.icon }}</mat-icon>
+          </div>
+          <div class="stat-body">
+            <span class="stat-value">{{ card.value ?? '—' }}</span>
+            <span class="stat-label">{{ card.label }}</span>
+            @if (card.sub) {
+              <span class="stat-sub">{{ card.sub }}</span>
+            }
+          </div>
+        </mat-card>
+      }
+    }
+  </div>
+
+  <!-- ── Filters Bar ── -->
+  <mat-card class="filters-card">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Rechercher une boutique</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [formControl]="searchControl" placeholder="Nom, slug, téléphone…" />
+      @if (searchControl.value) {
+        <button matSuffix mat-icon-button (click)="searchControl.setValue('')" matTooltip="Effacer">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="sort-field">
+      <mat-label>Trier par</mat-label>
+      <mat-icon matPrefix>sort</mat-icon>
+      <mat-select [formControl]="sortControl">
+        @for (opt of sortOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="status-field">
+      <mat-label>Statut</mat-label>
+      <mat-icon matPrefix>filter_list</mat-icon>
+      <mat-select [formControl]="statusControl">
+        <mat-option value="all">Toutes</mat-option>
+        <mat-option value="active">Actives</mat-option>
+        <mat-option value="inactive">Inactives</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card>
+
+  <!-- ── Table Card ── -->
+  <mat-card class="table-card">
+
+    @if (reloading()) {
+      <mat-progress-bar mode="indeterminate" class="reload-bar"></mat-progress-bar>
+    }
+
+    @if (loading()) {
+      <div class="skeleton-table">
+        @for (row of skeletonRows; track $index) {
+          <div class="skel-row">
+            <div class="skel-block skel-logo-cell"></div>
+            <div class="skel-name-col">
+              <div class="skel-line skel-wide"></div>
+              <div class="skel-line skel-narrow"></div>
+            </div>
+            <div class="skel-line skel-phone-line"></div>
+            <div class="skel-badge-wrap">
+              <div class="skel-line skel-badge-line"></div>
+            </div>
+            <div class="skel-line skel-date-line"></div>
+            <div class="skel-actions-wrap">
+              <div class="skel-block skel-action-btn"></div>
+              <div class="skel-block skel-action-btn"></div>
+              <div class="skel-block skel-action-btn"></div>
+            </div>
+          </div>
+        }
+      </div>
+
+    } @else if (error()) {
+      <div class="empty-state error-state">
+        <div class="empty-icon-wrap error-icon-wrap">
+          <mat-icon>cloud_off</mat-icon>
+        </div>
+        <h3>Erreur de chargement</h3>
+        <p>{{ error() }}</p>
+        <button mat-flat-button color="primary" (click)="loadShops(true)">
+          <mat-icon>refresh</mat-icon> Réessayer
+        </button>
+      </div>
+
+    } @else if (!shops().length) {
+      <div class="empty-state">
+        <div class="empty-icon-wrap">
+          <mat-icon>store_mall_directory</mat-icon>
+        </div>
+        <h3>Aucune boutique trouvée</h3>
+        <p>Essayez de modifier vos critères de recherche.</p>
+      </div>
+
+    } @else {
+
+      <!-- ── Cards grid (mobile / card mode) ── -->
+      @if (viewMode() === 'cards') {
+        <div class="shop-cards-grid">
+          @for (shop of shops(); track shop.id) {
+            <div class="shop-card">
+              <div class="shop-card-header">
+                <div class="shop-logo" [style.background]="shop.coverColor + '22'">
+                  @if (isUrl(shop.logo)) {
+                    <img [src]="shop.logo" [alt]="shop.name" class="logo-img" />
+                  } @else {
+                    <span class="logo-emoji">{{ shop.logo || '🏪' }}</span>
+                  }
+                </div>
+                <div class="shop-card-identity">
+                  <span class="shop-name">{{ shop.name }}</span>
+                  <span class="shop-slug">/{{ shop.slug }}</span>
+                </div>
+                <span class="status-badge"
+                  [class.active]="shop.status === 'active'"
+                  [class.inactive]="shop.status !== 'active'">
+                  <span class="status-dot"></span>
+                  {{ shop.status === 'active' ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+              <div class="shop-card-meta">
+                <span class="meta-item">
+                  <mat-icon>phone</mat-icon>{{ shop.phone }}
+                </span>
+                <span class="meta-item">
+                  <mat-icon>inventory_2</mat-icon>{{ shop.productCount }} produits
+                </span>
+                <span class="meta-item">
+                  <mat-icon>event</mat-icon>{{ shop.createdAt | date:'dd/MM/yy' }}
+                </span>
+              </div>
+              <div class="shop-card-actions">
+                <button mat-icon-button [style.color]="'#25D366'"
+                  matTooltip="WhatsApp" (click)="openWhatsApp(shop)">
+                  <mat-icon>chat</mat-icon>
+                </button>
+                <button mat-icon-button
+                  [matTooltip]="copiedId() === shop.id ? 'Copié !' : 'Copier le lien'"
+                  (click)="copyLink(shop)">
+                  <mat-icon [style.color]="copiedId() === shop.id ? '#10b981' : null">
+                    {{ copiedId() === shop.id ? 'check_circle' : 'link' }}
+                  </mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Voir boutique" (click)="openPublicShop(shop)">
+                  <mat-icon>open_in_new</mat-icon>
+                </button>
+                <button mat-icon-button color="primary"
+                  matTooltip="Détails" (click)="openDetail(shop)">
+                  <mat-icon>info_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+      <!-- ── Table view ── -->
+      } @else {
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="shops()" class="shops-table">
+
+            <!-- Logo -->
+            <ng-container matColumnDef="logo">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let shop">
+                <div class="shop-logo" [style.background]="shop.coverColor + '22'">
+                  @if (isUrl(shop.logo)) {
+                    <img [src]="shop.logo" [alt]="shop.name" class="logo-img" />
+                  } @else {
+                    <span class="logo-emoji">{{ shop.logo || '🏪' }}</span>
+                  }
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Nom & Slug -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Boutique</th>
+              <td mat-cell *matCellDef="let shop">
+                <span class="shop-name">{{ shop.name }}</span>
+                <span class="shop-slug">/{{ shop.slug }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Téléphone -->
+            <ng-container matColumnDef="phone">
+              <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+              <td mat-cell *matCellDef="let shop" class="phone-cell">{{ shop.phone }}</td>
+            </ng-container>
+
+            <!-- Produits -->
+            <ng-container matColumnDef="products">
+              <th mat-header-cell *matHeaderCellDef>Produits</th>
+              <td mat-cell *matCellDef="let shop">
+                <span class="product-badge" [class.badge-zero]="shop.productCount === 0">
+                  {{ shop.productCount }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Statut -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Statut</th>
+              <td mat-cell *matCellDef="let shop">
+                <span class="status-badge"
+                  [class.active]="shop.status === 'active'"
+                  [class.inactive]="shop.status !== 'active'">
+                  <span class="status-dot"></span>
+                  {{ shop.status === 'active' ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Date de création -->
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef>Créé le</th>
+              <td mat-cell *matCellDef="let shop" class="date-cell">
+                {{ shop.createdAt | date:'dd/MM/yyyy' }}
+              </td>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="actions-th">Actions</th>
+              <td mat-cell *matCellDef="let shop">
+                <div class="actions-cell">
+                  <button mat-icon-button [style.color]="'#25D366'"
+                    matTooltip="Ouvrir WhatsApp" (click)="openWhatsApp(shop)">
+                    <mat-icon>chat</mat-icon>
+                  </button>
+                  <button mat-icon-button
+                    [matTooltip]="copiedId() === shop.id ? 'Lien copié !' : 'Copier le lien'"
+                    (click)="copyLink(shop)">
+                    <mat-icon [style.color]="copiedId() === shop.id ? '#10b981' : null">
+                      {{ copiedId() === shop.id ? 'check_circle' : 'link' }}
+                    </mat-icon>
+                  </button>
+                  <button mat-icon-button matTooltip="Voir la boutique"
+                    (click)="openPublicShop(shop)">
+                    <mat-icon>open_in_new</mat-icon>
+                  </button>
+                  <button mat-icon-button color="primary"
+                    matTooltip="Détails de la boutique" (click)="openDetail(shop)">
+                    <mat-icon>info_outline</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="shop-row"></tr>
+          </table>
+        </div>
+      }
+
+      <mat-paginator
+        [length]="totalItems()"
+        [pageIndex]="currentPage()"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        showFirstLastButtons
+        (page)="onPageChange($event)"
+        class="table-paginator">
+      </mat-paginator>
+    }
+
+  </mat-card>
+</div>

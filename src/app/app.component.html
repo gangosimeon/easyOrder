@@ -280,6 +280,10 @@
         </div>
       </header>
 
+      @if (!isPublicRoute() && authService.isLoggedIn()) {
+        <app-announcement-banner />
+      }
+
       <div class="page-container" [class.public-page]="isPublicRoute()">
         <router-outlet />
       </div>

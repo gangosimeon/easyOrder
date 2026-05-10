@@ -1,0 +1,174 @@
+<div class="admin-ann-page">
+
+  <!-- ── Header ── -->
+  <header class="page-header">
+    <div class="header-left">
+      <div class="page-icon">
+        <mat-icon>campaign</mat-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Annonces administrateur</h1>
+        <p class="page-subtitle">Messages globaux ou ciblés envoyés aux boutiques</p>
+      </div>
+    </div>
+    <div class="header-right">
+      @if (total() > 0) {
+        <span class="total-badge">{{ total() }} annonce{{ total() > 1 ? 's' : '' }}</span>
+      }
+      <button mat-flat-button color="primary" class="new-btn" (click)="openForm()">
+        <mat-icon>add</mat-icon> Nouvelle annonce
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Table Card ── -->
+  <mat-card class="table-card">
+
+    @if (saving()) {
+      <mat-progress-bar mode="indeterminate" class="save-bar"></mat-progress-bar>
+    }
+
+    @if (loading()) {
+      <div class="skeleton-table">
+        @for (row of skeletonRows; track $index) {
+          <div class="skel-row">
+            <div class="skel-block skel-type"></div>
+            <div class="skel-name-col">
+              <div class="skel-line skel-wide"></div>
+              <div class="skel-line skel-narrow"></div>
+            </div>
+            <div class="skel-line skel-short"></div>
+            <div class="skel-block skel-status"></div>
+            <div class="skel-line skel-short"></div>
+            <div class="skel-actions-wrap">
+              <div class="skel-block skel-act-btn"></div>
+              <div class="skel-block skel-act-btn"></div>
+              <div class="skel-block skel-act-btn"></div>
+            </div>
+          </div>
+        }
+      </div>
+
+    } @else if (error()) {
+      <div class="empty-state error-state">
+        <div class="empty-icon-wrap err-wrap"><mat-icon>cloud_off</mat-icon></div>
+        <h3>Erreur de chargement</h3>
+        <p>{{ error() }}</p>
+        <button mat-flat-button color="primary" (click)="load()">
+          <mat-icon>refresh</mat-icon> Réessayer
+        </button>
+      </div>
+
+    } @else if (!announcements().length) {
+      <div class="empty-state">
+        <div class="empty-icon-wrap"><mat-icon>campaign</mat-icon></div>
+        <h3>Aucune annonce</h3>
+        <p>Créez votre première annonce pour les boutiques.</p>
+        <button mat-flat-button color="primary" (click)="openForm()">
+          <mat-icon>add</mat-icon> Créer une annonce
+        </button>
+      </div>
+
+    } @else {
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="announcements()" class="ann-table">
+
+          <!-- Type -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>Type</th>
+            <td mat-cell *matCellDef="let ann">
+              <div class="type-badge type-{{ ann.type }}">
+                <mat-icon>{{ typeIcon(ann.type) }}</mat-icon>
+                <span>{{ typeLabel(ann.type) }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Titre + contenu -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Annonce</th>
+            <td mat-cell *matCellDef="let ann">
+              <span class="ann-title">{{ ann.title }}</span>
+              <span class="ann-preview">{{ ann.content }}</span>
+            </td>
+          </ng-container>
+
+          <!-- Cible -->
+          <ng-container matColumnDef="target">
+            <th mat-header-cell *matHeaderCellDef>Cible</th>
+            <td mat-cell *matCellDef="let ann">
+              @if (!ann.targetShops?.length) {
+                <span class="target-global">
+                  <mat-icon>public</mat-icon> Toutes les boutiques
+                </span>
+              } @else {
+                <span class="target-specific">
+                  <mat-icon>storefront</mat-icon> {{ ann.targetShops.length }} boutique{{ ann.targetShops.length > 1 ? 's' : '' }}
+                </span>
+              }
+            </td>
+          </ng-container>
+
+          <!-- Statut -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Statut</th>
+            <td mat-cell *matCellDef="let ann">
+              <span class="status-badge" [class.active]="ann.active" [class.inactive]="!ann.active">
+                {{ ann.active ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Expiration -->
+          <ng-container matColumnDef="expireAt">
+            <th mat-header-cell *matHeaderCellDef>Expiration</th>
+            <td mat-cell *matCellDef="let ann" class="date-cell">
+              @if (ann.expireAt) {
+                {{ ann.expireAt | date:'dd/MM/yyyy' }}
+              } @else {
+                <span class="no-expire">—</span>
+              }
+            </td>
+          </ng-container>
+
+          <!-- Création -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Créée le</th>
+            <td mat-cell *matCellDef="let ann" class="date-cell">
+              {{ ann.createdAt | date:'dd/MM/yyyy' }}
+            </td>
+          </ng-container>
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-th">Actions</th>
+            <td mat-cell *matCellDef="let ann">
+              <div class="actions-cell">
+                <button mat-icon-button
+                  [matTooltip]="ann.active ? 'Désactiver' : 'Activer'"
+                  [disabled]="togglingId() === ann.id"
+                  [style.color]="ann.active ? '#22c55e' : '#9ca3af'"
+                  (click)="toggleActive(ann)">
+                  <mat-icon>{{ ann.active ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Modifier" (click)="openForm(ann)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Supprimer"
+                  [disabled]="deletingId() === ann.id"
+                  [style.color]="'#ef4444'"
+                  (click)="deleteAnnouncement(ann)">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="ann-row"></tr>
+        </table>
+      </div>
+    }
+
+  </mat-card>
+</div>

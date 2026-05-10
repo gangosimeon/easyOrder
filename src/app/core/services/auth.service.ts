@@ -14,6 +14,7 @@ export interface Company {
   logo: string;
   address: string;
   coverColor: string;
+  role?: 'admin' | 'user';
 }
 
 export interface RegisterPayload {

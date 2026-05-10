@@ -6,6 +6,7 @@ import { filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CartService } from './core/services/cart.service';
 import { AuthService } from './core/services/auth.service';
+import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
 
 interface NavItem {
   label: string;
@@ -16,7 +17,7 @@ interface NavItem {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
