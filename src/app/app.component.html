@@ -126,6 +126,24 @@
               <span class="nav-label">{{ item.label }}</span>
             </a>
           }
+
+          @if (isAdmin()) {
+            <div class="admin-divider">
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span>Administration</span>
+            </div>
+            @for (item of adminNavItems; track item.route) {
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="active"
+                class="nav-item nav-item-admin"
+                matRipple
+              >
+                <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+                <span class="nav-label">{{ item.label }}</span>
+              </a>
+            }
+          }
         </nav>
 
         <div class="sidebar-footer">
@@ -276,6 +294,25 @@
                 </a>
               }
             </div>
+
+            @if (isAdmin()) {
+              <div class="mobile-admin-bar">
+                <span class="admin-bar-label">
+                  <mat-icon>admin_panel_settings</mat-icon>
+                  Admin
+                </span>
+                @for (item of adminNavItems; track item.route) {
+                  <a
+                    [routerLink]="item.route"
+                    routerLinkActive="active-admin-mobile"
+                    class="mobile-admin-item"
+                  >
+                    <mat-icon>{{ item.icon }}</mat-icon>
+                    <span>{{ item.label }}</span>
+                  </a>
+                }
+              </div>
+            }
           }
         </div>
       </header>

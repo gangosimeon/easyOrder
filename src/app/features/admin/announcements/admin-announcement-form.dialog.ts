@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -12,7 +12,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AdminAnnouncement, AnnouncementFormData } from '../../../core/services/admin-announcement.service';
+import { AdminService, AdminShop } from '../../../core/services/admin.service';
 
 export interface AnnouncementDialogData {
   announcement?: AdminAnnouncement;
@@ -24,15 +26,15 @@ export interface AnnouncementDialogData {
   imports: [
     ReactiveFormsModule,
     MatDialogModule, MatButtonModule, MatFormFieldModule,
-    MatInputModule, MatSelectModule, MatCheckboxModule, MatIconModule,
+    MatInputModule, MatSelectModule, MatCheckboxModule, MatIconModule, MatProgressSpinnerModule,
   ],
   template: `
     <div class="dlg-header">
       <mat-icon class="dlg-header-icon" [class]="'type-' + form.get('type')?.value">
         {{ iconFor(form.get('type')?.value) }}
       </mat-icon>
-      <h2 mat-dialog-title class="dlg-title">
-        {{ data.announcement ? 'Modifier l\'annonce' : 'Nouvelle annonce' }}
+      <h2 class="dlg-title">
+        {{ data.announcement ? "Modifier l'annonce" : "Nouvelle annonce"}}
       </h2>
     </div>
 
@@ -79,11 +81,23 @@ export interface AnnouncementDialogData {
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Boutiques ciblées (IDs séparés par virgule — vide = global)</mat-label>
+          <mat-label>Boutiques ciblées (vide = annonce globale)</mat-label>
           <mat-icon matPrefix>storefront</mat-icon>
-          <input matInput formControlName="targetShopsRaw"
-            placeholder="Laisser vide pour toutes les boutiques" />
-          <mat-hint>Ex : 6643b…, 6643c… — Vide = annonce globale</mat-hint>
+          <mat-select formControlName="targetShops" multiple>
+            @if (shopsLoading()) {
+              <mat-option disabled>
+                <mat-spinner diameter="18" style="display:inline-block;margin-right:8px"></mat-spinner>
+                Chargement…
+              </mat-option>
+            } @else {
+              @for (shop of shops(); track shop.id) {
+                <mat-option [value]="shop.id">
+                  {{ shop.name }}
+                </mat-option>
+              }
+            }
+          </mat-select>
+          <mat-hint>Laisser vide = toutes les boutiques</mat-hint>
         </mat-form-field>
 
         <div class="active-row">
@@ -135,6 +149,11 @@ export class AdminAnnouncementFormDialogComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<AdminAnnouncementFormDialogComponent>);
   private fb        = inject(FormBuilder);
 
+  private adminService = inject(AdminService);
+
+  readonly shops        = signal<AdminShop[]>([]);
+  readonly shopsLoading = signal(false);
+
   readonly typeOptions = [
     { value: 'info',    label: 'ℹ️ Information' },
     { value: 'success', label: '✅ Succès'       },
@@ -147,12 +166,18 @@ export class AdminAnnouncementFormDialogComponent implements OnInit {
   ngOnInit(): void {
     const ann = this.data.announcement;
     this.form = this.fb.group({
-      title:          [ann?.title    ?? '', [Validators.required, Validators.maxLength(200)]],
-      content:        [ann?.content  ?? '', [Validators.required, Validators.maxLength(2000)]],
-      type:           [ann?.type     ?? 'info'],
-      active:         [ann?.active   ?? true],
-      expireAt:       [ann?.expireAt ? ann.expireAt.substring(0, 10) : ''],
-      targetShopsRaw: [(ann?.targetShops ?? []).join(', ')],
+      title:       [ann?.title    ?? '', [Validators.required, Validators.maxLength(200)]],
+      content:     [ann?.content  ?? '', [Validators.required, Validators.maxLength(2000)]],
+      type:        [ann?.type     ?? 'info'],
+      active:      [ann?.active   ?? true],
+      expireAt:    [ann?.expireAt ? ann.expireAt.substring(0, 10) : ''],
+      targetShops: [ann?.targetShops ?? []],
+    });
+
+    this.shopsLoading.set(true);
+    this.adminService.getShops({ limit: 100 }).subscribe({
+      next:  res => { this.shops.set(res.shops); this.shopsLoading.set(false); },
+      error: ()  => this.shopsLoading.set(false),
     });
   }
 
@@ -168,9 +193,9 @@ export class AdminAnnouncementFormDialogComponent implements OnInit {
 
   submit(): void {
     if (this.form.invalid) return;
-    const { title, content, type, active, expireAt, targetShopsRaw } = this.form.value as {
+    const { title, content, type, active, expireAt, targetShops } = this.form.value as {
       title: string; content: string; type: string;
-      active: boolean; expireAt: string; targetShopsRaw: string;
+      active: boolean; expireAt: string; targetShops: string[];
     };
 
     const result: AnnouncementFormData = {
@@ -179,9 +204,7 @@ export class AdminAnnouncementFormDialogComponent implements OnInit {
       type:        type as AnnouncementFormData['type'],
       active,
       expireAt:    expireAt || null,
-      targetShops: targetShopsRaw
-        ? targetShopsRaw.split(',').map(s => s.trim()).filter(Boolean)
-        : [],
+      targetShops: targetShops ?? [],
     };
     this.dialogRef.close(result);
   }

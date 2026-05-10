@@ -44,11 +44,18 @@ export class AppComponent {
   );
 
   readonly navItems: NavItem[] = [
-    { label: 'Catégories', icon: 'category',       route: '/categories' },
-    { label: 'Produits',   icon: 'inventory_2',    route: '/products'   },
-    { label: 'Annonces',   icon: 'campaign',       route: '/annonces'   },
+    { label: 'Catégories', icon: 'category',        route: '/categories' },
+    { label: 'Produits',   icon: 'inventory_2',     route: '/products'   },
+    { label: 'Annonces',   icon: 'campaign',        route: '/annonces'   },
     { label: 'Mon Profil', icon: 'manage_accounts', route: '/profile'   },
   ];
+
+  readonly adminNavItems: NavItem[] = [
+    { label: 'Boutiques', icon: 'storefront', route: '/admin/shops'          },
+    { label: 'Annonces',  icon: 'flag',       route: '/admin/announcements'  },
+  ];
+
+  readonly isAdmin = computed(() => this.authService.company()?.role === 'admin');
 
   constructor() {
     this.router.events.pipe(
