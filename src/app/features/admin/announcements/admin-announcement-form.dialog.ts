@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -83,17 +83,27 @@ export interface AnnouncementDialogData {
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Boutiques ciblées (vide = annonce globale)</mat-label>
           <mat-icon matPrefix>storefront</mat-icon>
-          <mat-select formControlName="targetShops" multiple>
+          <mat-select formControlName="targetShops" multiple
+            (openedChange)="$event ? null : shopSearch.set('')">
+            <mat-option disabled class="shop-search-opt">
+              <mat-icon class="shop-search-icon">search</mat-icon>
+              <input type="text" class="shop-search-input"
+                placeholder="Rechercher une boutique…"
+                [value]="shopSearch()"
+                (input)="shopSearch.set($any($event.target).value)"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()" />
+            </mat-option>
             @if (shopsLoading()) {
               <mat-option disabled>
                 <mat-spinner diameter="18" style="display:inline-block;margin-right:8px"></mat-spinner>
                 Chargement…
               </mat-option>
+            } @else if (filteredShops().length === 0) {
+              <mat-option disabled>Aucune boutique trouvée</mat-option>
             } @else {
-              @for (shop of shops(); track shop.id) {
-                <mat-option [value]="shop.id">
-                  {{ shop.name }}
-                </mat-option>
+              @for (shop of filteredShops(); track shop.id) {
+                <mat-option [value]="shop.id">{{ shop.name }}</mat-option>
               }
             }
           </mat-select>
@@ -137,6 +147,36 @@ export interface AnnouncementDialogData {
     .active-row { padding: 4px 0 8px; }
     .dlg-actions { padding: 8px 16px 16px !important; gap: 8px; }
 
+    .shop-search-opt {
+      position: sticky !important;
+      top: 0;
+      z-index: 10;
+      background: #fff !important;
+      border-bottom: 1px solid #e5e7eb;
+      cursor: default !important;
+      pointer-events: all !important;
+      height: 44px !important;
+      display: flex !important;
+      align-items: center;
+      padding: 0 12px !important;
+      gap: 6px;
+    }
+    .shop-search-icon {
+      font-size: 18px; width: 18px; height: 18px;
+      color: #9ca3af;
+      flex-shrink: 0;
+    }
+    .shop-search-input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      flex: 1;
+      color: #111827;
+      font-family: inherit;
+      &::placeholder { color: #9ca3af; }
+    }
+
     .type-info    { color: #3b82f6; }
     .type-success { color: #22c55e; }
     .type-warning { color: #f59e0b; }
@@ -153,6 +193,11 @@ export class AdminAnnouncementFormDialogComponent implements OnInit {
 
   readonly shops        = signal<AdminShop[]>([]);
   readonly shopsLoading = signal(false);
+  readonly shopSearch   = signal('');
+  readonly filteredShops = computed(() => {
+    const q = this.shopSearch().toLowerCase().trim();
+    return !q ? this.shops() : this.shops().filter(s => s.name.toLowerCase().includes(q));
+  });
 
   readonly typeOptions = [
     { value: 'info',    label: 'ℹ️ Information' },
