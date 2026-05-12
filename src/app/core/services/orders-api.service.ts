@@ -147,12 +147,13 @@ export class OrdersApiService {
    * Génère l'URL WhatsApp pour une commande.
    */
   buildWhatsAppUrl(order: Order): string {
+    const orderId = (order as any)._id || (order as any).id || '';
     const lines = order.items
       .map(i => `• *${i.productName}* ×${i.quantity} — ${this.fmt(i.price * i.quantity)}`)
       .join('\n');
 
     const msg =
-      `🛒 *Commande #${order._id.slice(-6)}*\n` +
+      `🛒 *Commande #${orderId.slice(-6)}*\n` +
       `Client : ${order.customerName}\n` +
       `Tél : ${order.customerPhone}\n` +
       `━━━━━━━━━━━━━━━━━━\n` +
