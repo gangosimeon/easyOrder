@@ -560,4 +560,11 @@
     background: #fff;
     color: var(--primary);
   }
+
+  /* Hide mobile orders bar on desktop */
+  @media (min-width: 768px) {
+    .mobile-orders-bar {
+      display: none;
+    }
+  }
 }
