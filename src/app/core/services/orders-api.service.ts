@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, catchError, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AuthService } from './auth.service';
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -46,6 +47,7 @@ export interface UpdateStatusInput {
 @Injectable({ providedIn: 'root' })
 export class OrdersApiService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
   // ── State ────────────────────────────────────────────────────────────────
 
