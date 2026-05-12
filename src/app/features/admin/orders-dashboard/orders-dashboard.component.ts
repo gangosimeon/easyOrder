@@ -152,6 +152,7 @@ export class OrdersDashboardComponent implements OnInit {
         fmtPrice: (p: number) => this.ordersApi.fmt(p),
       },
     }).afterClosed().subscribe(result => {
+      console.log('Drawer result:', result);
       if (result?.action === 'updateStatus') {
         this.ordersApi.updateOrderStatus(result.orderId, result.status).subscribe();
       }

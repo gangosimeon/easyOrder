@@ -126,6 +126,7 @@ export class OrdersApiService {
   // ── Update Status ──────────────────────────────────────────────────────────
 
   updateOrderStatus(orderId: string, status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'): Observable<Order> {
+    console.log('Updating order status:', orderId, status);
     return this.http.patch<Order>(`${environment.apiUrl}/orders/${orderId}`, { status }).pipe(
       tap(updatedOrder => {
         this.orders.update(orders =>
