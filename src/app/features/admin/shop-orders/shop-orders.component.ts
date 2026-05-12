@@ -115,6 +115,7 @@ export class ShopOrdersComponent implements OnInit {
         fmtPrice: (p: number) => this.ordersService.fmt(p),
       },
     }).afterClosed().subscribe(result => {
+      console.log('Drawer result:', result);
       if (result?.action === 'updateStatus') {
         this.ordersService.updateOrderStatus(result.orderId, result.status).subscribe();
       }
@@ -122,6 +123,7 @@ export class ShopOrdersComponent implements OnInit {
   }
 
   onChangeStatus(order: Order): void {
+    console.log('Changing status for order:', order._id, order.status);
     this.ordersService.updateOrderStatus(order._id, order.status).subscribe();
   }
 
