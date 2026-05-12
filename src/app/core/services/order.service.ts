@@ -123,7 +123,7 @@ export class OrderService {
       `💰 *Total : ${this.fmt(total)}*\n\n` +
       `Merci de confirmer ma commande 🙏`;
 
-    return `https://wa.me/${phone.replace(/[\s\-]/g, '')}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${phone.replace(/[\s\-\+]/g, '')}?text=${encodeURIComponent(msg)}`;
   }
 
   /**

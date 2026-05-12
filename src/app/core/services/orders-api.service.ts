@@ -161,14 +161,14 @@ export class OrdersApiService {
       `💰 *Total : ${this.fmt(order.total)}*\n` +
       `Statut : ${order.status.toUpperCase()}`;
 
-    return `https://wa.me/${order.customerPhone.replace(/[\s\-]/g, '')}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${order.customerPhone.replace(/[\s\-\+]/g, '')}?text=${encodeURIComponent(msg)}`;
   }
 
   /**
    * Génère l'URL d'appel téléphonique.
    */
   buildCallUrl(phone: string): string {
-    return `tel:${phone.replace(/[\s\-]/g, '')}`;
+    return `tel:${phone.replace(/[\s\-\+]/g, '')}`;
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

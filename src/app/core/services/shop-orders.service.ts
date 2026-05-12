@@ -252,11 +252,11 @@ export class ShopOrdersService {
       `💰 *Total : ${this.fmt(order.total)}*\n` +
       `Statut : ${this.getStatusLabel(order.status)}`;
 
-    return `https://wa.me/${order.customerPhone.replace(/[\s\-]/g, '')}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${order.customerPhone.replace(/[\s\-\+]/g, '')}?text=${encodeURIComponent(msg)}`;
   }
 
   buildCallUrl(phone: string): string {
-    return `tel:${phone.replace(/[\s\-]/g, '')}`;
+    return `tel:${phone.replace(/[\s\-\+]/g, '')}`;
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────
