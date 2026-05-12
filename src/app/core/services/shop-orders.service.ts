@@ -118,6 +118,13 @@ export class ShopOrdersService {
     this.shopId.set(extractShopIdFromToken());
     this.loadOrders();
     this.setupAutoRefresh();
+    // Migrate existing data to handle both _id and id
+    this.orders.update(orders =>
+      orders.map((order: any) => ({
+        ...order,
+        _id: order._id || order.id,
+      }))
+    );
   }
 
   // ── Load Orders ─────────────────────────────────────────────────────────
@@ -146,7 +153,10 @@ export class ShopOrdersService {
       .get<PaginatedResponse>(`${environment.apiUrl}/orders`, { params })
       .pipe(
         tap(res => {
-          const newOrders = res.data || [];
+          const newOrders = (res.data || []).map((order: any) => ({
+            ...order,
+            _id: order._id || order.id, // Handle both _id and id for compatibility
+          }));
           this.orders.update(existing => (reset ? newOrders : [...existing, ...newOrders]));
           this.currentPage.set(res.pagination.page);
           this.hasMore.set(newOrders.length === this.pageSize);
@@ -202,7 +212,11 @@ export class ShopOrdersService {
       }),
       tap(res => {
         if (res) {
-          this.orders.set(res.data || []);
+          const orders = (res.data || []).map((order: any) => ({
+            ...order,
+            _id: order._id || order.id, // Handle both _id and id for compatibility
+          }));
+          this.orders.set(orders);
           this.totalCount.set(res.pagination.total);
         }
       }),
