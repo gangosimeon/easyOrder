@@ -124,6 +124,9 @@
             >
               <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
               <span class="nav-label">{{ item.label }}</span>
+              @if (item.route === '/orders' && pendingOrdersCount() > 0) {
+                <span class="nav-badge nav-badge-warning">{{ pendingOrdersCount() }}</span>
+              }
             </a>
           }
 
@@ -291,6 +294,9 @@
                 >
                   <mat-icon>{{ item.icon }}</mat-icon>
                   <span>{{ item.label }}</span>
+                  @if (item.route === '/orders' && pendingOrdersCount() > 0) {
+                    <span class="mobile-badge mobile-badge-warning">{{ pendingOrdersCount() }}</span>
+                  }
                 </a>
               }
             </div>

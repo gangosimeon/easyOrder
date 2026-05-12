@@ -1,28 +1,43 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartService, CartItem } from '../../../core/services/cart.service';
+import { OrderService } from '../../../core/services/order.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [MatIconModule, MatButtonModule, MatDialogModule, MatProgressSpinnerModule, FormsModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent {
-  private router  = inject(Router);
-  private dialog  = inject(MatDialog);
+  private router       = inject(Router);
+  private dialog       = inject(MatDialog);
   readonly cartService = inject(CartService);
-  private snackBar    = inject(MatSnackBar);
+  readonly orderService = inject(OrderService);
+  private snackBar     = inject(MatSnackBar);
   readonly cartItems = toSignal(this.cartService.items$, { initialValue: [] });
 
   readonly company = this.cartService.company;
+
+  // ── Customer form state ──────────────────────────────────────────────
+  readonly showOrderForm  = signal(false);
+  readonly customerName   = signal('');
+  readonly customerPhone  = signal('');
+  readonly customerNote   = signal('');
+
+  get formValid(): boolean {
+    return this.customerName().trim().length >= 2 &&
+           this.customerPhone().trim().replace(/\D/g, '').length >= 8;
+  }
 
   getTotal(): number {
     return this.cartItems().reduce(
@@ -31,26 +46,52 @@ export class CartComponent {
     );
   }
 
-  generateWhatsAppMessage(items: CartItem[], companyName: string): string {
-    let msg = `Bonjour, je souhaite commander chez *${companyName}* :\n\n`;
+  openOrderForm(): void {
+    this.showOrderForm.set(true);
+    // scroll to form on mobile
+    setTimeout(() => {
+      document.querySelector('.customer-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }
 
-    let total = 0;
+  cancelOrderForm(): void {
+    this.showOrderForm.set(false);
+    this.orderService.submitError.set(null);
+  }
 
-    for (const item of items) {
-      const productTotal = item.product.price * item.quantity;
-      total += productTotal;
-      msg += `*${item.product.name}*\n`;
-      msg += `    Quantité : ${item.quantity}x\n`;
-      msg += `    Prix : ${this.formatPrice(productTotal)}\n`;
+  submitOrder(): void {
+    const company = this.cartService.company();
+    const items   = this.cartItems();
+    if (!company || items.length === 0 || !this.formValid) return;
 
-      if (item.product.image) {
-        msg += `    Image : ${item.product.image}\n`;
-      }
-      msg += `\n`;
-    }
-    msg += ` *TOTAL : ${this.formatPrice(total)}*\n\n`;
-    msg += `Merci de me confirmer la disponibilité 🙏`;
-    return msg;
+    this.orderService
+      .createOrderFromCart(
+        this.customerName(),
+        this.customerPhone(),
+        items,
+        company.slug,
+        { note: this.customerNote(), whatsappSent: true },
+      )
+      .subscribe({
+        next: () => {
+          this.snack('✅ Commande enregistrée !');
+          this.openWhatsApp(items, company);
+          this.cartService.clearCart();
+          this.showOrderForm.set(false);
+        },
+        error: () => {
+          // API failed but saved locally — still open WhatsApp
+          this.snack('⚠️ Hors-ligne : commande sauvegardée localement');
+          this.openWhatsApp(items, company);
+          this.cartService.clearCart();
+          this.showOrderForm.set(false);
+        },
+      });
+  }
+
+  private openWhatsApp(items: CartItem[], company: { phone: string; name: string }): void {
+    const url = this.orderService.buildWhatsAppUrl(company.phone, items, company.name);
+    window.open(url, '_blank');
   }
   clearCart(): void {
     this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(
@@ -63,12 +104,7 @@ export class CartComponent {
     });
   }
   orderViaWhatsApp(): void {
-    const company = this.cartService.company();
-    const items = this.cartItems();
-    if (!company || items.length === 0) return;
-    const message = this.generateWhatsAppMessage(items, company.name);
-    const url = `https://wa.me/${company.phone}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    this.openOrderForm();
   }
 
   goBack(): void {

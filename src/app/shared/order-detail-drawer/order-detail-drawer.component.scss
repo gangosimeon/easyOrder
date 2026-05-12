@@ -1,0 +1,392 @@
+/* ============================================================
+   Order Detail Drawer — Bottom Sheet (same style as product detail)
+   ============================================================ */
+
+/* ---------- Sheet ---------- */
+.od-sheet {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  max-height: 92dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  animation: od-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &::before {
+    content: '';
+    display: block;
+    width: 44px;
+    height: 4px;
+    border-radius: 2px;
+    background: #ddd;
+    margin: 12px auto 0;
+    flex-shrink: 0;
+  }
+}
+
+/* ---------- Hero ---------- */
+.od-hero {
+  position: relative;
+  min-height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.od-hero-imgs {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 16px;
+}
+
+.od-hero-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 3px solid rgba(255,255,255,0.8);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  flex-shrink: 0;
+
+  &--ph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.5);
+    font-size: 36px;
+    line-height: 1;
+  }
+}
+
+/* ---------- Status ribbon ---------- */
+.od-status-ribbon {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* ---------- Close button ---------- */
+.od-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.92);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  transition: transform 0.15s;
+
+  mat-icon { font-size: 20px; color: #374151; }
+  &:hover  { transform: scale(1.1); }
+  &:active { transform: scale(0.95); }
+}
+
+/* ---------- ID pill ---------- */
+.od-id-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin: 14px 16px 0;
+  width: fit-content;
+
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+}
+
+/* ---------- Body ---------- */
+.od-body {
+  padding: 12px 20px 8px;
+  flex: 1;
+}
+
+.od-client-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+
+/* ---------- Chips ---------- */
+.od-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.od-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  background: #f3f4f6;
+  border-radius: 20px;
+  padding: 5px 12px;
+
+  mat-icon { font-size: 14px; width: 14px; height: 14px; color: #6b7280; }
+}
+
+/* ---------- Status change ---------- */
+.od-status-row {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.od-status-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  &:hover { background: #f9fafb; }
+}
+
+.od-status-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+  padding: 8px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.od-status-option {
+  width: 100%;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  transition: opacity 0.15s;
+  &:hover { opacity: 0.88; }
+}
+
+/* ---------- Section title ---------- */
+.od-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+  margin: 0 0 10px;
+}
+
+/* ---------- Items list ---------- */
+.od-items-list {
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+}
+
+.od-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  &:last-child { border-bottom: none; }
+}
+
+.od-item-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #e5e7eb;
+
+  &--ph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e7eb;
+    color: #9ca3af;
+    mat-icon { font-size: 22px; width: 22px; height: 22px; }
+  }
+}
+
+.od-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.od-item-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.od-item-meta {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.od-item-price {
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* ---------- Note ---------- */
+.od-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0 0 16px;
+  background: #fef3c7;
+  border-radius: 12px;
+  padding: 12px 14px;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #d97706; flex-shrink: 0; margin-top: 1px; }
+}
+
+/* ---------- Total ---------- */
+.od-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+
+.od-total-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.od-total-value {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+/* ---------- Footer ---------- */
+.od-footer {
+  padding: 12px 20px 28px;
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
+}
+
+.od-btn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.15s, transform 0.15s;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.16);
+
+  mat-icon { font-size: 20px; }
+  &:hover  { opacity: 0.9; }
+  &:active { transform: scale(0.97); }
+}
+
+.od-btn--call {
+  background: #059669;
+  flex: 0 0 auto;
+  padding: 14px 20px;
+}
+
+.od-btn--wa {
+  background: linear-gradient(135deg, #25D366, #128C7E);
+}
+
+.od-wa-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Animation
+   ============================================================ */
+@keyframes od-slide-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ============================================================
+   Desktop
+   ============================================================ */
+@media (min-width: 640px) {
+  .od-sheet {
+    border-radius: 24px;
+    max-height: 88dvh;
+    animation: od-pop-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    &::before { display: none; }
+  }
+}
+
+@keyframes od-pop-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+

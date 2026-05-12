@@ -1,0 +1,251 @@
+/* ============================================================
+   Orders Dashboard — Mobile-First African Ecommerce Style
+   ============================================================ */
+
+.dashboard-container {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+
+.dashboard-header {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: #111827;
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #059669;
+}
+
+/* ── Filters Bar ───────────────────────────────────────────────────────── */
+
+.filters-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.search-field,
+.filter-field {
+  width: 100%;
+}
+
+::ng-deep .search-field .mat-mdc-form-field-subscript-wrapper,
+::ng-deep .filter-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+::ng-deep .search-field .mat-mdc-text-field-wrapper,
+::ng-deep .filter-field .mat-mdc-text-field-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  padding: 4px 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+::ng-deep .search-field .mat-mdc-form-field-infix,
+::ng-deep .filter-field .mat-mdc-form-field-infix {
+  padding: 8px 0;
+  font-size: 15px;
+}
+
+.clear-filters-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #fef3c7;
+  color: #92400e;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+/* ── Error Banner ─────────────────────────────────────────────────────── */
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  color: #991b1b;
+  font-size: 14px;
+
+  .error-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ── Loading State ─────────────────────────────────────────────────────── */
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+
+  span {
+    font-size: 14px;
+    color: #6b7280;
+  }
+}
+
+/* ── Empty State ───────────────────────────────────────────────────────── */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #d1d5db;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 8px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+/* ── Orders List ───────────────────────────────────────────────────────── */
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ── No Results ───────────────────────────────────────────────────────── */
+
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+
+  .no-results-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #d1d5db;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 16px;
+  }
+
+  .reset-btn {
+    padding: 10px 20px;
+    background: #059669;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (min-width: 768px) {
+  .dashboard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .filters-bar {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .search-field {
+    flex: 1;
+  }
+
+  .filter-field {
+    width: 200px;
+  }
+
+  .page-title {
+    font-size: 32px;
+  }
+}
+
+/* ── Safe Area (Notch) ─────────────────────────────────────────────────── */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .dashboard-container {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+}

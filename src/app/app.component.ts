@@ -6,6 +6,7 @@ import { filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CartService } from './core/services/cart.service';
 import { AuthService } from './core/services/auth.service';
+import { ShopOrdersService } from './core/services/shop-orders.service';
 import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
 
 interface NavItem {
@@ -25,7 +26,11 @@ export class AppComponent {
   private router = inject(Router);
   readonly cartService  = inject(CartService);
   readonly authService  = inject(AuthService);
+  readonly ordersService = inject(ShopOrdersService);
   readonly cartCount = toSignal(this.cartService.items$.pipe(map(items => items.length)), { initialValue: 0 });
+  readonly pendingOrdersCount = computed(() =>
+    this.ordersService.orders().filter(o => o.status === 'pending').length
+  );
 
   readonly isPublicRoute = signal(
     window.location.pathname.startsWith('/shop') || window.location.pathname.startsWith('/cart')
@@ -47,6 +52,7 @@ export class AppComponent {
     { label: 'Catégories', icon: 'category',        route: '/categories' },
     { label: 'Produits',   icon: 'inventory_2',     route: '/products'   },
     { label: 'Annonces',   icon: 'campaign',        route: '/annonces'   },
+    { label: 'Mes Commandes', icon: 'receipt_long', route: '/orders'     },
     { label: 'Mon Profil', icon: 'manage_accounts', route: '/profile'   },
   ];
 

@@ -1,0 +1,348 @@
+/* ============================================================
+   WhatsApp Order Button — Mobile-First Styles
+   ============================================================ */
+
+:host {
+  display: block;
+  position: relative;
+  z-index: 100;
+}
+
+/* ── Sticky Bottom Button ───────────────────────────────────────────── */
+
+.wa-order-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  border: none;
+  padding: 14px 20px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 -4px 20px rgba(37, 211, 102, 0.3);
+  animation: slideUp 0.3s ease-out;
+  z-index: 999;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.wa-btn-disabled {
+    background: #9ca3af;
+    box-shadow: none;
+    cursor: not-allowed;
+    animation: none;
+  }
+
+  &.wa-btn-loading {
+    opacity: 0.7;
+    cursor: wait;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Pulse Animation (Subtle) ────────────────────────────────────────── */
+
+.wa-order-btn:not(.wa-btn-disabled):not(.wa-btn-loading) {
+  animation: slideUp 0.3s ease-out, pulse 2s ease-in-out infinite 0.5s;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 -4px 20px rgba(37, 211, 102, 0.3); }
+  50% { box-shadow: 0 -4px 28px rgba(37, 211, 102, 0.5); }
+}
+
+/* ── Icon & Content ──────────────────────────────────────────────────── */
+
+.wa-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.wa-btn-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.wa-btn-label {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.wa-btn-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+.wa-item-count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.wa-total {
+  font-weight: 700;
+}
+
+.wa-empty {
+  opacity: 0.7;
+}
+
+.wa-spinner {
+  --mdc-circular-progress-active-indicator-color: #fff;
+  flex-shrink: 0;
+}
+
+/* ── Inline Form (Slide-up) ───────────────────────────────────────────── */
+
+.wa-order-form {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px 32px;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+  animation: slideUpForm 0.25s ease-out;
+  max-height: 85vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+@keyframes slideUpForm {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ── Form Header ─────────────────────────────────────────────────────── */
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+
+  .wa-icon-small {
+    width: 20px;
+    height: 20px;
+    color: #25D366;
+    flex-shrink: 0;
+  }
+
+  span { flex: 1; }
+
+  .form-close {
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+
+    &:hover { background: #e5e7eb; }
+  }
+}
+
+/* ── Input Fields ─────────────────────────────────────────────────────── */
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 0 14px;
+  margin-bottom: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: #25D366;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
+    background: #fff;
+  }
+
+  &.input-filled {
+    border-color: #d1fae5;
+    background: #f0fdf4;
+  }
+
+  .input-icon {
+    width: 18px;
+    height: 18px;
+    color: #9ca3af;
+    flex-shrink: 0;
+  }
+
+  &:focus-within .input-icon { color: #25D366; }
+}
+
+.form-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  font-family: inherit;
+  color: #111827;
+  padding: 14px 0;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &::placeholder { color: #9ca3af; }
+}
+
+/* ── Error Banner ──────────────────────────────────────────────────────── */
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #c2410c;
+  margin-bottom: 12px;
+
+  .error-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Confirm Button ──────────────────────────────────────────────────── */
+
+.confirm-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 15px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: opacity 0.15s, transform 0.1s;
+  margin-bottom: 12px;
+
+  &:active { transform: scale(0.98); }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  mat-spinner { --mdc-circular-progress-active-indicator-color: #fff; }
+
+  .wa-icon-small { width: 20px; height: 20px; }
+}
+
+/* ── Hint Text ────────────────────────────────────────────────────────── */
+
+.form-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #9ca3af;
+  margin: 0;
+
+  .hint-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+
+@media (min-width: 768px) {
+  .wa-order-btn {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    max-width: 400px;
+    border-radius: 14px;
+    margin: 0 auto;
+    animation: none;
+  }
+
+  .wa-order-form {
+    position: fixed;
+    bottom: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 400px;
+    border-radius: 20px;
+    animation: fadeIn 0.2s ease-out;
+    max-height: 90vh;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+}
+
+/* ── Safe Area (Notch) ─────────────────────────────────────────────────── */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .wa-order-btn {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+
+  .wa-order-form {
+    padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  }
+}

@@ -68,6 +68,26 @@ body {
   border-radius: var(--radius-lg) !important;
 }
 
+/* ---- Order Detail Drawer — bottom sheet panel ---- */
+.order-drawer {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+  .mdc-dialog__container {
+    align-items: flex-end !important;
+  }
+}
+
 /* ---- Scrollbar ---- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-main); }

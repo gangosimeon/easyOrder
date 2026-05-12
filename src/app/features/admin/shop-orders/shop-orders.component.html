@@ -1,0 +1,114 @@
+<div class="shop-orders-container" (scroll)="onScroll($event)">
+  <!-- Header -->
+  <div class="orders-header">
+    <h1 class="page-title">Mes Commandes</h1>
+    <div class="header-actions">
+      <button class="refresh-btn" (click)="manualRefresh()" matRipple>
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <span class="stats">
+        {{ displayCount() }} / {{ totalCount() }} commande{{ totalCount() > 1 ? 's' : '' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Filters Bar -->
+  <div class="filters-bar">
+    <!-- Search -->
+    <mat-form-field class="search-field">
+      <input matInput placeholder="Rechercher client, téléphone..." [value]="searchQuery()" (input)="onSearchChange($any($event.target).value)" />
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+
+    <!-- Status Filter -->
+    <mat-form-field class="filter-field">
+      <mat-select [value]="statusFilter()" (selectionChange)="onStatusChange($event.value)">
+        <mat-option value="">Tous statuts</mat-option>
+        <mat-option value="pending">En attente</mat-option>
+        <mat-option value="confirmed">Confirmé</mat-option>
+        <mat-option value="delivered">Livré</mat-option>
+        <mat-option value="cancelled">Annulé</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Clear Filters Button -->
+    @if (searchQuery() || statusFilter()) {
+      <button class="clear-filters-btn" (click)="clearFilters()">
+        <mat-icon>filter_list_off</mat-icon>
+        Effacer
+      </button>
+    }
+  </div>
+
+  <!-- Error Banner -->
+  @if (error()) {
+    <div class="error-banner">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      {{ error() }}
+      <button class="retry-btn" (click)="manualRefresh()">Réessayer</button>
+    </div>
+  }
+
+  <!-- Loading State (Initial) -->
+  @if (loading() && orders().length === 0) {
+    <div class="loading-state">
+      <mat-spinner diameter="32" strokeWidth="3" />
+      <span>Chargement...</span>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!loading() && orders().length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">receipt_long</mat-icon>
+      <h2>Aucune commande</h2>
+      <p>Vos commandes WhatsApp apparaîtront ici.</p>
+      <button class="refresh-btn-primary" (click)="manualRefresh()">
+        <mat-icon>refresh</mat-icon>
+        Actualiser
+      </button>
+    </div>
+  }
+
+  <!-- Orders List -->
+  @if (orders().length > 0) {
+    <div class="orders-list">
+      @for (order of filteredOrders(); track order._id || $index) {
+        <app-order-card
+          [order]="order"
+          [statusColor]="getStatusColor(order.status)"
+          [statusLabel]="getStatusLabel(order.status)"
+          [formatDate]="formatDate"
+          [fmtPrice]="fmtPrice"
+          (onCall)="onCallClient($event)"
+          (onWhatsApp)="onOpenWhatsApp($event)"
+          (onOpenDetail)="onOpenDetail($event)"
+          (onChangeStatus)="onChangeStatus($event)"
+        />
+      }
+    </div>
+
+    <!-- Load More Indicator -->
+    @if (loading()) {
+      <div class="loading-more">
+        <mat-spinner diameter="24" strokeWidth="3" />
+      </div>
+    }
+
+    <!-- End of List -->
+    @if (!hasMore() && filteredOrders().length > 0) {
+      <div class="end-list">
+        <span>Fin des commandes</span>
+      </div>
+    }
+  }
+
+  <!-- No Results (Filtered) -->
+  @if (!loading() && orders().length > 0 && filteredOrders().length === 0) {
+    <div class="no-results">
+      <mat-icon class="no-results-icon">search_off</mat-icon>
+      <p>Aucun résultat pour cette recherche</p>
+      <button class="reset-btn" (click)="clearFilters()">Réinitialiser les filtres</button>
+    </div>
+  }
+</div>
