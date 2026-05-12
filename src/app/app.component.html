@@ -287,17 +287,16 @@
             </div>
             <div class="mobile-nav">
               @for (item of navItems; track item.route) {
-                <a
-                  [routerLink]="item.route"
-                  routerLinkActive="active-mobile"
-                  class="mobile-nav-item"
-                >
-                  <mat-icon>{{ item.icon }}</mat-icon>
-                  <span>{{ item.label }}</span>
-                  @if (item.route === '/orders' && pendingOrdersCount() > 0) {
-                    <span class="mobile-badge mobile-badge-warning">{{ pendingOrdersCount() }}</span>
-                  }
-                </a>
+                @if (item.route !== '/orders') {
+                  <a
+                    [routerLink]="item.route"
+                    routerLinkActive="active-mobile"
+                    class="mobile-nav-item"
+                  >
+                    <mat-icon>{{ item.icon }}</mat-icon>
+                    <span>{{ item.label }}</span>
+                  </a>
+                }
               }
             </div>
 
@@ -330,6 +329,22 @@
       <div class="page-container" [class.public-page]="isPublicRoute()">
         <router-outlet />
       </div>
+
+      <!-- ── Mobile sticky orders bar (admin only) ── -->
+      @if (!isPublicRoute() && authService.isLoggedIn()) {
+        <nav class="mobile-orders-bar">
+          <a routerLink="/orders" routerLinkActive="active-orders" class="orders-bar-link">
+            <div class="orders-bar-icon-wrap">
+              <mat-icon>receipt_long</mat-icon>
+              @if (pendingOrdersCount() > 0) {
+                <span class="orders-bar-badge">{{ pendingOrdersCount() }}</span>
+              }
+            </div>
+            <span class="orders-bar-label">Mes Commandes</span>
+          </a>
+        </nav>
+      }
+
     </main>
   </div>
 }
