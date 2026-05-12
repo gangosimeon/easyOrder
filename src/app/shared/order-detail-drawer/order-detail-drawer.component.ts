@@ -55,18 +55,19 @@ export class OrderDetailDrawerComponent implements OnInit {
   callClient(): void {
     const order = this.order();
     if (!order?.customerPhone) return;
-    window.open(`tel:${order.customerPhone.replace(/[\s\-]/g, '')}`, '_self');
+    window.open(`tel:${order.customerPhone.replace(/[\s\-\+]/g, '')}`, '_self');
   }
 
   openWhatsApp(): void {
     const order = this.order();
     if (!order) return;
+    const orderId = (order as any)._id || (order as any).id || '';
     const lines = order.items
       .map((i: any) => `• *${i.productName}* ×${i.quantity} — ${this.fmtPrice()(i.price * i.quantity)}`)
       .join('\n');
 
     const msg =
-      `🛒 *Commande #${order._id.slice(-6)}*\n` +
+      `🛒 *Commande #${orderId.slice(-6)}*\n` +
       `Client : ${order.customerName}\n` +
       `Tél : ${order.customerPhone}\n` +
       `━━━━━━━━━━━━━━━━━━\n` +
@@ -75,7 +76,7 @@ export class OrderDetailDrawerComponent implements OnInit {
       `💰 *Total : ${this.fmtPrice()(order.total)}*\n` +
       `Statut : ${this.statusLabel()}`;
 
-    window.open(`https://wa.me/${order.customerPhone.replace(/[\s\-]/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/${order.customerPhone.replace(/[\s\-\+]/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   toggleStatusMenu(): void {
