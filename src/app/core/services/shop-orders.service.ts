@@ -254,7 +254,9 @@ export class ShopOrdersService {
       `💰 *Total : ${this.fmt(order.total)}*\n` +
       `Statut : ${this.getStatusLabel(order.status)}`;
 
-    return `https://wa.me/${order.customerPhone}?text=${encodeURIComponent(msg)}`;
+    const cleanPhone = order.customerPhone.replace(/[\s\-\+]/g, '');
+    console.log('Clean phone:', cleanPhone);
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
   }
 
   buildCallUrl(phone: string): string {
