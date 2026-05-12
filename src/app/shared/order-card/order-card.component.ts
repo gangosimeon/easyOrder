@@ -43,6 +43,7 @@ export class OrderCardComponent {
     const nextIndex = (currentIndex + 1) % statuses.length;
     const nextStatus = statuses[nextIndex];
     const updated = { ...this.order(), status: nextStatus };
+    console.log('Updated order:', updated);
     this.onChangeStatus.emit(updated);
   }
 }
