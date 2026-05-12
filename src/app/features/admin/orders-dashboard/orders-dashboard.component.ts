@@ -159,8 +159,8 @@ export class OrdersDashboardComponent implements OnInit {
     });
   }
 
-  onChangeStatus(order: Order): void {
-    this.ordersApi.updateOrderStatus(order._id, order.status).subscribe();
+  onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
+    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe();
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────

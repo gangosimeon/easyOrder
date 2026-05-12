@@ -22,7 +22,7 @@ export class OrderCardComponent {
   readonly onCall = output<string>();
   readonly onWhatsApp = output<Order>();
   readonly onOpenDetail = output<Order>();
-  readonly onChangeStatus = output<Order>();
+  readonly onChangeStatus = output<{ orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }>();
 
   callClient(): void {
     this.onCall.emit(this.order().customerPhone);
@@ -37,13 +37,12 @@ export class OrderCardComponent {
   }
 
   cycleStatus(): void {
+    const order = this.order();
+    // Interceptor renames _id → id; handle both cases
+    const orderId = order._id || (order as any).id;
+    if (!orderId) return;
     const statuses: ('pending' | 'confirmed' | 'delivered' | 'cancelled')[] = ['pending', 'confirmed', 'delivered', 'cancelled'];
-    const current = this.order().status;
-    const currentIndex = statuses.indexOf(current);
-    const nextIndex = (currentIndex + 1) % statuses.length;
-    const nextStatus = statuses[nextIndex];
-    const updated = { ...this.order(), status: nextStatus };
-    console.log('Updated order:', updated);
-    this.onChangeStatus.emit(updated);
+    const nextIndex = (statuses.indexOf(order.status) + 1) % statuses.length;
+    this.onChangeStatus.emit({ orderId, status: statuses[nextIndex] });
   }
 }
