@@ -238,6 +238,7 @@ export class ShopOrdersService {
   // ── Quick Actions ───────────────────────────────────────────────────────
 
   buildWhatsAppUrl(order: Order): string {
+    console.log('Order data:', order);
     const orderId = (order as any)._id || (order as any).id || '';
     const lines = order.items
       .map(i => `• *${i.productName}* ×${i.quantity} — ${this.fmt(i.price * i.quantity)}`)
