@@ -123,8 +123,9 @@ export class ShopOrdersComponent implements OnInit {
   }
 
   onChangeStatus(order: Order): void {
-    console.log('Changing status for order:', order._id, order.status);
-    this.ordersService.updateOrderStatus(order._id, order.status).subscribe();
+    const orderId = (order as any)._id || (order as any).id;
+    console.log('Changing status for order:', orderId, order.status);
+    this.ordersService.updateOrderStatus(orderId, order.status).subscribe();
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────

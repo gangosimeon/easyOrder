@@ -86,8 +86,9 @@ export class OrderDetailDrawerComponent implements OnInit {
     this.selectedStatus.set(status);
     this.showStatusMenu = false;
     const order = this.order();
-    if (!order?._id) return;
-    this.dialogRef.close({ action: 'updateStatus', status, orderId: order._id });
+    const orderId = (order as any)._id || (order as any).id;
+    if (!orderId) return;
+    this.dialogRef.close({ action: 'updateStatus', status, orderId });
   }
 
   statuses: { value: 'pending' | 'confirmed' | 'delivered' | 'cancelled'; label: string; color: string }[] = [
