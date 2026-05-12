@@ -114,7 +114,7 @@ export class OrderService {
     const lines = items
       .map(i => `• *${i.product.name}* ×${i.quantity} — ${this.fmt(i.product.price * i.quantity)}`)
       .join('\n');
-
+    const phoneNumber = phone.replace(/[\s\-\+]/g, '');
     const msg =
       `🛒 *Commande — ${shopName}*\n` +
       `━━━━━━━━━━━━━━━━━━\n` +
@@ -123,7 +123,7 @@ export class OrderService {
       `💰 *Total : ${this.fmt(total)}*\n\n` +
       `Merci de confirmer ma commande 🙏`;
 
-    return `https://wa.me/${phone.replace(/[\s\-\+]/g, '')}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`;
   }
 
   /**
