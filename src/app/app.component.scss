@@ -492,7 +492,7 @@
     }
   }
 
-  .page-container { padding: 16px; }
+  .page-container { padding: 16px; margin-bottom: 60px;}
 
   /* ── Mobile Sticky Orders Bar ─────────────────────────────────────────── */
   .mobile-orders-bar {
@@ -561,14 +561,11 @@
     color: var(--primary);
   }
 
-  /* Hide mobile orders bar on desktop */
-  @media (min-width: 768px) {
-    .mobile-orders-bar {
-      display: none;
-    }
-
-    .page-container{
-      margin-bottom: 60px;
-    }
+  
+}
+/* Hide mobile orders bar on desktop */
+@media (min-width: 768px) {
+  .mobile-orders-bar {
+    display: none;
   }
 }
