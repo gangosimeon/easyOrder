@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 
 export interface OrderItem {
   productId: string;
-  productName: string;
+  productName?: string;
   price: number;
   quantity: number;
   image: string;
@@ -17,8 +17,8 @@ export interface OrderItem {
 export interface Order {
   _id: string;
   shopId: string;
-  customerName: string;
-  customerPhone: string;
+  customerName?: string;
+  customerPhone?: string;
   items: OrderItem[];
   total: number;
   status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
@@ -81,8 +81,8 @@ export class ShopOrdersService {
     return orders.filter(order => {
       // Search filter
       if (search) {
-        const matchName = order.customerName.toLowerCase().includes(search);
-        const matchPhone = order.customerPhone.includes(search);
+        const matchName = order.customerName?.toLowerCase().includes(search) ?? false;
+        const matchPhone = order.customerPhone?.includes(search) ?? false;
         if (!matchName && !matchPhone) return false;
       }
 
@@ -236,7 +236,7 @@ export class ShopOrdersService {
       `💰 *Total : ${this.fmt(order.total)}*\n` +
       `Statut : ${this.getStatusLabel(order.status)}`;
 
-    const cleanPhone = order.customerPhone.replace(/[\s\-\+]/g, '');
+    const cleanPhone = order.customerPhone?.replace(/[\s\-\+]/g, '') || '';
     console.log('Clean phone:', cleanPhone);
     return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
   }

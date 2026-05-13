@@ -76,7 +76,7 @@ export class OrderDetailDrawerComponent implements OnInit {
       `💰 *Total : ${this.fmtPrice()(order.total)}*\n` +
       `Statut : ${this.statusLabel()}`;
 
-    window.open(`https://wa.me/${order.customerPhone.replace(/[\s\-\+]/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://wa.me/${order.customerPhone?.replace(/[\s\-\+]/g, '') || ''}?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   toggleStatusMenu(): void {

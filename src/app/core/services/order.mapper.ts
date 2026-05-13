@@ -4,7 +4,7 @@ import { CartItem } from './cart.service';
 
 export interface OrderItemInput {
   productId: string;
-  productName: string;
+  productName?: string;
   price: number;
   quantity: number;
   image: string;
@@ -12,8 +12,8 @@ export interface OrderItemInput {
 }
 
 export interface CreateOrderInput {
-  customerName: string;
-  customerPhone: string;
+  customerName?: string;
+  customerPhone?: string;
   items: OrderItemInput[];
   total: number;
   note?: string;
@@ -29,7 +29,6 @@ export interface OrderValidationError {
 
 export function validateOrderItem(item: OrderItemInput): OrderValidationError | null {
   if (!item.productId?.trim()) return { field: 'productId', message: 'productId requis' };
-  if (!item.productName?.trim()) return { field: 'productName', message: 'productName requis' };
   if (typeof item.price !== 'number' || item.price < 0) return { field: 'price', message: 'price doit être ≥ 0' };
   if (typeof item.quantity !== 'number' || item.quantity < 1) return { field: 'quantity', message: 'quantity doit être ≥ 1' };
   return null;
@@ -38,10 +37,10 @@ export function validateOrderItem(item: OrderItemInput): OrderValidationError | 
 export function validateCreateOrderInput(input: CreateOrderInput): OrderValidationError[] {
   const errors: OrderValidationError[] = [];
 
-  if (!input.customerName?.trim()) errors.push({ field: 'customerName', message: 'Nom requis' });
-  if (!input.customerPhone?.trim()) errors.push({ field: 'customerPhone', message: 'Téléphone requis' });
-  if (input.customerPhone.trim().replace(/\D/g, '').length < 8) {
-    errors.push({ field: 'customerPhone', message: 'Numéro invalide (min 8 chiffres)' });
+  if (input.customerPhone?.trim()) {
+    if (input.customerPhone.trim().replace(/\D/g, '').length < 8) {
+      errors.push({ field: 'customerPhone', message: 'Numéro invalide (min 8 chiffres)' });
+    }
   }
 
   if (!Array.isArray(input.items) || input.items.length === 0) {
@@ -79,8 +78,8 @@ function mapCartItemToOrderItem(cartItem: CartItem): OrderItemInput {
 // ── Fonction principale : mapCartToCreateOrderInput ─────────────────────────────
 
 export interface MapCartToOrderOptions {
-  customerName: string;
-  customerPhone: string;
+  customerName?: string;
+  customerPhone?: string;
   note?: string;
   whatsappSent: boolean;
 }
@@ -106,16 +105,6 @@ export function mapCartToCreateOrderInput(
     return { success: false, errors: [{ field: 'items', message: 'Panier vide' }] };
   }
 
-  if (!options.customerName?.trim() || !options.customerPhone?.trim()) {
-    return {
-      success: false,
-      errors: [
-        { field: 'customerName', message: 'Nom requis' },
-        { field: 'customerPhone', message: 'Téléphone requis' },
-      ],
-    };
-  }
-
   // 2. Mapping des items avec fallbacks
   const items = cartItems.map(mapCartItemToOrderItem);
 
@@ -127,8 +116,8 @@ export function mapCartToCreateOrderInput(
 
   // 4. Construction payload avec nettoyage
   const payload: CreateOrderInput = {
-    customerName: options.customerName.trim(),
-    customerPhone: options.customerPhone.trim().replace(/[\s\-]/g, ''),
+    customerName: options.customerName?.trim(),
+    customerPhone: options.customerPhone?.trim().replace(/[\s\-]/g, ''),
     items,
     total,
     note: options.note?.trim() || undefined,

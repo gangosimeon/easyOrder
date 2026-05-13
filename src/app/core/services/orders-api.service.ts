@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 
 export interface OrderItem {
   productId: string;
-  productName: string;
+  productName?: string;
   price: number;
   quantity: number;
   image: string;
@@ -18,8 +18,8 @@ export interface OrderItem {
 export interface Order {
   _id: string;
   shopId: string;
-  customerName: string;
-  customerPhone: string;
+  customerName?: string;
+  customerPhone?: string;
   items: OrderItem[];
   total: number;
   status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
@@ -162,7 +162,7 @@ export class OrdersApiService {
       `💰 *Total : ${this.fmt(order.total)}*\n` +
       `Statut : ${order.status.toUpperCase()}`;
 
-    return `https://wa.me/${order.customerPhone.replace(/[\s\-\+]/g, '')}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${order.customerPhone?.replace(/[\s\-\+]/g, '') || ''}?text=${encodeURIComponent(msg)}`;
   }
 
   /**

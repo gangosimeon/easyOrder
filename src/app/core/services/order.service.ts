@@ -19,14 +19,15 @@ export type OrderItem = OrderItemInput;
 export interface OrderResult {
   _id:          string;
   shopId:       string;
-  customerName: string;
-  customerPhone:string;
+  customerName?: string;
+  customerPhone?:string;
   items:        OrderItem[];
   total:        number;
   status:       'pending' | 'confirmed' | 'delivered' | 'cancelled';
   whatsappSent: boolean;
   note?:        string;
   createdAt:    string;
+  updatedAt:    string;
 }
 
 export interface PendingOrder {

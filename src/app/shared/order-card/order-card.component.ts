@@ -25,7 +25,8 @@ export class OrderCardComponent {
   readonly onChangeStatus = output<{ orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }>();
 
   callClient(): void {
-    this.onCall.emit(this.order().customerPhone);
+    const phone = this.order().customerPhone;
+    if (phone) this.onCall.emit(phone);
   }
 
   openWhatsApp(): void {
