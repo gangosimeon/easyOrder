@@ -361,7 +361,7 @@
     }
   }
 }
-.page-container { flex: 1; padding: 32px; }
+.page-container { flex: 1; padding: 32px; min-height: 100vh; }
 .page-container.public-page { padding: 0; overflow: hidden; }
 
 /* ===== RESPONSIVE ===== */
@@ -565,6 +565,10 @@
   @media (min-width: 768px) {
     .mobile-orders-bar {
       display: none;
+    }
+
+    .page-container{
+      margin-bottom: 60px;
     }
   }
 }
