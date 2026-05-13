@@ -52,17 +52,6 @@ export interface JWTPayload {
   slug: string;
 }
 
-function extractShopIdFromToken(): string | null {
-  const token = sessionStorage.getItem('bs_token');
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1])) as JWTPayload;
-    return payload.userId; // userId IS the shopId in this architecture
-  } catch {
-    return null;
-  }
-}
-
 // ── Service ──────────────────────────────────────────────────────────────────
 
 @Injectable({ providedIn: 'root' })
@@ -78,7 +67,6 @@ export class ShopOrdersService {
   readonly currentPage = signal(1);
   readonly pageSize = 20;
   readonly hasMore = signal(true);
-  readonly shopId = signal<string | null>(null);
 
   private refreshTrigger = new Subject<void>();
   private pollingInterval = 30000; // 30 seconds
@@ -115,7 +103,6 @@ export class ShopOrdersService {
   // ── Initialization ───────────────────────────────────────────────────────
 
   constructor() {
-    this.shopId.set(extractShopIdFromToken());
     this.loadOrders();
     this.setupAutoRefresh();
   }
@@ -123,12 +110,7 @@ export class ShopOrdersService {
   // ── Load Orders ─────────────────────────────────────────────────────────
 
   loadOrders(reset = false): void {
-    const shopId = this.shopId();
-    if (!shopId) {
-      this.error.set('Non authentifié - shopId introuvable');
-      return;
-    }
-
+    this.error.set(null);
     if (reset) {
       this.currentPage.set(1);
       this.orders.set([]);
