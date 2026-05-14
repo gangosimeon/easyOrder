@@ -113,4 +113,24 @@ export class AuthService {
     localStorage.removeItem('bs_auth');
     this.router.navigate(['/login']);
   }
+
+  refreshToken(): Observable<AuthResult> {
+    return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/refresh`, {}).pipe(
+      tap(({ user, token }) => {
+        localStorage.setItem('bs_token', token);
+        localStorage.setItem('bs_auth', JSON.stringify(user));
+        this._company.set(user);
+        this._isLoggedIn.set(true);
+      }),
+      map(() => ({ success: true } as AuthResult)),
+      catchError(err => {
+        // Si le refresh échoue, déconnecter l'utilisateur
+        this.logout();
+        return of({
+          success: false,
+          error: 'Session expirée. Veuillez vous reconnecter.',
+        } as AuthResult);
+      })
+    );
+  }
 }
