@@ -103,7 +103,18 @@ export class ShopOrdersService {
   // ── Initialization ───────────────────────────────────────────────────────
 
   constructor() {
-    this.loadOrders();
+    // Wait for token to be available before loading orders
+    const token = sessionStorage.getItem('bs_token');
+    if (token) {
+      this.loadOrders();
+    } else {
+      // Retry after a short delay if token is not yet available
+      setTimeout(() => {
+        if (sessionStorage.getItem('bs_token')) {
+          this.loadOrders();
+        }
+      }, 100);
+    }
     this.setupAutoRefresh();
   }
 
@@ -177,6 +188,8 @@ export class ShopOrdersService {
     interval(this.pollingInterval).pipe(
       switchMap(() => {
         if (document.hidden) return of(null);
+        const token = sessionStorage.getItem('bs_token');
+        if (!token) return of(null);
         this.refreshTrigger.next();
         return this.http.get<PaginatedResponse>(`${environment.apiUrl}/orders`, {
           params: new HttpParams().set('page', '1').set('limit', this.pageSize.toString()),
