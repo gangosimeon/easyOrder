@@ -50,8 +50,8 @@ export class AuthService {
   readonly company    = this._company.asReadonly();
 
   constructor() {
-    const stored = sessionStorage.getItem('bs_auth');
-    const token  = sessionStorage.getItem('bs_token');
+    const stored = localStorage.getItem('bs_auth');
+    const token  = localStorage.getItem('bs_token');
     if (stored && token) {
       try {
         this._company.set(JSON.parse(stored));
@@ -63,8 +63,8 @@ export class AuthService {
   login(phone: string, password: string): Observable<AuthResult> {
     return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/login`, { phone, password }).pipe(
       tap(({ user, token }) => {
-        sessionStorage.setItem('bs_token', token);
-        sessionStorage.setItem('bs_auth', JSON.stringify(user));
+        localStorage.setItem('bs_token', token);
+        localStorage.setItem('bs_auth', JSON.stringify(user));
         this._company.set(user);
         this._isLoggedIn.set(true);
       }),
@@ -79,8 +79,8 @@ export class AuthService {
   register(data: RegisterPayload): Observable<AuthResult> {
     return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/register`, data).pipe(
       tap(({ user, token }) => {
-        sessionStorage.setItem('bs_token', token);
-        sessionStorage.setItem('bs_auth', JSON.stringify(user));
+        localStorage.setItem('bs_token', token);
+        localStorage.setItem('bs_auth', JSON.stringify(user));
         this._company.set(user);
         this._isLoggedIn.set(true);
       }),
@@ -95,7 +95,7 @@ export class AuthService {
   updateProfile(data: Partial<Omit<Company, 'id' | 'phone' | 'slug'>>): Observable<AuthResult> {
     return this.http.put<Company>(`${this.apiUrl}/auth/me`, data).pipe(
       tap(user => {
-        sessionStorage.setItem('bs_auth', JSON.stringify(user));
+        localStorage.setItem('bs_auth', JSON.stringify(user));
         this._company.set(user);
       }),
       map(() => ({ success: true } as AuthResult)),
@@ -109,8 +109,8 @@ export class AuthService {
   logout(): void {
     this._isLoggedIn.set(false);
     this._company.set(null);
-    sessionStorage.removeItem('bs_token');
-    sessionStorage.removeItem('bs_auth');
+    localStorage.removeItem('bs_token');
+    localStorage.removeItem('bs_auth');
     this.router.navigate(['/login']);
   }
 }

@@ -104,13 +104,13 @@ export class ShopOrdersService {
 
   constructor() {
     // Wait for token to be available before loading orders
-    const token = sessionStorage.getItem('bs_token');
+    const token = localStorage.getItem('bs_token');
     if (token) {
       this.loadOrders();
     } else {
       // Retry after a short delay if token is not yet available
       setTimeout(() => {
-        if (sessionStorage.getItem('bs_token')) {
+        if (localStorage.getItem('bs_token')) {
           this.loadOrders();
         }
       }, 100);
@@ -188,7 +188,7 @@ export class ShopOrdersService {
     interval(this.pollingInterval).pipe(
       switchMap(() => {
         if (document.hidden) return of(null);
-        const token = sessionStorage.getItem('bs_token');
+        const token = localStorage.getItem('bs_token');
         if (!token) return of(null);
         this.refreshTrigger.next();
         return this.http.get<PaginatedResponse>(`${environment.apiUrl}/orders`, {
