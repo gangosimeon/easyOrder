@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
@@ -8,6 +8,8 @@ import { CartService } from './core/services/cart.service';
 import { AuthService } from './core/services/auth.service';
 import { ShopOrdersService } from './core/services/shop-orders.service';
 import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
+import { ProductService } from './core/services/product.service';
+import { CategoryService } from './core/services/category.service';
 
 interface NavItem {
   label: string;
@@ -22,15 +24,18 @@ interface NavItem {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   readonly cartService  = inject(CartService);
   readonly authService  = inject(AuthService);
   readonly ordersService = inject(ShopOrdersService);
+  readonly productService = inject(ProductService);
+  readonly categoryService = inject(CategoryService);
   readonly cartCount = toSignal(this.cartService.items$.pipe(map(items => items.length)), { initialValue: 0 });
   readonly pendingOrdersCount = computed(() =>
     this.ordersService.orders().filter(o => o.status === 'pending').length
   );
+  private visibilityHandler?: () => void;
 
   readonly isPublicRoute = signal(
     window.location.pathname.startsWith('/shop') || window.location.pathname.startsWith('/cart')
@@ -72,6 +77,26 @@ export class AppComponent {
       this.isPublicRoute.set(url.startsWith('/shop') || url.startsWith('/cart'));
       this.isAuthRoute.set(pathname.startsWith('/login') || pathname.startsWith('/register') || pathname === '/');
     });
+  }
+
+  ngOnInit(): void {
+    // Reload data when app becomes visible after being hidden
+    this.visibilityHandler = () => {
+      if (!document.hidden && this.authService.isLoggedIn()) {
+        // Reload all data - token refresh will handle expired tokens automatically
+        this.ordersService.reload();
+        this.productService.reload();
+        this.categoryService.reload();
+      }
+    };
+
+    document.addEventListener('visibilitychange', this.visibilityHandler);
+  }
+
+  ngOnDestroy(): void {
+    if (this.visibilityHandler) {
+      document.removeEventListener('visibilitychange', this.visibilityHandler);
+    }
   }
 
   selectPublicCategory(id: string | null): void {

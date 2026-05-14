@@ -43,6 +43,12 @@ export class ProductService {
     });
   }
 
+  reload(): void {
+    if (this.auth.isLoggedIn()) {
+      this.loadAll();
+    }
+  }
+
   getByCategory(categoryId: string): Product[] {
     return this._products().filter(p => p.categoryId === categoryId);
   }

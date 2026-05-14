@@ -36,6 +36,12 @@ export class CategoryService {
     });
   }
 
+  reload(): void {
+    if (this.auth.isLoggedIn()) {
+      this.loadAll();
+    }
+  }
+
   getById(id: string): Category | undefined {
     return this._categories().find(c => c.id === id);
   }
