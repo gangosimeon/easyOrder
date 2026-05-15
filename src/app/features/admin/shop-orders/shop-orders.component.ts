@@ -1,5 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -16,7 +15,6 @@ import { OrderDetailDrawerComponent } from '../../../shared/order-detail-drawer/
   standalone: true,
   imports: [
     FormsModule,
-    MatDialogModule,
     MatIconModule,
     MatButtonModule,
     MatInputModule,
@@ -24,13 +22,13 @@ import { OrderDetailDrawerComponent } from '../../../shared/order-detail-drawer/
     MatFormFieldModule,
     MatProgressSpinnerModule,
     OrderCardComponent,
+    OrderDetailDrawerComponent,
   ],
   templateUrl: './shop-orders.component.html',
   styleUrls: ['./shop-orders.component.scss'],
 })
 export class ShopOrdersComponent implements OnInit {
   private ordersService = inject(ShopOrdersService);
-  private dialog = inject(MatDialog);
 
   // ── State from service ───────────────────────────────────────────────────
 
@@ -46,6 +44,18 @@ export class ShopOrdersComponent implements OnInit {
 
   readonly searchQuery = this.ordersService.searchQuery;
   readonly statusFilter = this.ordersService.statusFilter;
+
+  // ── Detail drawer ────────────────────────────────────────────────────────
+
+  readonly selectedOrder = signal<Order | null>(null);
+  readonly selectedOrderStatusColor = computed(() => {
+    const o = this.selectedOrder();
+    return o ? this.ordersService.getStatusColor(o.status) : '';
+  });
+  readonly selectedOrderStatusLabel = computed(() => {
+    const o = this.selectedOrder();
+    return o ? this.ordersService.getStatusLabel(o.status) : '';
+  });
 
   // ── Initialization ───────────────────────────────────────────────────────
 
@@ -101,29 +111,18 @@ export class ShopOrdersComponent implements OnInit {
   }
 
   onOpenDetail(order: Order): void {
-    this.dialog.open(OrderDetailDrawerComponent, {
-      panelClass: 'order-drawer',
-      position: { bottom: '0' },
-      maxWidth: '100vw',
-      width: '100%',
-      height: 'auto',
-      data: {
-        order,
-        statusColor: this.ordersService.getStatusColor(order.status),
-        statusLabel: this.ordersService.getStatusLabel(order.status),
-        formatDate: (d: string) => this.ordersService.formatDate(d),
-        fmtPrice: (p: number) => this.ordersService.fmt(p),
-      },
-    }).afterClosed().subscribe(result => {
-      console.log('Drawer result:', result);
-      if (result?.action === 'updateStatus') {
-        this.ordersService.updateOrderStatus(result.orderId, result.status).subscribe();
-      }
-    });
+    this.selectedOrder.set(order);
+  }
+
+  closeOrderDetail(): void {
+    this.selectedOrder.set(null);
+  }
+
+  onStatusChangedFromDrawer(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
+    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe();
   }
 
   onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
-    console.log('Changing status for order:', data.orderId, data.status);
     this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe();
   }
 

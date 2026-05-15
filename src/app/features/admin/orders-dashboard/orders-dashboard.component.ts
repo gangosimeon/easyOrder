@@ -1,5 +1,4 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -16,7 +15,6 @@ import { OrderDetailDrawerComponent } from '../../../shared/order-detail-drawer/
   standalone: true,
   imports: [
     FormsModule,
-    MatDialogModule,
     MatIconModule,
     MatButtonModule,
     MatInputModule,
@@ -24,13 +22,13 @@ import { OrderDetailDrawerComponent } from '../../../shared/order-detail-drawer/
     MatFormFieldModule,
     MatProgressSpinnerModule,
     OrderCardComponent,
+    OrderDetailDrawerComponent,
   ],
   templateUrl: './orders-dashboard.component.html',
   styleUrls: ['./orders-dashboard.component.scss'],
 })
 export class OrdersDashboardComponent implements OnInit {
   private ordersApi = inject(OrdersApiService);
-  private dialog = inject(MatDialog);
 
   // ── State from service ───────────────────────────────────────────────────
 
@@ -40,6 +38,18 @@ export class OrdersDashboardComponent implements OnInit {
   readonly hasMore    = this.ordersApi.hasMore;
   readonly totalCount = this.ordersApi.totalCount;
   readonly skeletonRows = Array(4).fill(0);
+
+  // ── Detail drawer ────────────────────────────────────────────────────────
+
+  readonly selectedOrder = signal<Order | null>(null);
+  readonly selectedOrderStatusColor = computed(() => {
+    const o = this.selectedOrder();
+    return o ? this.ordersApi.getStatusColor(o.status) : '';
+  });
+  readonly selectedOrderStatusLabel = computed(() => {
+    const o = this.selectedOrder();
+    return o ? this.ordersApi.getStatusLabel(o.status) : '';
+  });
 
   // ── Filters ───────────────────────────────────────────────────────────────
 
@@ -139,25 +149,15 @@ export class OrdersDashboardComponent implements OnInit {
   }
 
   onOpenDetail(order: Order): void {
-    this.dialog.open(OrderDetailDrawerComponent, {
-      panelClass: 'order-drawer',
-      position: { bottom: '0' },
-      maxWidth: '100vw',
-      width: '100%',
-      height: 'auto',
-      data: {
-        order,
-        statusColor: this.ordersApi.getStatusColor(order.status),
-        statusLabel: this.ordersApi.getStatusLabel(order.status),
-        formatDate: (d: string) => this.ordersApi.formatDate(d),
-        fmtPrice: (p: number) => this.ordersApi.fmt(p),
-      },
-    }).afterClosed().subscribe(result => {
-      console.log('Drawer result:', result);
-      if (result?.action === 'updateStatus') {
-        this.ordersApi.updateOrderStatus(result.orderId, result.status).subscribe();
-      }
-    });
+    this.selectedOrder.set(order);
+  }
+
+  closeOrderDetail(): void {
+    this.selectedOrder.set(null);
+  }
+
+  onStatusChangedFromDrawer(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
+    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe();
   }
 
   onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
@@ -166,21 +166,10 @@ export class OrdersDashboardComponent implements OnInit {
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
-  getStatusColor(status: string): string {
-    return this.ordersApi.getStatusColor(status);
-  }
-
-  getStatusLabel(status: string): string {
-    return this.ordersApi.getStatusLabel(status);
-  }
-
-  formatDate(dateStr: string): string {
-    return this.ordersApi.formatDate(dateStr);
-  }
-
-  fmtPrice(price: number): string {
-    return this.ordersApi.fmt(price);
-  }
+  readonly getStatusColor = (status: string): string => this.ordersApi.getStatusColor(status);
+  readonly getStatusLabel = (status: string): string => this.ordersApi.getStatusLabel(status);
+  readonly formatDate     = (d: string): string      => this.ordersApi.formatDate(d);
+  readonly fmtPrice       = (p: number): string      => this.ordersApi.fmt(p);
 
   // ── Infinite Scroll ───────────────────────────────────────────────────────
 

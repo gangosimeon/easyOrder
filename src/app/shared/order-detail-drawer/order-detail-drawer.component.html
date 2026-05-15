@@ -1,13 +1,16 @@
-@if (order()) {
+@if (order) {
+  <!-- Backdrop -->
+  <div class="od-backdrop" (click)="close()"></div>
+
   <!-- Sheet -->
-  <div class="od-sheet" role="dialog" aria-modal="true">
+  <div class="od-sheet" (click)="stopProp($event)" role="dialog" aria-modal="true">
 
     <!-- Hero -->
-    <div class="od-hero" [style.background]="statusColor() + '22'">
+    <div class="od-hero" [style.background]="statusColor + '22'">
 
       <!-- Items images mosaic -->
       <div class="od-hero-imgs">
-        @for (item of order()!.items.slice(0, 4); track item.productId) {
+        @for (item of order.items.slice(0, 4); track item.productId) {
           @if (item.image) {
             <img class="od-hero-img" [src]="item.image" [alt]="item.productName" loading="lazy" />
           } @else {
@@ -17,8 +20,8 @@
       </div>
 
       <!-- Status badge -->
-      <div class="od-status-ribbon" [style.background]="statusColor()">
-        {{ statusLabel() }}
+      <div class="od-status-ribbon" [style.background]="statusColor">
+        {{ statusLabel }}
       </div>
 
       <!-- Close button -->
@@ -28,24 +31,24 @@
     </div>
 
     <!-- Order ID pill -->
-    <div class="od-id-pill" [style.background]="statusColor() + '18'" [style.color]="statusColor()">
+    <div class="od-id-pill" [style.background]="statusColor + '18'" [style.color]="statusColor">
       <mat-icon>receipt_long</mat-icon>
-      {{ displayOrderId() }} · {{ formatDate()(order()!.createdAt) }}
+      {{ displayOrderId }} · {{ formatDate(order.createdAt) }}
     </div>
 
     <!-- Body -->
     <div class="od-body">
 
       <!-- Client section -->
-      <h2 class="od-client-name">{{ order()!.customerName }}</h2>
+      <h2 class="od-client-name">{{ order.customerName }}</h2>
       <div class="od-chips">
         <span class="od-chip">
           <mat-icon>call</mat-icon>
-          {{ order()!.customerPhone }}
+          {{ order.customerPhone }}
         </span>
         <span class="od-chip">
           <mat-icon>shopping_bag</mat-icon>
-          {{ order()!.items.length }} article{{ order()!.items.length > 1 ? 's' : '' }}
+          {{ order.items.length }} article{{ order.items.length > 1 ? 's' : '' }}
         </span>
       </div>
 
@@ -69,7 +72,7 @@
       <!-- Items list -->
       <h3 class="od-section-title">Articles</h3>
       <div class="od-items-list">
-        @for (item of order()!.items; track item.productId) {
+        @for (item of order.items; track item.productId) {
           <div class="od-item-row">
             @if (item.image) {
               <img class="od-item-img" [src]="item.image" [alt]="item.productName" loading="lazy" />
@@ -80,23 +83,23 @@
               <span class="od-item-name">{{ item.productName }}</span>
               <span class="od-item-meta">{{ item.unit }} · ×{{ item.quantity }}</span>
             </div>
-            <span class="od-item-price">{{ fmtPrice()(item.price * item.quantity) }}</span>
+            <span class="od-item-price">{{ fmtPrice(item.price * item.quantity) }}</span>
           </div>
         }
       </div>
 
       <!-- Note -->
-      @if (order()!.note) {
+      @if (order.note) {
         <p class="od-note">
           <mat-icon>sticky_note_2</mat-icon>
-          {{ order()!.note }}
+          {{ order.note }}
         </p>
       }
 
       <!-- Total -->
       <div class="od-total-row">
         <span class="od-total-label">Total</span>
-        <span class="od-total-value" [style.color]="statusColor()">{{ fmtPrice()(order()!.total) }}</span>
+        <span class="od-total-value" [style.color]="statusColor">{{ fmtPrice(order.total) }}</span>
       </div>
 
     </div>

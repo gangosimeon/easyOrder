@@ -112,3 +112,13 @@
     </div>
   }
 </div>
+
+<app-order-detail-drawer
+  [order]="selectedOrder()"
+  [statusColor]="selectedOrderStatusColor()"
+  [statusLabel]="selectedOrderStatusLabel()"
+  [formatDate]="formatDate"
+  [fmtPrice]="fmtPrice"
+  (closed)="closeOrderDetail()"
+  (statusChanged)="onStatusChangedFromDrawer($event)">
+</app-order-detail-drawer>
