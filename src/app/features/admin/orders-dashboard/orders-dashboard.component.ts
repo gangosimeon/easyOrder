@@ -34,11 +34,12 @@ export class OrdersDashboardComponent implements OnInit {
 
   // ── State from service ───────────────────────────────────────────────────
 
-  readonly loading = this.ordersApi.loading;
-  readonly error = this.ordersApi.error;
-  readonly orders = this.ordersApi.orders;
-  readonly hasMore = this.ordersApi.hasMore;
+  readonly loading    = this.ordersApi.loading;
+  readonly error      = this.ordersApi.error;
+  readonly orders     = this.ordersApi.orders;
+  readonly hasMore    = this.ordersApi.hasMore;
   readonly totalCount = this.ordersApi.totalCount;
+  readonly skeletonRows = Array(4).fill(0);
 
   // ── Filters ───────────────────────────────────────────────────────────────
 

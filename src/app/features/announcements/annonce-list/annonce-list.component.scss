@@ -463,3 +463,80 @@
     -webkit-line-clamp: 1;
   }
 }
+
+// ── Skeleton ─────────────────────────────────────────
+
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+$skel: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+
+.skel-block {
+  background: $skel;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.skel-line {
+  background: $skel;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+  height: 12px;
+}
+
+.skel-ann-card {
+  display: flex;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+
+.skel-stripe {
+  width: 5px;
+  flex-shrink: 0;
+  background: $skel;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skel-ann-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 16px 16px 18px;
+  flex: 1;
+}
+
+.skel-emoji-box { width: 56px; height: 56px; border-radius: var(--radius-sm); }
+
+.skel-ann-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skel-meta-row { display: flex; gap: 8px; }
+
+.skel-type-badge  { width: 80px;  height: 22px; border-radius: 20px; }
+.skel-status-pill { width: 60px;  height: 22px; border-radius: 20px; }
+.skel-title-line  { width: 55%; }
+.skel-msg-line-1  { width: 80%; }
+.skel-msg-line-2  { width: 60%; }
+.skel-date-line   { width: 35%; margin-top: 4px; }
+
+.skel-ann-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.skel-act-btn { width: 32px; height: 32px; border-radius: 8px; }

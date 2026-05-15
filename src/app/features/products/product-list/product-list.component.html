@@ -61,6 +61,21 @@
 
   <!-- Products -->
   <div class="products-grid">
+    @if (loading()) {
+      @for (row of skeletonRows; track $index) {
+        <div class="skel-product-card">
+          <div class="skel-product-image"></div>
+          <div class="skel-product-info">
+            <div class="skel-line skel-prod-name"></div>
+            <div class="skel-line skel-prod-desc"></div>
+            <div class="skel-line skel-prod-price"></div>
+            <div class="skel-prod-footer">
+              <div class="skel-block skel-stock-badge"></div>
+            </div>
+          </div>
+        </div>
+      }
+    } @else {
     @for (product of filteredProducts(); track product.id) {
       <div class="product-card card-item" [class.out-of-stock]="!product.inStock">
 
@@ -146,6 +161,7 @@
           <mat-icon>add</mat-icon> Ajouter un produit
         </button>
       </div>
+    }
     }
   </div>
 

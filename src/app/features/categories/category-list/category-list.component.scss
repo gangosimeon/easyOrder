@@ -246,6 +246,71 @@
   width: 100%;
 }
 
+// ── Skeleton ─────────────────────────────────────────
+
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+$skel: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+
+.skel-block {
+  background: $skel;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.skel-line {
+  background: $skel;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+  height: 12px;
+}
+
+.skel-category-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.skel-cat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  margin: 24px 20px 16px;
+}
+
+.skel-cat-info {
+  padding: 0 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.skel-cat-name   { width: 55%; height: 14px; }
+.skel-cat-desc-1 { width: 80%; }
+.skel-cat-desc-2 { width: 65%; }
+
+.skel-cat-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 12px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.skel-cat-count { width: 80px; }
+.skel-cat-arrow { width: 22px; height: 22px; border-radius: 50%; }
+
 @media (max-width: 768px) {
   .page-title {
     font-size: 22px !important;

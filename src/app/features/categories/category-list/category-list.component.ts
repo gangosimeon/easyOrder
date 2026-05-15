@@ -34,8 +34,10 @@ export class CategoryListComponent {
   private router          = inject(Router);
 
   // Signals consommés directement dans le template
-  readonly categories = this.categoryService.categories;
-  readonly count      = this.categoryService.count;
+  readonly categories   = this.categoryService.categories;
+  readonly loading      = this.categoryService.loading;
+  readonly count        = this.categoryService.count;
+  readonly skeletonRows = Array(6).fill(0);
 
   // Signal calculé : stats par catégorie pour la barre
   readonly statsBar = computed(() =>

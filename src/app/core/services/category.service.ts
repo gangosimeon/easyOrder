@@ -14,9 +14,11 @@ export class CategoryService {
   private auth = inject(AuthService);
 
   private _categories = signal<Category[]>([]);
+  private _loading    = signal(false);
 
   private readonly apiUrl = environment.apiUrl;
   readonly categories = this._categories.asReadonly();
+  readonly loading    = this._loading.asReadonly();
   readonly count      = computed(() => this._categories().length);
 
   constructor() {
@@ -30,9 +32,10 @@ export class CategoryService {
   }
 
   private loadAll(): void {
+    this._loading.set(true);
     this.http.get<Category[]>(`${this.apiUrl}/categories`).subscribe({
-      next: cats => this._categories.set(cats.map(parseCategory)),
-      error: ()  => this._categories.set([]),
+      next: cats => { this._categories.set(cats.map(parseCategory)); this._loading.set(false); },
+      error: ()  => { this._categories.set([]); this._loading.set(false); },
     });
   }
 

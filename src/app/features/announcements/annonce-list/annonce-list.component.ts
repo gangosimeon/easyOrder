@@ -35,6 +35,8 @@ export class AnnonceListComponent {
   readonly annonces      = this.annonceService.annonces;
   readonly countActives  = this.annonceService.countActives;
   readonly epinglees     = this.annonceService.epinglees;
+  readonly loading       = this.annonceService.loading;
+  readonly skeletonRows  = Array(4).fill(0);
 
   activeFilter = signal<FilterTab>('toutes');
 

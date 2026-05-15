@@ -59,6 +59,32 @@
 
   <!-- Liste des annonces -->
   <div class="annonces-list">
+    @if (loading()) {
+      @for (row of skeletonRows; track $index) {
+        <div class="skel-ann-card">
+          <div class="skel-stripe"></div>
+          <div class="skel-ann-body">
+            <div class="skel-block skel-emoji-box"></div>
+            <div class="skel-ann-content">
+              <div class="skel-meta-row">
+                <div class="skel-block skel-type-badge"></div>
+                <div class="skel-block skel-status-pill"></div>
+              </div>
+              <div class="skel-line skel-title-line"></div>
+              <div class="skel-line skel-msg-line-1"></div>
+              <div class="skel-line skel-msg-line-2"></div>
+              <div class="skel-line skel-date-line"></div>
+            </div>
+            <div class="skel-ann-actions">
+              <div class="skel-block skel-act-btn"></div>
+              <div class="skel-block skel-act-btn"></div>
+              <div class="skel-block skel-act-btn"></div>
+              <div class="skel-block skel-act-btn"></div>
+            </div>
+          </div>
+        </div>
+      }
+    } @else {
     @for (ann of filteredAnnonces(); track ann.id) {
       <div class="annonce-card card-item"
            [class.inactive]="!ann.active || isExpired(ann)"
@@ -158,6 +184,7 @@
           <mat-icon>add</mat-icon> Créer une annonce
         </button>
       </div>
+    }
     }
   </div>
 

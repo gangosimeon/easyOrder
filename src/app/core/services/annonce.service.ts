@@ -19,8 +19,10 @@ export class AnnonceService {
   private auth = inject(AuthService);
 
   private _annonces = signal<Annonce[]>([]);
+  private _loading  = signal(false);
   private readonly apiUrl = environment.apiUrl;
   readonly annonces     = this._annonces.asReadonly();
+  readonly loading      = this._loading.asReadonly();
   readonly actives      = computed(() => this._annonces().filter(a => a.active));
   readonly epinglees    = computed(() => this._annonces().filter(a => a.epinglee && a.active));
   readonly count        = computed(() => this._annonces().length);
@@ -37,9 +39,10 @@ export class AnnonceService {
   }
 
   private loadAll(): void {
+    this._loading.set(true);
     this.http.get<Annonce[]>(`${this.apiUrl}/annonces`).subscribe({
-      next: list => this._annonces.set(list.map(parseAnnonce)),
-      error: ()  => this._annonces.set([]),
+      next: list => { this._annonces.set(list.map(parseAnnonce)); this._loading.set(false); },
+      error: ()  => { this._annonces.set([]); this._loading.set(false); },
     });
   }
 

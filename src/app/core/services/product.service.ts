@@ -14,9 +14,11 @@ export class ProductService {
   private auth = inject(AuthService);
 
   private _products = signal<Product[]>([]);
+  private _loading  = signal(false);
 
   private readonly apiUrl = environment.apiUrl;
   readonly products = this._products.asReadonly();
+  readonly loading  = this._loading.asReadonly();
 
   readonly countByCategory = computed(() => {
     const map = new Map<string, number>();
@@ -37,9 +39,10 @@ export class ProductService {
   }
 
   private loadAll(): void {
+    this._loading.set(true);
     this.http.get<Product[]>(`${this.apiUrl}/products`).subscribe({
-      next: prods => this._products.set(prods.map(parseProduct)),
-      error: ()   => this._products.set([]),
+      next: prods => { this._products.set(prods.map(parseProduct)); this._loading.set(false); },
+      error: ()   => { this._products.set([]); this._loading.set(false); },
     });
   }
 

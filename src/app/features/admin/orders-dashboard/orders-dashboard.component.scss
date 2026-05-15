@@ -117,21 +117,119 @@
   }
 }
 
-/* ── Loading State ─────────────────────────────────────────────────────── */
+/* ── Skeleton ──────────────────────────────────────────────────────────── */
 
-.loading-state {
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+$skel: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+
+.skel-block {
+  background: $skel;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.skel-line {
+  background: $skel;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+  height: 12px;
+}
+
+.skeleton-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  gap: 16px;
-
-  span {
-    font-size: 14px;
-    color: #6b7280;
-  }
+  gap: 12px;
 }
+
+.skel-order-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f3f4f6;
+}
+
+.skel-order-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.skel-client-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skel-client-name  { width: 55%; height: 14px; }
+.skel-phone        { width: 40%; }
+.skel-status-badge { width: 80px; height: 28px; border-radius: 20px; }
+
+.skel-items-preview {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.skel-img-strip {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.skel-strip-img { width: 40px; height: 40px; border-radius: 8px; }
+
+.skel-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  &:last-child { margin-bottom: 0; }
+}
+
+.skel-item-name-wide  { flex: 1; max-width: 65%; }
+.skel-item-name-mid   { flex: 1; max-width: 50%; }
+.skel-item-name-short { flex: 1; max-width: 40%; }
+.skel-item-qty        { width: 24px; flex-shrink: 0; }
+
+.skel-order-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.skel-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skel-total { width: 45%; height: 16px; }
+.skel-time  { width: 30%; }
+
+.skel-quick-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.skel-action-btn { width: 40px; height: 40px; border-radius: 50%; }
 
 /* ── Empty State ───────────────────────────────────────────────────────── */
 

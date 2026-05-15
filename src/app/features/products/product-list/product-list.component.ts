@@ -59,8 +59,10 @@ export class ProductListComponent implements OnInit {
   });
 
   // Signals dérivés des services
-  readonly categories = this.categoryService.categories;
+  readonly categories  = this.categoryService.categories;
   readonly allProducts = this.productService.products;
+  readonly loading     = this.productService.loading;
+  readonly skeletonRows = Array(8).fill(0);
 
   // ✅ Angular 20 — computed() pour le filtrage réactif
   readonly filteredProducts = computed(() => {
