@@ -9,19 +9,127 @@
   font-family: var(--font-body);
 }
 
-/* ----- Loading / Error ----- */
-.loading-container {
+/* ----- Skeleton Loading ----- */
+
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+$skel-gradient: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+
+.skel-block,
+.skel-line {
+  background: $skel-gradient;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.shop-skeleton {
+  padding: 0;
+}
+
+.skel-section {
+  padding: 10px 16px;
+}
+
+// ── Annonces skeleton ──
+.skel-ann-section {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  padding: 10px 16px 6px;
+}
+
+.skel-ann-card {
+  background: #fafafa;
+  border-left: 4px solid #e8e8e8;
+  border-radius: 0 8px 8px 0;
+  padding: 10px 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skel-ann-meta {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 80px 20px;
-  color: var(--text-secondary);
-  p {
-    font-size: 15px;
+  gap: 8px;
+}
+
+.skel-emoji       { width: 28px; height: 28px; border-radius: 50%; }
+.skel-type-label  { height: 10px; width: 90px; }
+.skel-ann-title   { height: 13px; width: 70%; }
+.skel-ann-body    { height: 11px; width: 90%; }
+.skel-short       { width: 55%; }
+
+// ── Catégories skeleton ──
+.skel-cats-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px 8px;
+}
+
+.skel-cat-chip { width: 80px; height: 32px; border-radius: 20px; }
+
+// ── Produits skeleton ──
+.skel-products-section {
+  padding: 8px 16px 24px;
+}
+
+.skel-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.skel-cat-icon { width: 20px; height: 20px; border-radius: 4px; }
+.skel-cat-name { height: 14px; width: 120px; }
+
+.skel-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 }
+
+.skel-product-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 2px solid #f0f0f0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.skel-product-img {
+  width: 100%;
+  height: 200px;
+  border-radius: 0;
+
+  @media (min-width: 769px) {
+    height: 250px;
+  }
+}
+
+.skel-product-info {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skel-product-name  { height: 13px; width: 80%; }
+.skel-product-price { height: 15px; width: 55%; }
+.skel-add-pill      { height: 34px; border-radius: 12px; margin-top: 4px; }
 
 .error-state {
   display: flex;

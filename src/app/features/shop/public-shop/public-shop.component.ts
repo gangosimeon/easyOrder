@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PublicShopService, ShopData } from '../../../core/services/public-shop.service';
 import { CartService } from '../../../core/services/cart.service';
@@ -25,7 +24,6 @@ registerLocaleData(localeFr);
   imports: [
     MatIconModule,
     MatButtonModule,
-    MatProgressSpinnerModule,
     MatSnackBarModule,
     MatRippleModule,
     ProductDetailModalComponent,
@@ -43,6 +41,9 @@ export class PublicShopComponent implements OnInit {
   private visitorService = inject(VisitorService);
 
   readonly ANNONCE_TYPE_CONFIG = ANNONCE_TYPE_CONFIG;
+  readonly skeletonAnn      = Array(2).fill(0);
+  readonly skeletonCats     = Array(4).fill(0);
+  readonly skeletonProducts = Array(4).fill(0);
 
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);

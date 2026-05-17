@@ -8,7 +8,26 @@
       [style.--cover-color]="coverColor()"
     >
       <div class="header-bg"></div>
-      @if (isPublicRoute()) {
+      @if (isPublicRoute() && !cartService.company()) {
+        <!-- ── SIDEBAR SKELETON ── -->
+        <div class="skel-sidebar-logo">
+          <div class="skel-white skel-sidebar-avatar"></div>
+          <div class="skel-sidebar-meta">
+            <div class="skel-white skel-sidebar-name"></div>
+            <div class="skel-white skel-sidebar-desc"></div>
+            <div class="skel-white skel-sidebar-loc"></div>
+          </div>
+        </div>
+        <div class="skel-sidebar-nav">
+          @for (i of [0,1,2,3,4]; track i) {
+            <div class="skel-nav-item">
+              <div class="skel-white skel-nav-icon"></div>
+              <div class="skel-white skel-nav-label"></div>
+            </div>
+          }
+        </div>
+
+      } @else if (isPublicRoute()) {
         <!-- ── SIDEBAR PUBLIQUE ── -->
         <div class="sidebar-logo">
           <div class="shop-logo">
@@ -178,7 +197,22 @@
       >
         <div class="header-bg"></div>
         <div class="header-content">
-          @if (isPublicRoute()) {
+          @if (isPublicRoute() && !cartService.company()) {
+            <!-- ── MOBILE HEADER SKELETON ── -->
+            <div class="skel-mobile-logo">
+              <div class="skel-white skel-mobile-avatar"></div>
+              <div class="skel-mobile-meta">
+                <div class="skel-white skel-mobile-name"></div>
+                <div class="skel-white skel-mobile-desc"></div>
+              </div>
+            </div>
+            <div class="skel-mobile-nav">
+              @for (i of [0,1,2]; track i) {
+                <div class="skel-white skel-mobile-nav-item"></div>
+              }
+            </div>
+
+          } @else if (isPublicRoute()) {
             <!-- ── MOBILE HEADER PUBLIC ── -->
             <div class="mobile-logo">
               <div class="shop-logo">

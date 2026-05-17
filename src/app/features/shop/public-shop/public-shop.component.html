@@ -1,8 +1,49 @@
-<!-- ===== LOADING ===== -->
+<!-- ===== SKELETON LOADING ===== -->
 @if (loading()) {
-  <div class="loading-container">
-    <mat-spinner diameter="48" />
-    <p>Chargement de la boutique...</p>
+  <div class="shop-skeleton">
+
+    <!-- Skeleton annonces -->
+    <div class="skel-section skel-ann-section">
+      @for (i of skeletonAnn; track $index) {
+        <div class="skel-ann-card">
+          <div class="skel-ann-meta">
+            <div class="skel-block skel-emoji"></div>
+            <div class="skel-line skel-type-label"></div>
+          </div>
+          <div class="skel-line skel-ann-title"></div>
+          <div class="skel-line skel-ann-body"></div>
+          <div class="skel-line skel-ann-body skel-short"></div>
+        </div>
+      }
+    </div>
+
+    <!-- Skeleton catégories -->
+    <div class="skel-section skel-cats-section">
+      @for (i of skeletonCats; track $index) {
+        <div class="skel-block skel-cat-chip"></div>
+      }
+    </div>
+
+    <!-- Skeleton produits -->
+    <div class="skel-section skel-products-section">
+      <div class="skel-cat-header">
+        <div class="skel-block skel-cat-icon"></div>
+        <div class="skel-line skel-cat-name"></div>
+      </div>
+      <div class="skel-products-grid">
+        @for (i of skeletonProducts; track $index) {
+          <div class="skel-product-card">
+            <div class="skel-block skel-product-img"></div>
+            <div class="skel-product-info">
+              <div class="skel-line skel-product-name"></div>
+              <div class="skel-line skel-product-price"></div>
+              <div class="skel-block skel-add-pill"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
   </div>
 }
 

@@ -20,24 +20,64 @@ export interface CompanyRef {
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private _items = new BehaviorSubject<CartItem[]>([]);
+  private readonly COMPANY_KEY = 'shop_company_ref';
+  private readonly CART_KEY    = 'shop_cart_items';
+
+  private _items = new BehaviorSubject<CartItem[]>(this._restoreItems());
   readonly items$ = this._items.asObservable();
 
-  private _company = signal<CompanyRef | null>(null);
+  constructor() {
+    this._items.subscribe(items => {
+      try { localStorage.setItem(this.CART_KEY, JSON.stringify(items)); } catch { /* ignore */ }
+    });
+  }
+
+  private _restoreItems(): CartItem[] {
+    try {
+      const raw = localStorage.getItem(this.CART_KEY);
+      return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private _company = signal<CompanyRef | null>(this._restoreCompany());
   readonly company = this._company.asReadonly();
+
+  private _restoreCompany(): CompanyRef | null {
+    try {
+      const raw = localStorage.getItem(this.COMPANY_KEY);
+      return raw ? (JSON.parse(raw) as CompanyRef) : null;
+    } catch {
+      return null;
+    }
+  }
 
   setCompany(info: CompanyRef): void {
     this._company.set(info);
+    try { localStorage.setItem(this.COMPANY_KEY, JSON.stringify(info)); } catch { /* ignore */ }
   }
 
-  private _categories = signal<Category[]>([]);
+  private readonly CATEGORIES_KEY = 'shop_categories';
+
+  private _categories = signal<Category[]>(this._restoreCategories());
   readonly categories = this._categories.asReadonly();
+
+  private _restoreCategories(): Category[] {
+    try {
+      const raw = localStorage.getItem(this.CATEGORIES_KEY);
+      return raw ? (JSON.parse(raw) as Category[]) : [];
+    } catch {
+      return [];
+    }
+  }
 
   private _selectedCategoryId = signal<string | null>(null);
   readonly selectedCategoryId = this._selectedCategoryId.asReadonly();
 
   setCategories(cats: Category[]): void {
     this._categories.set(cats);
+    try { localStorage.setItem(this.CATEGORIES_KEY, JSON.stringify(cats)); } catch { /* ignore */ }
   }
 
   selectCategory(id: string | null): void {
