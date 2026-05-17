@@ -10,6 +10,7 @@ import { ShopOrdersService } from './core/services/shop-orders.service';
 import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
 import { ProductService } from './core/services/product.service';
 import { CategoryService } from './core/services/category.service';
+import { PushNotificationService } from './core/services/push-notification.service';
 
 interface NavItem {
   label: string;
@@ -31,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly ordersService = inject(ShopOrdersService);
   readonly productService = inject(ProductService);
   readonly categoryService = inject(CategoryService);
+  private readonly pushService = inject(PushNotificationService);
   readonly cartCount = toSignal(this.cartService.items$.pipe(map(items => items.length)), { initialValue: 0 });
   readonly pendingOrdersCount = computed(() =>
     this.ordersService.orders().filter(o => o.status === 'pending').length
@@ -80,10 +82,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Initialiser les push notifications si l'utilisateur est déjà connecté
+    if (this.authService.isLoggedIn()) {
+      this.pushService.init();
+    }
+
     // Reload data when app becomes visible after being hidden
     this.visibilityHandler = () => {
       if (!document.hidden && this.authService.isLoggedIn()) {
-        // Reload all data - token refresh will handle expired tokens automatically
         this.ordersService.reload();
         this.productService.reload();
         this.categoryService.reload();

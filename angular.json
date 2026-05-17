@@ -31,7 +31,8 @@
               { "glob": "robots.txt", "input": "src", "output": "" },
               { "glob": "sitemap.xml", "input": "src", "output": "" },
               { "glob": "google*.html", "input": "src", "output": "" },
-              { "glob": "manifest.webmanifest", "input": "src", "output": "" }
+              { "glob": "manifest.webmanifest", "input": "src", "output": "" },
+              { "glob": "push-sw.js", "input": "src", "output": "" }
             ],
             "styles": [
               "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",

@@ -5,7 +5,6 @@ Application de gestion moderne pour une petite boutique au Burkina Faso.
 Design warm African-inspired, mobile-first, entièrement en localStorage.
 
 ---
-# old front url =  https://easyorder-l6ec.onrender.com
 ## 🚀 Lancer le projet
 
 ```bash

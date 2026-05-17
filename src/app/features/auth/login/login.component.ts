@@ -7,6 +7,7 @@ import { MatButtonModule }          from '@angular/material/button';
 import { MatIconModule }            from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService }              from '../../../core/services/auth.service';
+import { PushNotificationService }  from '../../../core/services/push-notification.service';
 import { LandingNavComponent } from '../../landing/components/landing-nav/landing-nav.component';
 
 @Component({
@@ -25,6 +26,7 @@ export class LoginComponent {
   private fb   = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private pushService = inject(PushNotificationService);
 
   readonly form = this.fb.group({
     phone:    ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]],
@@ -46,6 +48,7 @@ export class LoginComponent {
     this.auth.login(phone!, password!).subscribe(result => {
       this.loading.set(false);
       if (result.success) {
+        this.pushService.init();
         this.router.navigate(['/categories']);
       } else {
         this.errorMsg.set(result.error ?? 'Erreur de connexion');
