@@ -147,7 +147,6 @@ export class ShopOrdersService {
           this.loading.set(false);
         }),
         catchError(err => {
-          console.error('[ShopOrdersService.loadOrders]', err);
           this.error.set('Erreur lors du chargement des commandes');
           this.loading.set(false);
           return of(null);
@@ -202,7 +201,6 @@ export class ShopOrdersService {
         }
       }),
       catchError(err => {
-        console.error('[ShopOrdersService.autoRefresh]', err);
         return of(null);
       }),
     ).subscribe();
@@ -223,7 +221,6 @@ export class ShopOrdersService {
         );
       }),
       catchError(err => {
-        console.error('[ShopOrdersService.updateOrderStatus]', err);
         this.error.set('Erreur lors de la mise à jour du statut');
         throw err;
       }),
@@ -233,7 +230,6 @@ export class ShopOrdersService {
   // ── Quick Actions ───────────────────────────────────────────────────────
 
   buildWhatsAppUrl(order: Order): string {
-    console.log('Order data:', order);
     const orderId = (order as any)._id || (order as any).id || '';
     const lines = order.items
       .map(i => `• *${i.productName}* ×${i.quantity} — ${this.fmt(i.price * i.quantity)}`)
@@ -250,7 +246,6 @@ export class ShopOrdersService {
       `Statut : ${this.getStatusLabel(order.status)}`;
 
     const cleanPhone = order.customerPhone?.replace(/[\s\-\+]/g, '') || '';
-    console.log('Clean phone:', cleanPhone);
     return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
   }
 

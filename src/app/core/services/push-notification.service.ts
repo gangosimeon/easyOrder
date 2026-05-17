@@ -36,19 +36,15 @@ export class PushNotificationService implements OnDestroy {
 
     // Vérifier le support navigateur
     if (!('Notification' in window) || !('serviceWorker' in navigator)) {
-      console.warn('[Push] API Notification ou ServiceWorker non supportée');
       return;
     }
 
     if (Notification.permission === 'denied') {
-      console.info('[Push] Notifications refusées par l\'utilisateur');
       return;
     }
 
     // La subscription push nécessite le Service Worker actif (build production)
     if (!this.swPush.isEnabled) {
-      console.info('[Push] SwPush non actif — les notifications push nécessitent un build production');
-      // Demander quand même la permission pour préparer l'utilisateur
       Notification.requestPermission();
       return;
     }
@@ -59,23 +55,17 @@ export class PushNotificationService implements OnDestroy {
 
       const vapidPublicKey = environment.vapidPublicKey;
       if (!vapidPublicKey) {
-        console.error('[Push] vapidPublicKey manquant dans environment');
         return;
       }
 
       // requestSubscription gère la permission + subscription en une seule étape
       const subscription = await this.swPush.requestSubscription({ serverPublicKey: vapidPublicKey });
-      console.info('[Push] Subscription obtenue, envoi au backend...');
-
       await this.sendSubscriptionToBackend(subscription);
       this.subscribed = true;
-      console.info('[Push] Subscription enregistrée avec succès');
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
       if (e.name === 'NotAllowedError') {
-        console.info('[Push] Permission refusée par l\'utilisateur');
-      } else {
-        console.error('[Push] Erreur lors de la subscription:', e.message ?? err);
+        // Permission refusée
       }
     }
   }
