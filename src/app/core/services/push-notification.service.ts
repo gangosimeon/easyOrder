@@ -11,8 +11,8 @@ export class PushNotificationService implements OnDestroy {
   private http    = inject(HttpClient);
   private router  = inject(Router);
 
-  private readonly apiUrl    = environment.apiUrl;
-  private subscribed         = false;
+  private readonly apiUrl = environment.apiUrl;
+  private subscribed      = false;
   private clickSub?: Subscription;
 
   /**
@@ -24,13 +24,8 @@ export class PushNotificationService implements OnDestroy {
    * Appeler uniquement si l'utilisateur est connecté.
    */
   async init(): Promise<void> {
-    if (!this.swPush.isEnabled) {
-      console.info('[Push] Service Worker non disponible (mode dev ou non HTTPS)');
-      return;
-    }
-
     // Écouter les clics notification (app ouverte)
-    if (!this.clickSub) {
+    if (!this.clickSub && this.swPush.isEnabled) {
       this.clickSub = this.swPush.notificationClicks.subscribe(({ notification }) => {
         const url = notification.data?.url || '/orders';
         this.router.navigateByUrl(url);
@@ -39,22 +34,49 @@ export class PushNotificationService implements OnDestroy {
 
     if (this.subscribed) return;
 
+    // Vérifier le support navigateur
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+      console.warn('[Push] API Notification ou ServiceWorker non supportée');
+      return;
+    }
+
     if (Notification.permission === 'denied') {
       console.info('[Push] Notifications refusées par l\'utilisateur');
       return;
     }
 
-    try {
-      const vapidPublicKey = await this.getVapidPublicKey();
-      if (!vapidPublicKey) return;
+    // La subscription push nécessite le Service Worker actif (build production)
+    if (!this.swPush.isEnabled) {
+      console.info('[Push] SwPush non actif — les notifications push nécessitent un build production');
+      // Demander quand même la permission pour préparer l'utilisateur
+      Notification.requestPermission();
+      return;
+    }
 
+    try {
+      // Attendre que le SW soit prêt avant de souscrire
+      await navigator.serviceWorker.ready;
+
+      const vapidPublicKey = environment.vapidPublicKey;
+      if (!vapidPublicKey) {
+        console.error('[Push] vapidPublicKey manquant dans environment');
+        return;
+      }
+
+      // requestSubscription gère la permission + subscription en une seule étape
       const subscription = await this.swPush.requestSubscription({ serverPublicKey: vapidPublicKey });
+      console.info('[Push] Subscription obtenue, envoi au backend...');
+
       await this.sendSubscriptionToBackend(subscription);
       this.subscribed = true;
       console.info('[Push] Subscription enregistrée avec succès');
-    } catch (err) {
-      // L'utilisateur a refusé ou erreur technique — on ne relance pas
-      console.info('[Push] Subscription non obtenue:', err);
+    } catch (err: unknown) {
+      const e = err as { name?: string; message?: string };
+      if (e.name === 'NotAllowedError') {
+        console.info('[Push] Permission refusée par l\'utilisateur');
+      } else {
+        console.error('[Push] Erreur lors de la subscription:', e.message ?? err);
+      }
     }
   }
 
@@ -67,18 +89,6 @@ export class PushNotificationService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.clickSub?.unsubscribe();
-  }
-
-  private async getVapidPublicKey(): Promise<string | null> {
-    try {
-      const response = await firstValueFrom(
-        this.http.get<{ publicKey: string }>(`${this.apiUrl}/notifications/vapid-public-key`)
-      );
-      return response.publicKey;
-    } catch {
-      console.error('[Push] Impossible de récupérer la VAPID public key');
-      return null;
-    }
   }
 
   private async sendSubscriptionToBackend(subscription: PushSubscription): Promise<void> {
