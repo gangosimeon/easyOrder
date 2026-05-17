@@ -150,7 +150,7 @@
         </div>
 
         <!-- Nom -->
-        <label class="field-label" for="cust-name">Nom complet *</label>
+        <label class="field-label" for="cust-name">Nom complet</label>
         <div class="input-wrap" [class.input-filled]="customerName().length > 0">
           <mat-icon class="input-icon">badge</mat-icon>
           <input
@@ -166,7 +166,7 @@
         </div>
 
         <!-- Téléphone -->
-        <label class="field-label" for="cust-phone">Numéro WhatsApp *</label>
+        <label class="field-label" for="cust-phone">Numéro WhatsApp </label>
         <div class="input-wrap" [class.input-filled]="customerPhone().length > 0">
           <mat-icon class="input-icon">phone</mat-icon>
           <input
@@ -203,11 +203,11 @@
           </div>
         }
 
-        <!-- Bouton confirmer -->
+        <!-- Bouton confirmer !formValid || -->
         <button
           class="confirm-btn"
           (click)="submitOrder()"
-          [disabled]="!formValid || orderService.submitting()"
+          [disabled]="orderService.submitting()"
         >
           @if (orderService.submitting()) {
             <mat-spinner diameter="20" strokeWidth="3" />

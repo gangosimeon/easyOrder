@@ -62,7 +62,8 @@ export class CartComponent {
   submitOrder(): void {
     const company = this.cartService.company();
     const items   = this.cartItems();
-    if (!company || items.length === 0 || !this.formValid) return;
+    // || !this.formValid
+    if (!company || items.length === 0 ) return;
 
     this.orderService
       .createOrderFromCart(
