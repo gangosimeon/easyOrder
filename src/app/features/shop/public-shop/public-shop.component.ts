@@ -178,6 +178,22 @@ export class PublicShopComponent implements OnInit {
     return new Intl.NumberFormat('fr-FR').format(price) + ' FCFA';
   }
 
+  getShareUrl(slug: string): string {
+    return `${environment.shareBaseUrl}/shop/${slug}`;
+  }
+
+  shareShop(): void {
+    const slug = this.company()?.slug;
+    if (!slug) return;
+    const url = this.getShareUrl(slug);
+    if (navigator.share) {
+      navigator.share({ title: this.company()?.name ?? '', url });
+    } else {
+      navigator.clipboard.writeText(url);
+      this.snackBar.open('🔗 Lien copié !', '', { duration: 2000 });
+    }
+  }
+
   isUrl(value: string): boolean {
     return !!value && (value.startsWith('http') || value.startsWith('data:'));
   }

@@ -245,6 +245,13 @@
     (closed)="closeProductDetail()">
   </app-product-detail-modal>
 
+  <!-- SHARE BUTTON -->
+  @if (company()) {
+    <button class="share-fab" (click)="shareShop()" title="Partager la boutique">
+      <mat-icon>share</mat-icon>
+    </button>
+  }
+
   <!-- STICKY CART FOOTER -->
   @if (cartItemIds().size > 0) {
     <div class="sticky-footer">

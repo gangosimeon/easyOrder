@@ -2,6 +2,8 @@ export const environment = {
   production: true,
   // apiUrl: 'http://localhost:4000/api',
   apiUrl: 'https://easyorder-backend-wnku.onrender.com/api',
+  shareBaseUrl: 'https://easyorder-backend-wnku.onrender.com',
   // apiUrl:'https://api.jecreemaboutique.com/api',
+  // shareBaseUrl: 'http://localhost:4000',
   vapidPublicKey: 'BOIprxwmxzEEhlqjl6xOrL5nT2spopdAh1uzsP9UqKPvwKjPIUsaQP3fNaZAR5_lCqJcagpx6qhRQIHJ2y-9B-o',
 };
