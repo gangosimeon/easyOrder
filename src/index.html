@@ -5,39 +5,68 @@
   <title>JeCreeMaBoutique — Créez votre boutique en ligne gratuitement</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+
   <!-- SEO Meta Tags -->
   <meta name="description" content="Créez votre boutique, partagez votre lien et commencez à vendre dès aujourd'hui. Gestion facile des produits, commandes via WhatsApp, boutique publique accessible 24/7.">
   <meta name="keywords" content="boutique en ligne, créer boutique, vendre en ligne, WhatsApp commerce, gestion boutique, e-commerce gratuit">
   <meta name="author" content="JeCreeMaBoutique">
   <meta name="robots" content="index, follow">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.jecreemaboutique.com/">
-  <meta property="og:title" content="JeCreeMaBoutique — Créez votre boutique en ligne gratuitement">
+
+  <!-- Open Graph / Facebook / WhatsApp / Telegram -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://www.jecreemaboutique.com/">
+  <meta property="og:site_name"   content="JeCreeMaBoutique">
+  <meta property="og:locale"      content="fr_FR">
+  <meta property="og:title"       content="JeCreeMaBoutique — Créez votre boutique en ligne gratuitement">
   <meta property="og:description" content="Créez votre boutique, partagez votre lien et commencez à vendre dès aujourd'hui. Gestion facile des produits, commandes via WhatsApp.">
-  <meta property="og:image" content="https://www.jecreemaboutique.com/assets/images/web-app-manifest-192x192.png">
-  <meta property="og:locale" content="fr_FR">
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://www.jecreemaboutique.com/">
-  <meta name="twitter:title" content="JeCreeMaBoutique — Créez votre boutique en ligne gratuitement">
+  <meta property="og:image"       content="https://www.jecreemaboutique.com/assets/icons/web-app-manifest-512x512.png">
+  <meta property="og:image:width"  content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:type"   content="image/png">
+  <meta property="og:image:secure_url" content="https://www.jecreemaboutique.com/assets/icons/web-app-manifest-512x512.png">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:site"        content="@jecreemaboutique">
+  <meta name="twitter:url"         content="https://www.jecreemaboutique.com/">
+  <meta name="twitter:title"       content="JeCreeMaBoutique — Créez votre boutique en ligne gratuitement">
   <meta name="twitter:description" content="Créez votre boutique, partagez votre lien et commencez à vendre dès aujourd'hui. Gestion facile des produits, commandes via WhatsApp.">
-  <meta name="twitter:image" content="https://www.jecreemaboutique.com/assets/images/favicon-96x96.png">
-  
+  <meta name="twitter:image"       content="https://www.jecreemaboutique.com/assets/icons/web-app-manifest-512x512.png">
+
   <!-- Canonical URL -->
   <link rel="canonical" href="https://www.jecreemaboutique.com/">
-  
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Favicons -->
+  <link rel="icon"             type="image/x-icon" href="favicon.ico">
+  <link rel="icon"             type="image/png" sizes="96x96"  href="assets/icons/favicon-96x96.png">
+  <link rel="icon"             type="image/png" sizes="192x192" href="assets/icons/web-app-manifest-192x192.png">
+  <link rel="icon"             type="image/png" sizes="512x512" href="assets/icons/web-app-manifest-512x512.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- JSON-LD : Organization → Google affiche le logo dans les résultats -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "JeCreeMaBoutique",
+    "url": "https://www.jecreemaboutique.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.jecreemaboutique.com/assets/icons/web-app-manifest-512x512.png",
+      "width": 512,
+      "height": 512
+    },
+    "sameAs": []
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&amp;family=Outfit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/web-app-manifest-192x192.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/web-app-manifest-96x96.png">
-  <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body class="mat-typography">
   <app-root></app-root>
