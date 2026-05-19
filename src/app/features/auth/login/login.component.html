@@ -66,6 +66,9 @@
       <!-- ── Footer ── -->
       <div class="auth-footer">
         <p>Pas encore de compte ? <a routerLink="/register">Créer une boutique</a></p>
+        @if (errorMsg()) {
+          <p><a routerLink="/auth/forgot-password" class="forgot-link">Mot de passe oublié ?</a></p>
+        }
         <div class="demo-hint">
           <mat-icon>info</mat-icon>
           <span>Démo — <strong>22677938688</strong> / <strong>password123</strong></span>

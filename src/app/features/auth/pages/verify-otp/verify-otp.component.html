@@ -1,0 +1,78 @@
+<div class="auth-container">
+  <div class="auth-card-wrapper">
+    <mat-card class="auth-card">
+      <!-- Back Button -->
+      <button class="back-btn" (click)="goBack()" mat-icon-button>
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <!-- Logo -->
+      <div class="logo-section">
+        <div class="logo-circle">
+          <mat-icon class="logo-icon">verified_user</mat-icon>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="header-section">
+        <h1 class="title">Vérification</h1>
+        <p class="subtitle">
+          Entrez le code à 6 chiffres envoyé à <strong>{{ email() }}</strong>
+        </p>
+      </div>
+
+      <!-- OTP Inputs -->
+      <div class="otp-container">
+        @for (digit of [0,1,2,3,4,5]; track digit) {
+          <input
+            #otp{{digit}}
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="1"
+            class="otp-input"
+            [value]="otpDigits()[digit]"
+            (input)="onOtpInput(digit, $event)"
+            (keydown)="onOtpKeyDown(digit, $event)"
+            (paste)="onOtpPaste($event)"
+            (focus)="onFocus(digit)"
+            autocomplete="one-time-code"
+          />
+        }
+      </div>
+
+      <!-- Timer / Resend -->
+      <div class="timer-section">
+        @if (!canResend()) {
+          <p class="timer-text">
+            Renvoyer dans <span class="timer-value">{{ timer() }}s</span>
+          </p>
+        } @else {
+          <button
+            mat-button
+            class="resend-btn"
+            (click)="resendOtp()"
+            [disabled]="loading()"
+          >
+            Renvoyer le code
+          </button>
+        }
+      </div>
+
+      <!-- Verify Button -->
+      <button
+        mat-flat-button
+        class="verify-btn"
+        (click)="verifyOtp()"
+        [disabled]="loading() || otpDigits().join('').length !== 6"
+        color="primary"
+      >
+        @if (loading()) {
+          <mat-spinner diameter="20" class="spinner"></mat-spinner>
+        } @else {
+          <span>Vérifier</span>
+        }
+      </button>
+    </mat-card>
+  </div>
+</div>

@@ -15,24 +15,35 @@
   <!-- Filters Bar -->
   <div class="filters-bar">
     <!-- Search -->
-    <mat-form-field class="search-field">
-      <input matInput placeholder="Rechercher client, téléphone..." [value]="searchQuery()" (input)="onSearchChange($any($event.target).value)" />
-      <mat-icon matPrefix>search</mat-icon>
-    </mat-form-field>
+    <div class="filter-item">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Rechercher client, téléphone..."
+        [(ngModel)]="searchValue"
+        (ngModelChange)="onSearchChange($event)"
+        class="search-input"
+      />
+    </div>
 
     <!-- Status Filter -->
-    <mat-form-field class="filter-field">
-      <mat-select [value]="statusFilter()" (selectionChange)="onStatusChange($event.value)">
-        <mat-option value="">Tous statuts</mat-option>
-        <mat-option value="pending">En attente</mat-option>
-        <mat-option value="confirmed">Confirmé</mat-option>
-        <mat-option value="delivered">Livré</mat-option>
-        <mat-option value="cancelled">Annulé</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="filter-item">
+      <mat-icon>filter_list</mat-icon>
+      <select
+        [(ngModel)]="statusValue"
+        (ngModelChange)="onStatusChange($event)"
+        class="status-select"
+      >
+        <option value="">Tous statuts</option>
+        <option value="pending">En attente</option>
+        <option value="confirmed">Confirmé</option>
+        <option value="delivered">Livré</option>
+        <option value="cancelled">Annulé</option>
+      </select>
+    </div>
 
     <!-- Clear Filters Button -->
-    @if (searchQuery() || statusFilter()) {
+    @if (searchValue || statusValue) {
       <button class="clear-filters-btn" (click)="clearFilters()">
         <mat-icon>filter_list_off</mat-icon>
         Effacer

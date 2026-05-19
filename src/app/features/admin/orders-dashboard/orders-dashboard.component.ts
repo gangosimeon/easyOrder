@@ -15,11 +15,11 @@ import { OrderDetailDrawerComponent } from '../../../shared/order-detail-drawer/
   standalone: true,
   imports: [
     FormsModule,
-    MatIconModule,
-    MatButtonModule,
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatFormFieldModule,
+    MatIconModule,
+    MatButtonModule,
     MatProgressSpinnerModule,
     OrderCardComponent,
     OrderDetailDrawerComponent,
@@ -71,8 +71,8 @@ export class OrdersDashboardComponent implements OnInit {
     return orders.filter(order => {
       // Search filter
       if (search) {
-        const matchName = order.customerName.toLowerCase().includes(search);
-        const matchPhone = order.customerPhone.includes(search);
+        const matchName = order.customerName?.toLowerCase().includes(search) ?? false;
+        const matchPhone = order.customerPhone?.includes(search) ?? false;
         if (!matchName && !matchPhone) return false;
       }
 

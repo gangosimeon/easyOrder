@@ -25,8 +25,14 @@ export interface AnnouncementDialogData {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatDialogModule, MatButtonModule, MatFormFieldModule,
-    MatInputModule, MatSelectModule, MatCheckboxModule, MatIconModule, MatProgressSpinnerModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
   ],
   template: `
     <div class="dlg-header">

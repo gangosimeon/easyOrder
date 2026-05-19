@@ -1,9 +1,6 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { ShopOrdersService, Order } from '../../../core/services/shop-orders.service';
@@ -17,9 +14,6 @@ import { OrderDetailDrawerComponent } from '../../../shared/order-detail-drawer/
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    MatInputModule,
-    MatSelectModule,
-    MatFormFieldModule,
     MatProgressSpinnerModule,
     OrderCardComponent,
     OrderDetailDrawerComponent,
@@ -30,6 +24,11 @@ import { OrderDetailDrawerComponent } from '../../../shared/order-detail-drawer/
 export class ShopOrdersComponent implements OnInit {
   private ordersService = inject(ShopOrdersService);
 
+  // ── Filter values (regular properties for ngModel) ───────────────────────────
+
+  searchValue = '';
+  statusValue = '';
+
   // ── State from service ───────────────────────────────────────────────────
 
   readonly loading = this.ordersService.loading;
@@ -39,11 +38,6 @@ export class ShopOrdersComponent implements OnInit {
   readonly hasMore = this.ordersService.hasMore;
   readonly totalCount = this.ordersService.totalCount;
   readonly displayCount = this.ordersService.displayCount;
-
-  // ── Filters from service ─────────────────────────────────────────────────
-
-  readonly searchQuery = this.ordersService.searchQuery;
-  readonly statusFilter = this.ordersService.statusFilter;
 
   // ── Detail drawer ────────────────────────────────────────────────────────
 
@@ -83,15 +77,19 @@ export class ShopOrdersComponent implements OnInit {
 
   // ── Filter Actions ─────────────────────────────────────────────────────
 
-  onSearchChange(query: string): void {
-    this.ordersService.onSearchChange(query);
+  onSearchChange(value: string): void {
+    this.searchValue = value;
+    this.ordersService.onSearchChange(value);
   }
 
-  onStatusChange(status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' | ''): void {
-    this.ordersService.onStatusChange(status);
+  onStatusChange(value: 'pending' | 'confirmed' | 'delivered' | 'cancelled' | ''): void {
+    this.statusValue = value;
+    this.ordersService.onStatusChange(value);
   }
 
   clearFilters(): void {
+    this.searchValue = '';
+    this.statusValue = '';
     this.ordersService.clearFilters();
   }
 

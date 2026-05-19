@@ -1,0 +1,33 @@
+<div class="auth-container">
+  <div class="auth-card-wrapper">
+    <mat-card class="auth-card">
+      <!-- Success Icon -->
+      <div class="success-icon-wrapper">
+        <mat-icon class="success-icon">check_circle</mat-icon>
+      </div>
+
+      <!-- Header -->
+      <div class="header-section">
+        <h1 class="title">Mot de passe réinitialisé !</h1>
+        <p class="subtitle">
+          Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.
+        </p>
+      </div>
+
+      <!-- Button -->
+      <button
+        mat-flat-button
+        class="submit-btn"
+        (click)="goToLogin()"
+        color="primary"
+      >
+        Se connecter
+      </button>
+
+      <!-- Auto-redirect notice -->
+      <p class="redirect-notice">
+        Redirection automatique dans 3 secondes...
+      </p>
+    </mat-card>
+  </div>
+</div>

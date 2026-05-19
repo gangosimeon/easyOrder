@@ -39,6 +39,31 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent),
   },
   {
+    path: 'auth/forgot-password',
+    loadComponent: () => import('./features/auth/pages/forgot-password/forgot-password.component')
+      .then(m => m.ForgotPasswordComponent),
+  },
+  {
+    path: 'auth/verify-otp',
+    loadComponent: () => import('./features/auth/pages/verify-otp/verify-otp.component')
+      .then(m => m.VerifyOtpComponent),
+  },
+  {
+    path: 'auth/reset-password',
+    loadComponent: () => import('./features/auth/pages/reset-password/reset-password.component')
+      .then(m => m.ResetPasswordComponent),
+  },
+  {
+    path: 'auth/success',
+    loadComponent: () => import('./features/auth/pages/success/success.component')
+      .then(m => m.SuccessComponent),
+  },
+  {
+    path: 'change-password',
+    loadComponent: () => import('./features/auth/change-password/change-password.component')
+      .then(m => m.ChangePasswordComponent),
+  },
+  {
     path: 'shop/:slug',
     loadComponent: () => import('./features/shop/public-shop/public-shop.component')
       .then(m => m.PublicShopComponent),

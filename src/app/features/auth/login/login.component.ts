@@ -15,8 +15,11 @@ import { LandingNavComponent } from '../../landing/components/landing-nav/landin
   standalone: true,
   imports: [
     ReactiveFormsModule, RouterLink,
-    MatFormFieldModule, MatInputModule,
-    MatButtonModule, MatIconModule, MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
     LandingNavComponent,
   ],
   templateUrl: './login.component.html',
@@ -36,6 +39,12 @@ export class LoginComponent {
   readonly showPassword = signal(false);
   readonly loading      = signal(false);
   readonly errorMsg     = signal<string | null>(null);
+
+  constructor() {
+    this.form.valueChanges.subscribe(() => {
+      if (this.errorMsg()) this.errorMsg.set(null);
+    });
+  }
 
   togglePassword(): void { this.showPassword.update(v => !v); }
 

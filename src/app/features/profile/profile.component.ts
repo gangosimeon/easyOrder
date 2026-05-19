@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild, inject, signal, computed, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatFormFieldModule }       from '@angular/material/form-field';
 import { MatInputModule }           from '@angular/material/input';
@@ -6,9 +7,11 @@ import { MatButtonModule }          from '@angular/material/button';
 import { MatIconModule }            from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRippleModule }          from '@angular/material/core';
+import { MatChipsModule }           from '@angular/material/chips';
 import { AuthService }              from '../../core/services/auth.service';
 import { UploadService }            from '../../core/services/upload.service';
 import { ShopStatsService, ShopStats } from '../../core/services/shop-stats.service';
+import { RecoveryEmailService }     from '../../core/services/recovery-email.service';
 import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
 
 @Component({
@@ -16,8 +19,13 @@ import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatIconModule, MatSnackBarModule, MatRippleModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatRippleModule,
+    MatChipsModule,
   ],
   templateUrl: './profile.component.html',
   styleUrls:  ['./profile.component.scss'],
@@ -26,10 +34,12 @@ export class ProfileComponent implements OnInit {
   @ViewChild('logoFileRef') logoFileRef!: ElementRef<HTMLInputElement>;
 
   private auth          = inject(AuthService);
+  private router        = inject(Router);
   private fb            = inject(FormBuilder);
   private snackBar      = inject(MatSnackBar);
   private uploadService = inject(UploadService);
   private statsService  = inject(ShopStatsService);
+  private recoveryEmailService = inject(RecoveryEmailService);
 
   readonly company     = this.auth.company;
   readonly shopUrl     = computed(() => {
@@ -75,10 +85,22 @@ export class ProfileComponent implements OnInit {
   statsError   = signal<string | null>(null);
   statsLoaded  = false;
 
+  // Recovery email state
+  recoveryEmailForm!: FormGroup;
+  otpForm!: FormGroup;
+  recoveryEmail = signal<string | null>(null);
+  recoveryEmailVerified = signal<boolean>(false);
+  recoveryLoading = signal<boolean>(false);
+  otpLoading = signal<boolean>(false);
+  showOtpModal = signal<boolean>(false);
+  otpError = signal<string | null>(null);
+
   readonly chartMax = computed(() => {
     const days = this.stats()?.visitsPerDay ?? [];
     return Math.max(1, ...days.map(d => d.count));
   });
+
+  readonly hasRecoveryEmail = computed(() => !!this.recoveryEmail());
 
   toggleStats(): void {
     this.statsOpen.update(v => !v);
@@ -173,6 +195,23 @@ export class ProfileComponent implements OnInit {
       description: [c?.description ?? ''],
       address:     [c?.address     ?? ''],
     });
+
+    // Initialize recovery email forms
+    this.recoveryEmailForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+    });
+
+    this.otpForm = this.fb.group({
+      otp: ['', [Validators.required, Validators.minLength(6)]],
+    });
+
+    // Load recovery email data from company
+    // Note: This data should come from the API when user profile is loaded
+    // For now, we'll initialize with empty values
+    // TODO: Update Company type to include recoveryEmail and recoveryEmailVerified
+    const companyData = c as any;
+    this.recoveryEmail.set(companyData?.recoveryEmail ?? null);
+    this.recoveryEmailVerified.set(companyData?.recoveryEmailVerified ?? false);
   }
 
   setLogoMode(mode: 'emoji' | 'upload'): void { this.logoMode.set(mode); }
@@ -240,5 +279,104 @@ export class ProfileComponent implements OnInit {
         this.errorMsg.set(result.error ?? 'Erreur lors de la mise à jour');
       }
     });
+  }
+
+  navigateToChangePassword(): void {
+    this.router.navigate(['/change-password']);
+  }
+
+  // ── Recovery Email Methods ──────────────────────────────────────────────
+
+  onAddRecoveryEmail(): void {
+    if (this.recoveryEmailForm.invalid) {
+      this.recoveryEmailForm.markAllAsTouched();
+      return;
+    }
+
+    const email = this.recoveryEmailForm.get('email')?.value;
+    this.recoveryLoading.set(true);
+
+    this.recoveryEmailService.addRecoveryEmail(email).subscribe({
+      next: (response) => {
+        this.recoveryLoading.set(false);
+        this.recoveryEmail.set(email);
+        this.recoveryEmailVerified.set(false);
+        this.recoveryEmailForm.reset();
+        this.snackBar.open(response.message, 'OK', { duration: 5000 });
+        this.showOtpModal.set(true);
+      },
+      error: (error) => {
+        this.recoveryLoading.set(false);
+        const errorMsg = error.error?.message || 'Erreur lors de l\'ajout de l\'email de récupération';
+        this.snackBar.open(errorMsg, 'OK', { duration: 5000 });
+      },
+    });
+  }
+
+  onEditRecoveryEmail(): void {
+    // Reset to no email state to allow adding a new one
+    this.recoveryEmail.set(null);
+    this.recoveryEmailVerified.set(false);
+    this.snackBar.open('Vous pouvez maintenant ajouter un nouvel email de récupération', 'OK', { duration: 3000 });
+  }
+
+  onResendOtp(): void {
+    if (!this.recoveryEmail()) return;
+
+    this.recoveryLoading.set(true);
+    this.recoveryEmailService.addRecoveryEmail(this.recoveryEmail()!).subscribe({
+      next: (response) => {
+        this.recoveryLoading.set(false);
+        this.snackBar.open('Code OTP renvoyé', 'OK', { duration: 5000 });
+        this.showOtpModal.set(true);
+      },
+      error: (error) => {
+        this.recoveryLoading.set(false);
+        const errorMsg = error.error?.message || 'Erreur lors de l\'envoi du code';
+        this.snackBar.open(errorMsg, 'OK', { duration: 5000 });
+      },
+    });
+  }
+
+  onVerifyOtp(): void {
+    if (this.otpForm.invalid) {
+      this.otpForm.markAllAsTouched();
+      return;
+    }
+
+    const otp = this.otpForm.get('otp')?.value;
+    const email = this.recoveryEmail();
+
+    if (!email) return;
+
+    this.otpLoading.set(true);
+    this.otpError.set(null);
+
+    this.recoveryEmailService.verifyRecoveryEmail(email, otp).subscribe({
+      next: (response) => {
+        this.otpLoading.set(false);
+        this.recoveryEmailVerified.set(true);
+        this.showOtpModal.set(false);
+        this.otpForm.reset();
+        this.snackBar.open(response.message, 'OK', { duration: 5000 });
+      },
+      error: (error) => {
+        this.otpLoading.set(false);
+        const errorMsg = error.error?.message || 'Code OTP invalide ou expiré';
+        this.otpError.set(errorMsg);
+      },
+    });
+  }
+
+  closeOtpModal(): void {
+    this.showOtpModal.set(false);
+    this.otpForm.reset();
+    this.otpError.set(null);
+  }
+
+  onOtpInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    // Allow only digits
+    input.value = input.value.replace(/\D/g, '');
   }
 }

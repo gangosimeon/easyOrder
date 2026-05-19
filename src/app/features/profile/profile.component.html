@@ -174,6 +174,164 @@
 
   </div>
 
+  <!-- ── Carte Sécurité ── -->
+  <div class="security-card">
+    <div class="security-header">
+      <mat-icon class="security-icon">lock</mat-icon>
+      <div>
+        <h3 class="security-title">Sécurité du compte</h3>
+        <p class="security-sub">Gérez votre mot de passe</p>
+      </div>
+    </div>
+    <button type="button" class="btn-change-password" mat-stroked-button matRipple (click)="navigateToChangePassword()">
+      <mat-icon>vpn_key</mat-icon>
+      Changer mon mot de passe
+    </button>
+  </div>
+
+  <!-- ── Carte Email de récupération ── -->
+  <div class="recovery-email-card">
+    <div class="recovery-header">
+      <mat-icon class="recovery-icon">email</mat-icon>
+      <div>
+        <h3 class="recovery-title">Email de récupération</h3>
+        <p class="recovery-sub">Sécurisez votre compte avec un email pour récupérer votre mot de passe</p>
+      </div>
+    </div>
+
+    <!-- CAS 1: Aucun email existant -->
+    @if (!hasRecoveryEmail()) {
+      <div class="recovery-no-email">
+        <mat-icon class="info-icon">info</mat-icon>
+        <p class="info-text">Ajoutez un email de récupération pour sécuriser votre compte en cas d'oubli de mot de passe</p>
+      </div>
+
+      <form [formGroup]="recoveryEmailForm" (ngSubmit)="onAddRecoveryEmail()" class="recovery-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email de récupération</mat-label>
+          <input matInput formControlName="email" placeholder="Ex: votre@email.com" type="email" />
+          <mat-icon matPrefix>mail</mat-icon>
+          @if (recoveryEmailForm.get('email')?.hasError('required') && recoveryEmailForm.get('email')?.touched) {
+            <mat-error>L'email est requis</mat-error>
+          }
+          @if (recoveryEmailForm.get('email')?.hasError('email')) {
+            <mat-error>Email invalide</mat-error>
+          }
+        </mat-form-field>
+
+        <button type="submit" mat-raised-button class="btn-add-recovery"
+                [disabled]="recoveryEmailForm.invalid || recoveryLoading()"
+                color="primary">
+          @if (recoveryLoading()) {
+            <mat-icon class="spin">sync</mat-icon>
+          } @else {
+            <mat-icon>add</mat-icon>
+          }
+          {{ recoveryLoading() ? 'Envoi...' : 'Ajouter et vérifier' }}
+        </button>
+      </form>
+    }
+
+    <!-- CAS 2: Email existant -->
+    @if (hasRecoveryEmail()) {
+      <div class="recovery-email-display">
+        <div class="email-info">
+          <div class="email-row">
+            <mat-icon class="email-icon">mail_outline</mat-icon>
+            <span class="email-value">{{ recoveryEmail() }}</span>
+          </div>
+          @if (recoveryEmailVerified()) {
+            <mat-chip class="verified-chip">
+              <mat-icon class="chip-icon">check_circle</mat-icon>
+              Vérifié
+            </mat-chip>
+          } @else {
+            <mat-chip class="unverified-chip">
+              <mat-icon class="chip-icon">warning</mat-icon>
+              Non vérifié
+            </mat-chip>
+          }
+        </div>
+
+        @if (!recoveryEmailVerified()) {
+          <p class="verify-prompt">Cet email n'est pas encore vérifié. Veuillez le vérifier pour pouvoir l'utiliser.</p>
+        }
+
+        <div class="recovery-actions">
+          <button type="button" mat-stroked-button class="btn-edit-recovery" matRipple
+                  (click)="onEditRecoveryEmail()">
+            <mat-icon>edit</mat-icon>
+            Modifier
+          </button>
+          @if (!recoveryEmailVerified()) {
+            <button type="button" mat-raised-button class="btn-resend-otp" matRipple
+                    (click)="onResendOtp()"
+                    [disabled]="recoveryLoading()"
+                    color="primary">
+              @if (recoveryLoading()) {
+                <mat-icon class="spin">sync</mat-icon>
+              } @else {
+                <mat-icon>send</mat-icon>
+              }
+              Renvoyer le code
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Modal de vérification OTP -->
+  @if (showOtpModal()) {
+    <div class="otp-modal-overlay" (click)="closeOtpModal()">
+      <div class="otp-modal" (click)="$event.stopPropagation()">
+        <div class="otp-modal-header">
+          <mat-icon class="otp-icon">verified_user</mat-icon>
+          <h3 class="otp-title">Vérifier votre email</h3>
+          <p class="otp-sub">Entrez le code à 6 chiffres envoyé à {{ recoveryEmail() }}</p>
+        </div>
+
+        <form [formGroup]="otpForm" (ngSubmit)="onVerifyOtp()" class="otp-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Code de vérification</mat-label>
+            <input matInput formControlName="otp" placeholder="000000" maxlength="6"
+                   type="text" (input)="onOtpInput($event)" />
+            <mat-icon matPrefix>pin</mat-icon>
+            @if (otpForm.get('otp')?.hasError('required') && otpForm.get('otp')?.touched) {
+              <mat-error>Le code est requis</mat-error>
+            }
+            @if (otpForm.get('otp')?.hasError('minlength')) {
+              <mat-error>Le code doit contenir 6 chiffres</mat-error>
+            }
+          </mat-form-field>
+
+          @if (otpError()) {
+            <div class="otp-error">
+              <mat-icon>error</mat-icon>
+              <span>{{ otpError() }}</span>
+            </div>
+          }
+
+          <div class="otp-modal-actions">
+            <button type="button" mat-stroked-button class="btn-cancel-otp" (click)="closeOtpModal()">
+              Annuler
+            </button>
+            <button type="submit" mat-raised-button class="btn-verify-otp"
+                    [disabled]="otpForm.invalid || otpLoading()"
+                    color="primary">
+              @if (otpLoading()) {
+                <mat-icon class="spin">sync</mat-icon>
+              } @else {
+                <mat-icon>check</mat-icon>
+              }
+              {{ otpLoading() ? 'Vérification...' : 'Vérifier' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
   <!-- ── Carte Liens de partage ── -->
   <div class="share-card">
     <div class="share-card-header">

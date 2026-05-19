@@ -46,6 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly isAuthRoute = signal(
     window.location.pathname.startsWith('/login') ||
     window.location.pathname.startsWith('/register') ||
+    window.location.pathname.startsWith('/auth/') ||
     window.location.pathname === '/'
   );
 
@@ -77,7 +78,12 @@ export class AppComponent implements OnInit, OnDestroy {
       const url = e.urlAfterRedirects;
       const pathname = window.location.pathname;
       this.isPublicRoute.set(url.startsWith('/shop') || url.startsWith('/cart'));
-      this.isAuthRoute.set(pathname.startsWith('/login') || pathname.startsWith('/register') || pathname === '/');
+      this.isAuthRoute.set(
+        pathname.startsWith('/login') ||
+        pathname.startsWith('/register') ||
+        pathname.startsWith('/auth/') ||
+        pathname === '/'
+      );
     });
   }
 
