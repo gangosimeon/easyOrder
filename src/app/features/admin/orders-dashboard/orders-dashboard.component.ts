@@ -157,11 +157,15 @@ export class OrdersDashboardComponent implements OnInit {
   }
 
   onStatusChangedFromDrawer(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
-    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe();
+    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe(() => {
+      this.loadOrders();
+    });
   }
 
   onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
-    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe();
+    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe(() => {
+      this.loadOrders();
+    });
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
