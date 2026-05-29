@@ -125,17 +125,21 @@ export class OrdersApiService {
 
   // ── Update Status ──────────────────────────────────────────────────────────
 
+  getOrderId(order: Order): string {
+    return order._id || (order as any).id || '';
+  }
+
   updateOrderStatus(orderId: string, status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'): Observable<Order> {
     const snapshot = this.orders();
     this.updatingOrderId.set(orderId);
     this.orders.update(orders =>
-      orders.map(o => (o._id === orderId ? { ...o, status } : o)),
+      orders.map(o => (this.getOrderId(o) === orderId ? { ...o, status } : o)),
     );
 
     return this.http.patch<Order>(`${environment.apiUrl}/orders/${orderId}`, { status }).pipe(
       tap(updatedOrder => {
         this.orders.update(orders =>
-          orders.map(o => (o._id === orderId ? { ...o, ...updatedOrder } : o)),
+          orders.map(o => (this.getOrderId(o) === orderId ? { ...o, ...updatedOrder } : o)),
         );
         this.updatingOrderId.set(null);
       }),

@@ -167,10 +167,11 @@ export class OrdersDashboardComponent implements OnInit {
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
-  readonly getStatusColor = (status: string): string => this.ordersApi.getStatusColor(status);
-  readonly getStatusLabel = (status: string): string => this.ordersApi.getStatusLabel(status);
-  readonly formatDate     = (d: string): string      => this.ordersApi.formatDate(d);
-  readonly fmtPrice       = (p: number): string      => this.ordersApi.fmt(p);
+  readonly getStatusColor = (status: string): string  => this.ordersApi.getStatusColor(status);
+  readonly getStatusLabel = (status: string): string  => this.ordersApi.getStatusLabel(status);
+  readonly formatDate     = (d: string): string       => this.ordersApi.formatDate(d);
+  readonly fmtPrice       = (p: number): string       => this.ordersApi.fmt(p);
+  readonly getOrderId     = (o: Order): string        => this.ordersApi.getOrderId(o);
 
   // ── Infinite Scroll ───────────────────────────────────────────────────────
 
