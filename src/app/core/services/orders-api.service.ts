@@ -125,6 +125,11 @@ export class OrdersApiService {
   // ── Update Status ──────────────────────────────────────────────────────────
 
   updateOrderStatus(orderId: string, status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'): Observable<Order> {
+    const snapshot = this.orders();
+    this.orders.update(orders =>
+      orders.map(o => (o._id === orderId ? { ...o, status } : o)),
+    );
+
     return this.http.patch<Order>(`${environment.apiUrl}/orders/${orderId}`, { status }).pipe(
       tap(updatedOrder => {
         this.orders.update(orders =>
@@ -132,6 +137,7 @@ export class OrdersApiService {
         );
       }),
       catchError(err => {
+        this.orders.set(snapshot);
         this.error.set('Erreur lors de la mise à jour du statut');
         throw err;
       }),
