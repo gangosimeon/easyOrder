@@ -17,6 +17,7 @@ export class OrderCardComponent {
   readonly statusLabel = input.required<string>();
   readonly formatDate = input.required<(dateStr: string) => string>();
   readonly fmtPrice = input.required<(price: number) => string>();
+  readonly statusUpdating = input<boolean>(false);
 
   // Outputs
   readonly onCall = output<string>();

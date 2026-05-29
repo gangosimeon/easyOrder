@@ -58,6 +58,7 @@ export class OrdersApiService {
   readonly currentPage = signal(1);
   readonly pageSize = 20;
   readonly hasMore = signal(true);
+  readonly updatingOrderId = signal<string | null>(null);
 
   private currentFilters: OrderFilters = {};
 
@@ -126,6 +127,7 @@ export class OrdersApiService {
 
   updateOrderStatus(orderId: string, status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'): Observable<Order> {
     const snapshot = this.orders();
+    this.updatingOrderId.set(orderId);
     this.orders.update(orders =>
       orders.map(o => (o._id === orderId ? { ...o, status } : o)),
     );
@@ -135,9 +137,11 @@ export class OrdersApiService {
         this.orders.update(orders =>
           orders.map(o => (o._id === orderId ? { ...o, ...updatedOrder } : o)),
         );
+        this.updatingOrderId.set(null);
       }),
       catchError(err => {
         this.orders.set(snapshot);
+        this.updatingOrderId.set(null);
         this.error.set('Erreur lors de la mise à jour du statut');
         throw err;
       }),

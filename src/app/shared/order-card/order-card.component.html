@@ -61,10 +61,11 @@
       <button
         class="action-btn status-btn"
         matRipple
+        [disabled]="statusUpdating()"
         (click)="cycleStatus(); $event.stopPropagation()"
         aria-label="Changer statut"
       >
-        <mat-icon>autorenew</mat-icon>
+        <mat-icon [class.spinning]="statusUpdating()">autorenew</mat-icon>
       </button>
     </div>
   </div>

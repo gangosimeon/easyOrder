@@ -121,6 +121,7 @@
           [statusLabel]="getStatusLabel(order.status)"
           [formatDate]="formatDate"
           [fmtPrice]="fmtPrice"
+          [statusUpdating]="updatingOrderId() === order._id"
           (onCall)="onCallClient($event)"
           (onWhatsApp)="onOpenWhatsApp($event)"
           (onOpenDetail)="onOpenDetail($event)"

@@ -233,6 +233,21 @@
   &:active {
     background: #e5e7eb;
   }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinning {
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────── */
