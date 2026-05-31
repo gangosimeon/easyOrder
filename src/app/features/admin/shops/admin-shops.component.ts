@@ -50,7 +50,7 @@ export class AdminShopsComponent implements OnInit {
   readonly totalItems      = signal(0);
   readonly currentPage     = signal(0);
   readonly pageSize        = signal(10);
-  readonly viewMode        = signal<'table' | 'cards'>('table');
+  readonly viewMode        = signal<'table' | 'cards'>(window.innerWidth < 768 ? 'cards' : 'table');
   readonly copiedId        = signal<string | null>(null);
 
   readonly searchControl = new FormControl('');
