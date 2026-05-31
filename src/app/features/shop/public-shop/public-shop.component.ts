@@ -50,6 +50,7 @@ export class PublicShopComponent implements OnInit {
   readonly shopData = signal<ShopData | null>(null);
   readonly selectedAnn = signal<Annonce | null>(null);
   readonly selectedDetailProduct = signal<Product | null>(null);
+  readonly searchQuery = signal('');
 
   openAnn(ann: Annonce): void  { this.selectedAnn.set(ann); }
   closeAnn(): void             { this.selectedAnn.set(null); }
@@ -100,7 +101,10 @@ export class PublicShopComponent implements OnInit {
     const allProducts = this.shopData()?.products ?? [];
     const cats = this.categories();
     const catId = this.cartService.selectedCategoryId();
-    const filtered = catId ? allProducts.filter(p => p.categoryId === catId) : allProducts;
+    const q = this.searchQuery().trim().toLowerCase();
+
+    let filtered = catId ? allProducts.filter(p => p.categoryId === catId) : allProducts;
+    if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q));
 
     const groups: { category: Category; products: Product[] }[] = [];
     for (const cat of cats) {
@@ -119,6 +123,9 @@ export class PublicShopComponent implements OnInit {
     }
     return groups;
   });
+
+  onSearch(value: string): void { this.searchQuery.set(value); }
+  clearSearch(): void           { this.searchQuery.set(''); }
 
   ngOnInit(): void {
     this.cartService.selectCategory(null);

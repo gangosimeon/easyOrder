@@ -89,6 +89,26 @@
     </section>
   }
 
+  
+  <!-- SEARCH BAR -->
+  <div class="search-bar-wrapper">
+    <div class="search-box">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Rechercher un produit…"
+        [value]="searchQuery()"
+        (input)="onSearch($any($event.target).value)"
+      />
+      @if (searchQuery()) {
+        <button class="clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+  
   <!-- CATEGORIES BAR -->
   @if (categories().length > 0) {
     <section class="categories-section mobile-only">
