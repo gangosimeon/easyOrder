@@ -1,0 +1,229 @@
+
+<div class="discover-page">
+  <app-landing-nav></app-landing-nav>
+  <!-- ── PAGE HEADER ── -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Découvrir les boutiques</h1>
+      <p class="page-subtitle">Parcourez toutes les boutiques disponibles sur notre plateforme</p>
+    </div>
+    <div class="header-right">
+      <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Rechercher une boutique..."
+          [value]="searchQuery()"
+          (input)="onSearch($any($event.target).value)"
+        />
+        @if (searchQuery()) {
+          <button class="clear-btn" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CATEGORY FILTER BAR ── -->
+  @if (!loading() && shops().length > 0) {
+    <div class="category-bar">
+      <button
+        class="cat-tab"
+        [class.active]="activeCategory() === 'all'"
+        (click)="selectCategory('all')"
+        matRipple
+      >
+        Toutes les boutiques
+      </button>
+      @for (cat of categories(); track cat) {
+        <button
+          class="cat-tab"
+          [class.active]="activeCategory() === cat"
+          (click)="selectCategory(cat)"
+          matRipple
+        >
+          {{ cat }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- ── CONTENT AREA ── -->
+  <div class="content-area">
+
+    <!-- Skeletons -->
+    @if (loading()) {
+      <div class="shops-grid">
+        @for (row of skeletonRows; track $index) {
+          <div class="skel-product-card">
+            <div class="skel-banner"></div>
+            <div class="skel-product-info">
+              <div class="skel-identity">
+                <div class="skel-block skel-circle"></div>
+                <div class="skel-text-col">
+                  <div class="skel-line skel-prod-name"></div>
+                  <div class="skel-line skel-prod-desc"></div>
+                </div>
+              </div>
+              <div class="skel-stats">
+                <div class="skel-line skel-w50"></div>
+                <div class="skel-line skel-w30"></div>
+              </div>
+              <div class="skel-carousel-row">
+                @for (i of [0,1,2,3]; track i) {
+                  <div class="skel-block skel-thumb"></div>
+                }
+              </div>
+              <div class="skel-block skel-btn"></div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (error()) {
+      <div class="state-center">
+        <mat-icon class="state-icon">storefront</mat-icon>
+        <h3>{{ error() }}</h3>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (!loading() && !error() && filteredShops().length === 0) {
+      <div class="state-center">
+        <mat-icon class="state-icon">search_off</mat-icon>
+        <h3>Aucune boutique trouvée</h3>
+        <p>Essayez un autre terme de recherche ou une autre catégorie.</p>
+      </div>
+    }
+
+    <!-- Shop grid -->
+    @if (!loading() && filteredShops().length > 0) {
+      <div class="shops-grid">
+        @for (card of filteredShops(); track card.info.id) {
+
+          <div class="shop-card" (click)="visitShop(card.info.slug)">
+
+            <!-- ── BANNER ── -->
+            <div class="card-banner">
+              @if (card.productsLoading) {
+                <div class="banner-skel skel-block"></div>
+              } @else if (getBannerImage(card)) {
+                <img class="banner-img" [src]="getBannerImage(card)" [alt]="card.info.name" loading="eager" />
+              } @else {
+                <div class="banner-gradient" [style.background]="getBannerBackground(card)">
+                  @if (isUrl(card.info.logo)) {
+                    <img class="banner-logo-img" [src]="card.info.logo" [alt]="card.info.name" />
+                  } @else {
+                    <span class="banner-logo-big">{{ card.info.logo || '🏪' }}</span>
+                  }
+                </div>
+              }
+              @if (!card.productsLoading && card.info.status === 'inactive') {
+                <div class="inactive-overlay">Inactif</div>
+              }
+            </div>
+
+            <!-- ── CARD BODY ── -->
+            <div class="card-body">
+
+              <!-- Identity row: logo + name + category -->
+              <div class="card-identity">
+                <div class="shop-logo" (click)="visitShop(card.info.slug, $event)">
+                  @if (isUrl(card.info.logo)) {
+                    <img [src]="card.info.logo" [alt]="card.info.name" />
+                  } @else {
+                    <span class="logo-emoji">{{ card.info.logo || '🏪' }}</span>
+                  }
+                </div>
+                <div class="shop-meta">
+                  <h2 class="shop-name" (click)="visitShop(card.info.slug, $event)">
+                    {{ card.info.name }}
+                  </h2>
+                  @if (card.productsLoading) {
+                    <div class="categories-row">
+                      <span class="skel-block skel-badge"></span>
+                      <span class="skel-block skel-badge skel-badge--sm"></span>
+                    </div>
+                  } @else if (card.categories.length > 0) {
+                    <div class="categories-row">
+                      @for (cat of card.categories; track cat.id) {
+                        <span class="category-badge" [style.--cat-color]="cat.color">
+                          {{ cat.name }}
+                        </span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Stats: location + product count -->
+              <div class="card-stats">
+                @if (card.info.address) {
+                  <span class="stat-loc">
+                    <mat-icon>location_on</mat-icon>
+                    {{ card.info.address }}
+                  </span>
+                }
+                <span class="stat-count">
+                  <strong>{{ card.info.productCount }}</strong>
+                  produit{{ card.info.productCount > 1 ? 's' : '' }}
+                </span>
+              </div>
+
+              <!-- Product carousel -->
+              <div class="carousel-wrapper">
+                <button class="carousel-btn carousel-prev"
+                        (click)="carouselPrev(card.info.slug, $event)">
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+
+                <div class="carousel-track" [id]="'carousel-' + card.info.slug">
+
+                  @if (card.productsLoading) {
+                    @for (i of [0,1,2,3]; track i) {
+                      <div class="skel-block carousel-skel"></div>
+                    }
+                  } @else if (card.products.length > 0) {
+                    @for (p of card.products.slice(0, 4); track p.id; let i = $index) {
+                      <div class="carousel-item">
+                        <img [src]="p.image" [alt]="p.name" loading="lazy" />
+                        @if (i === 3 && card.products.length > 4) {
+                          <div class="more-overlay">
+                            +{{ card.products.length - 4 }}<br>produits
+                          </div>
+                        }
+                      </div>
+                    }
+                  } @else {
+                    <div class="no-products">
+                      <mat-icon>inventory_2</mat-icon>
+                      <span>Aucun produit</span>
+                    </div>
+                  }
+
+                </div>
+
+                <button class="carousel-btn carousel-next"
+                        (click)="carouselNext(card.info.slug, $event)">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+
+              <!-- Visit button -->
+              <button class="visit-btn" (click)="visitShop(card.info.slug, $event)" matRipple>
+                Visiter la boutique
+              </button>
+
+            </div>
+          </div>
+
+        }
+      </div>
+    }
+
+  </div>
+</div>

@@ -64,6 +64,11 @@ export const routes: Routes = [
       .then(m => m.ChangePasswordComponent),
   },
   {
+    path: 'shops',
+    loadComponent: () => import('./features/shop/discover-shops/discover-shops.component')
+      .then(m => m.DiscoverShopsComponent),
+  },
+  {
     path: 'shop/:slug',
     loadComponent: () => import('./features/shop/public-shop/public-shop.component')
       .then(m => m.PublicShopComponent),

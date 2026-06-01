@@ -47,6 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
     window.location.pathname.startsWith('/login') ||
     window.location.pathname.startsWith('/register') ||
     window.location.pathname.startsWith('/auth/') ||
+    window.location.pathname.startsWith('/shops') ||
     window.location.pathname === '/'
   );
 
@@ -82,6 +83,7 @@ export class AppComponent implements OnInit, OnDestroy {
         pathname.startsWith('/login') ||
         pathname.startsWith('/register') ||
         pathname.startsWith('/auth/') ||
+        pathname.startsWith('/shops') ||
         pathname === '/'
       );
     });

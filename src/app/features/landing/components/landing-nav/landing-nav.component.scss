@@ -105,7 +105,9 @@ $muted:   var(--text-secondary);
     flex-direction: column;
     gap: 2px;
 
-    li button {
+    li button,
+    li a {
+      display: block;
       width: 100%;
       text-align: left;
       background: none;
@@ -117,6 +119,7 @@ $muted:   var(--text-secondary);
       padding: 12px 8px;
       border-radius: 8px;
       transition: background .15s;
+      text-decoration: none;
       &:hover { background: var(--bg-main); }
     }
   }

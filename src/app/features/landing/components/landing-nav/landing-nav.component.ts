@@ -1,6 +1,5 @@
-import { Component, HostListener, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { MatIcon } from "@angular/material/icon";
+import { Component, HostListener, signal, inject } from '@angular/core';
+import { RouterLink, Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing-nav',
@@ -10,6 +9,7 @@ import { MatIcon } from "@angular/material/icon";
   styleUrl: './landing-nav.component.scss'
 })
 export class LandingNavComponent {
+  private router = inject(Router);
   menuOpen = signal(false);
   scrolled  = signal(false);
 
@@ -23,6 +23,16 @@ export class LandingNavComponent {
 
   scrollTo(id: string): void {
     this.closeMenu();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      this.router.navigate(['/'], { fragment: id });
+    }
+  }
+
+  goToShops(): void {
+    this.closeMenu();
+    this.router.navigate(['/shops']);
   }
 }

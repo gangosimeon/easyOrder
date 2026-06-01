@@ -17,6 +17,17 @@ export interface CompanyInfo {
   coverColor: string;
 }
 
+export interface PublicShopInfo {
+  id: string;
+  name: string;
+  slug: string;
+  address: string;
+  logo: string;
+  coverColor: string;
+  productCount: number;
+  status: 'active' | 'inactive';
+}
+
 export interface ShopData {
   company: CompanyInfo;
   categories: Category[];
@@ -31,5 +42,9 @@ export class PublicShopService {
 
   getShop(slug: string): Observable<ShopData> {
     return this.http.get<ShopData>(`${this.apiUrl}/public/shop/${slug}`);
+  }
+
+  getShopsList(): Observable<PublicShopInfo[]> {
+    return this.http.get<PublicShopInfo[]>(`${this.apiUrl}/public/shops`);
   }
 }

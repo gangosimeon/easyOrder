@@ -1,8 +1,8 @@
 [
   {
     "context": ["/api"],
-    "target": "http://localhost:4000",
-    "secure": false,
+    "target": "https://easyorder-backend-wnku.onrender.com",
+    "secure": true,
     "changeOrigin": true,
     "logLevel": "debug"
   }
