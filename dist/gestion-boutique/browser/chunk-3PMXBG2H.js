@@ -1,1 +1,0 @@
-import"./chunk-4CLCTAJ7.js";var o=[{path:"",redirectTo:"shops",pathMatch:"full"},{path:"shops",loadComponent:()=>import("./chunk-BAMQOH2J.js").then(n=>n.AdminShopsComponent)},{path:"announcements",loadComponent:()=>import("./chunk-4SWCHP3E.js").then(n=>n.AdminAnnouncementsComponent)}];export{o as ADMIN_ROUTES};

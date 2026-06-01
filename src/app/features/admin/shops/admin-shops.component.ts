@@ -51,7 +51,8 @@ export class AdminShopsComponent implements OnInit {
   readonly currentPage     = signal(0);
   readonly pageSize        = signal(10);
   readonly viewMode        = signal<'table' | 'cards'>(window.innerWidth < 768 ? 'cards' : 'table');
-  readonly copiedId        = signal<string | null>(null);
+  readonly copiedId              = signal<string | null>(null);
+  readonly togglingVisibilityId  = signal<string | null>(null);
 
   readonly searchControl = new FormControl('');
   readonly sortControl   = new FormControl('createdAt_desc');
@@ -190,6 +191,19 @@ export class AdminShopsComponent implements OnInit {
 
   openPublicShop(shop: AdminShop): void {
     window.open(`/shop/${shop.slug}`, '_blank');
+  }
+
+  toggleVisibility(shop: AdminShop): void {
+    this.togglingVisibilityId.set(shop.id);
+    this.adminService.toggleShopVisibility(shop.id, !shop.isActive).subscribe({
+      next: () => {
+        this.shops.update(list =>
+          list.map(s => s.id === shop.id ? { ...s, isActive: !shop.isActive } : s)
+        );
+        this.togglingVisibilityId.set(null);
+      },
+      error: () => this.togglingVisibilityId.set(null),
+    });
   }
 
   isUrl(v: string): boolean {

@@ -15,6 +15,7 @@ export interface AdminShop {
   createdAt:    string;
   productCount: number;
   status:       'active' | 'inactive';
+  isActive:     boolean;
   publicUrl:    string;
 }
 
@@ -122,5 +123,12 @@ export class AdminService {
 
   getAggregateShopStats(): Observable<AggregateShopStats> {
     return this.http.get<AggregateShopStats>(`${this.apiUrl}/admin/shops/stats`);
+  }
+
+  toggleShopVisibility(shopId: string, isActive: boolean): Observable<{ id: string; isActive: boolean }> {
+    return this.http.patch<{ id: string; isActive: boolean }>(
+      `${this.apiUrl}/admin/shops/${shopId}/toggle-visibility`,
+      { isActive },
+    );
   }
 }

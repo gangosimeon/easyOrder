@@ -181,6 +181,13 @@
                 </span>
               </div>
               <div class="shop-card-actions">
+                <button mat-icon-button
+                  [matTooltip]="shop.isActive ? 'Masquer du catalogue public' : 'Afficher dans le catalogue public'"
+                  [disabled]="togglingVisibilityId() === shop.id"
+                  [style.color]="shop.isActive ? '#22c55e' : '#9ca3af'"
+                  (click)="toggleVisibility(shop)">
+                  <mat-icon>{{ shop.isActive ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
                 <button mat-icon-button [style.color]="'#25D366'"
                   matTooltip="WhatsApp" (click)="openWhatsApp(shop)">
                   <mat-icon>chat</mat-icon>
@@ -274,6 +281,13 @@
               <th mat-header-cell *matHeaderCellDef class="actions-th">Actions</th>
               <td mat-cell *matCellDef="let shop">
                 <div class="actions-cell">
+                  <button mat-icon-button
+                    [matTooltip]="shop.isActive ? 'Masquer du catalogue public' : 'Afficher dans le catalogue public'"
+                    [disabled]="togglingVisibilityId() === shop.id"
+                    [style.color]="shop.isActive ? '#22c55e' : '#9ca3af'"
+                    (click)="toggleVisibility(shop)">
+                    <mat-icon>{{ shop.isActive ? 'visibility' : 'visibility_off' }}</mat-icon>
+                  </button>
                   <button mat-icon-button [style.color]="'#25D366'"
                     matTooltip="Ouvrir WhatsApp" (click)="openWhatsApp(shop)">
                     <mat-icon>chat</mat-icon>
