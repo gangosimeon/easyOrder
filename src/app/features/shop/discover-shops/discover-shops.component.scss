@@ -179,6 +179,48 @@ $skel: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
   }
 }
 
+// ── Compteur dans onglet catégorie ───────────────────────
+.cat-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 6px;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(0,0,0,.08);
+  color: inherit;
+
+  .active & { background: rgba(255,255,255,.25); }
+}
+
+// ── Barre de rechargement ─────────────────────────────────
+.reload-bar-wrap {
+  height: 3px;
+  background: var(--border);
+  overflow: hidden;
+  margin: 0 32px;
+  border-radius: 2px;
+
+  @media (max-width: 768px) { margin: 0 16px; }
+}
+
+.reload-bar-inner {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+  animation: reload-slide 1.4s ease-in-out infinite;
+}
+
+@keyframes reload-slide {
+  0%   { transform: translateX(-100%); width: 60%; }
+  50%  { transform: translateX(80%);   width: 60%; }
+  100% { transform: translateX(200%);  width: 60%; }
+}
+
 // ── Content area ─────────────────────────────────────────
 
 .content-area {

@@ -1,6 +1,7 @@
 
 <div class="discover-page">
   <app-landing-nav></app-landing-nav>
+
   <!-- ── PAGE HEADER ── -->
   <div class="page-header">
     <div class="header-left">
@@ -27,26 +28,32 @@
   </div>
 
   <!-- ── CATEGORY FILTER BAR ── -->
-  @if (!loading() && shops().length > 0) {
+  @if (allCategories().length > 0) {
     <div class="category-bar">
       <button
         class="cat-tab"
         [class.active]="activeCategory() === 'all'"
         (click)="selectCategory('all')"
-        matRipple
-      >
+        matRipple>
         Toutes les boutiques
       </button>
-      @for (cat of categories(); track cat) {
+      @for (cat of allCategories(); track cat.name) {
         <button
           class="cat-tab"
-          [class.active]="activeCategory() === cat"
-          (click)="selectCategory(cat)"
-          matRipple
-        >
-          {{ cat }}
+          [class.active]="activeCategory() === cat.name"
+          (click)="selectCategory(cat.name)"
+          matRipple>
+          {{ cat.name }}
+          <span class="cat-count">{{ cat.count }}</span>
         </button>
       }
+    </div>
+  }
+
+  <!-- ── RELOADING BAR ── -->
+  @if (reloading()) {
+    <div class="reload-bar-wrap">
+      <div class="reload-bar-inner"></div>
     </div>
   }
 
@@ -92,7 +99,7 @@
     }
 
     <!-- Empty state -->
-    @if (!loading() && !error() && filteredShops().length === 0) {
+    @if (!loading() && !error() && shops().length === 0) {
       <div class="state-center">
         <mat-icon class="state-icon">search_off</mat-icon>
         <h3>Aucune boutique trouvée</h3>
@@ -101,9 +108,9 @@
     }
 
     <!-- Shop grid -->
-    @if (!loading() && filteredShops().length > 0) {
+    @if (!loading() && shops().length > 0) {
       <div class="shops-grid">
-        @for (card of filteredShops(); track card.info.id) {
+        @for (card of shops(); track card.info.id) {
 
           <div class="shop-card" (click)="visitShop(card.info.slug)">
 
@@ -130,7 +137,7 @@
             <!-- ── CARD BODY ── -->
             <div class="card-body">
 
-              <!-- Identity row: logo + name + category -->
+              <!-- Identity : logo + nom + catégories -->
               <div class="card-identity">
                 <div class="shop-logo" (click)="visitShop(card.info.slug, $event)">
                   @if (isUrl(card.info.logo)) {
@@ -143,15 +150,13 @@
                   <h2 class="shop-name" (click)="visitShop(card.info.slug, $event)">
                     {{ card.info.name }}
                   </h2>
-                  @if (card.productsLoading) {
+                  @if (card.info.categories.length > 0) {
                     <div class="categories-row">
-                      <span class="skel-block skel-badge"></span>
-                      <span class="skel-block skel-badge skel-badge--sm"></span>
-                    </div>
-                  } @else if (card.categories.length > 0) {
-                    <div class="categories-row">
-                      @for (cat of card.categories; track cat.id) {
-                        <span class="category-badge" [style.--cat-color]="cat.color">
+                      @for (cat of card.info.categories; track cat.name) {
+                        <span
+                          class="category-badge"
+                          [style.--cat-color]="cat.color"
+                          (click)="selectCategory(cat.name); $event.stopPropagation()">
                           {{ cat.name }}
                         </span>
                       }
@@ -160,7 +165,7 @@
                 </div>
               </div>
 
-              <!-- Stats: location + product count -->
+              <!-- Stats : adresse + nombre produits -->
               <div class="card-stats">
                 @if (card.info.address) {
                   <span class="stat-loc">
@@ -174,7 +179,7 @@
                 </span>
               </div>
 
-              <!-- Product carousel -->
+              <!-- Carousel produits -->
               <div class="carousel-wrapper">
                 <button class="carousel-btn carousel-prev"
                         (click)="carouselPrev(card.info.slug, $event)">
@@ -182,7 +187,6 @@
                 </button>
 
                 <div class="carousel-track" [id]="'carousel-' + card.info.slug">
-
                   @if (card.productsLoading) {
                     @for (i of [0,1,2,3]; track i) {
                       <div class="skel-block carousel-skel"></div>
@@ -204,7 +208,6 @@
                       <span>Aucun produit</span>
                     </div>
                   }
-
                 </div>
 
                 <button class="carousel-btn carousel-next"
@@ -213,7 +216,7 @@
                 </button>
               </div>
 
-              <!-- Visit button -->
+              <!-- Bouton visite -->
               <button class="visit-btn" (click)="visitShop(card.info.slug, $event)" matRipple>
                 Visiter la boutique
               </button>
