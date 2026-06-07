@@ -10,6 +10,8 @@ export interface Company {
   name: string;
   slug: string;
   phone: string;
+  countryCode?: string;
+  fullPhone?: string;
   description: string;
   logo: string;
   address: string;
@@ -20,6 +22,7 @@ export interface Company {
 export interface RegisterPayload {
   name: string;
   phone: string;
+  countryCode: string;
   password: string;
   description: string;
   logo: string;
@@ -60,8 +63,8 @@ export class AuthService {
     }
   }
 
-  login(phone: string, password: string): Observable<AuthResult> {
-    return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/login`, { phone, password }).pipe(
+  login(phone: string, password: string, countryCode = '226'): Observable<AuthResult> {
+    return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/login`, { phone, password, countryCode }).pipe(
       tap(({ user, token }) => {
         localStorage.setItem('bs_token', token);
         localStorage.setItem('bs_auth', JSON.stringify(user));

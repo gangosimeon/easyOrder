@@ -104,6 +104,27 @@
   mat-form-field { width: 100%; }
 }
 
+/* ── Phone field wrapper ── */
+.phone-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.phone-field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding-left: 2px;
+}
+
+.phone-error {
+  font-size: 12px;
+  color: #c62828;
+  padding-left: 2px;
+}
+
 /* ── Section labels ── */
 .section-label {
   display: flex;

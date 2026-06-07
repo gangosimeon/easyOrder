@@ -8,7 +8,8 @@ import { MatIconModule }            from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRippleModule }          from '@angular/material/core';
 import { AuthService }              from '../../../core/services/auth.service';
-import { LandingNavComponent } from '../../landing/components/landing-nav/landing-nav.component';
+import { LandingNavComponent }      from '../../landing/components/landing-nav/landing-nav.component';
+import { PhoneInputComponent }      from '../../../shared/phone-input/phone-input.component';
 
 export const COVER_COLORS = [
   '#a04343', '#E53935', '#D81B60', '#8E24AA', '#5E35B1',
@@ -41,7 +42,8 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
     MatIconModule,
     MatProgressSpinnerModule,
     MatRippleModule,
-    LandingNavComponent
+    LandingNavComponent,
+    PhoneInputComponent,
   ],
   templateUrl: './register.component.html',
   styleUrls:  ['./register.component.scss'],
@@ -54,12 +56,14 @@ export class RegisterComponent {
   readonly coverColors = COVER_COLORS;
   readonly shopLogos   = SHOP_LOGOS;
 
+  readonly countryCode   = signal('226');
   readonly selectedLogo  = signal('🏪');
   readonly selectedColor = signal(COVER_COLORS[0]);
   readonly showPassword  = signal(false);
   readonly showConfirm   = signal(false);
   readonly loading       = signal(false);
   readonly errorMsg      = signal<string | null>(null);
+  readonly submitted     = signal(false);
 
   readonly logoMode     = signal<'emoji' | 'upload'>('emoji');
   readonly uploadedLogo = signal<string | null>(null);
@@ -67,7 +71,7 @@ export class RegisterComponent {
   readonly form = this.fb.group(
     {
       name:            ['', [Validators.required, Validators.minLength(3)]],
-      phone:           ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]],
+      phone:           ['', [Validators.required, Validators.pattern(/^[0-9]{5,15}$/)]],
       password:        ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
       description:     [''],
@@ -102,6 +106,7 @@ export class RegisterComponent {
   }
 
   onSubmit(): void {
+    this.submitted.set(true);
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.errorMsg.set(null);
     this.loading.set(true);
@@ -110,6 +115,7 @@ export class RegisterComponent {
     this.auth.register({
       name:        v.name!,
       phone:       v.phone!,
+      countryCode: this.countryCode(),
       password:    v.password!,
       description: v.description ?? '',
       logo:        this.activeLogo,

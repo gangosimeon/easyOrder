@@ -8,7 +8,8 @@ import { MatIconModule }            from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService }              from '../../../core/services/auth.service';
 import { PushNotificationService }  from '../../../core/services/push-notification.service';
-import { LandingNavComponent } from '../../landing/components/landing-nav/landing-nav.component';
+import { LandingNavComponent }      from '../../landing/components/landing-nav/landing-nav.component';
+import { PhoneInputComponent }      from '../../../shared/phone-input/phone-input.component';
 
 @Component({
   selector: 'app-login',
@@ -21,24 +22,27 @@ import { LandingNavComponent } from '../../landing/components/landing-nav/landin
     MatIconModule,
     MatProgressSpinnerModule,
     LandingNavComponent,
+    PhoneInputComponent,
   ],
   templateUrl: './login.component.html',
   styleUrls:  ['./login.component.scss'],
 })
 export class LoginComponent {
-  private fb   = inject(FormBuilder);
-  private auth = inject(AuthService);
-  private router = inject(Router);
+  private fb          = inject(FormBuilder);
+  private auth        = inject(AuthService);
+  private router      = inject(Router);
   private pushService = inject(PushNotificationService);
 
-  readonly form = this.fb.group({
-    phone:    ['', [Validators.required, Validators.pattern(/^[0-9]{8,15}$/)]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-  });
-
+  readonly countryCode  = signal('226');
   readonly showPassword = signal(false);
   readonly loading      = signal(false);
   readonly errorMsg     = signal<string | null>(null);
+  readonly submitted    = signal(false);
+
+  readonly form = this.fb.group({
+    phone:    ['', [Validators.required, Validators.pattern(/^[0-9]{5,15}$/)]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
 
   constructor() {
     this.form.valueChanges.subscribe(() => {
@@ -49,12 +53,13 @@ export class LoginComponent {
   togglePassword(): void { this.showPassword.update(v => !v); }
 
   onSubmit(): void {
+    this.submitted.set(true);
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.errorMsg.set(null);
     this.loading.set(true);
 
     const { phone, password } = this.form.value;
-    this.auth.login(phone!, password!).subscribe(result => {
+    this.auth.login(phone!, password!, this.countryCode()).subscribe(result => {
       this.loading.set(false);
       if (result.success) {
         this.pushService.init();

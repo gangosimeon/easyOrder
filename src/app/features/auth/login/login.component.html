@@ -26,17 +26,19 @@
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
 
-        <mat-form-field appearance="outline">
-          <mat-label>Numéro de téléphone</mat-label>
-          <input matInput type="tel" formControlName="phone" placeholder="Ex: 22677938688" />
-          <mat-icon matSuffix>phone</mat-icon>
-          @if (form.get('phone')?.hasError('required') && form.get('phone')?.touched) {
-            <mat-error>Le numéro est requis</mat-error>
+        <div class="phone-field-group">
+          <label class="phone-field-label">Numéro de téléphone</label>
+          <app-phone-input
+            formControlName="phone"
+            (countryCodeChange)="countryCode.set($event)">
+          </app-phone-input>
+          @if (form.get('phone')?.hasError('required') && (form.get('phone')?.touched || submitted())) {
+            <span class="phone-error">Le numéro est requis</span>
           }
-          @if (form.get('phone')?.hasError('pattern') && form.get('phone')?.touched) {
-            <mat-error>Format invalide (8 à 15 chiffres)</mat-error>
+          @if (form.get('phone')?.hasError('pattern') && (form.get('phone')?.touched || submitted())) {
+            <span class="phone-error">Format invalide (5 à 15 chiffres)</span>
           }
-        </mat-form-field>
+        </div>
 
         <mat-form-field appearance="outline">
           <mat-label>Mot de passe</mat-label>

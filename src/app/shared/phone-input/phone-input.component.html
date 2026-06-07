@@ -1,0 +1,84 @@
+<div class="pi-root" [class.pi-disabled]="isDisabled()">
+
+  <!-- ── Input row ── -->
+  <div class="pi-field" [class.pi-field--open]="showDropdown()">
+
+    <!-- Country selector -->
+    <button
+      type="button"
+      class="pi-country-btn"
+      [disabled]="isDisabled()"
+      (click)="toggleDropdown(); $event.stopPropagation()">
+      <img
+        class="pi-flag-img"
+        [src]="flagUrl(selectedCountry().code)"
+        [alt]="selectedCountry().name"
+        loading="lazy" />
+      <span class="pi-dial">+{{ selectedCountry().dialCode }}</span>
+      <span class="pi-chevron" [class.pi-chevron--open]="showDropdown()">▾</span>
+    </button>
+
+    <div class="pi-divider"></div>
+
+    <!-- Phone number input -->
+    <input
+      class="pi-input"
+      type="tel"
+      inputmode="numeric"
+      placeholder="Numéro local"
+      [value]="localPhone()"
+      [disabled]="isDisabled()"
+      (input)="onPhoneInput($event)"
+      (blur)="onTouched()" />
+
+    <span class="pi-icon"><mat-icon>phone</mat-icon></span>
+  </div>
+
+  <!-- ── Country dropdown ── -->
+  @if (showDropdown()) {
+    <div class="pi-dropdown" (click)="$event.stopPropagation()">
+
+      <!-- Search -->
+      <div class="pi-search-wrap">
+        <input
+          class="pi-search"
+          type="text"
+          placeholder="Rechercher un pays…"
+          [value]="searchQuery()"
+          (input)="onSearchInput($event)"
+          autofocus />
+      </div>
+
+      <!-- List -->
+      <div class="pi-list">
+        @for (country of filteredCountries(); track country.code) {
+          <button
+            type="button"
+            class="pi-option"
+            [class.pi-option--selected]="country.code === selectedCountry().code"
+            (click)="selectCountry(country)">
+            <img
+              class="pi-option-flag-img"
+              [src]="flagUrl(country.code)"
+              [alt]="country.name"
+              loading="lazy" />
+            <span class="pi-option-name">{{ country.name }}</span>
+            <span class="pi-option-dial">+{{ country.dialCode }}</span>
+          </button>
+        }
+        @if (!filteredCountries().length) {
+          <div class="pi-no-results">Aucun pays trouvé</div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ── Full number preview ── -->
+  @if (fullPhonePreview()) {
+    <div class="pi-preview">
+      <span class="pi-preview-label">Numéro complet :</span>
+      <span class="pi-preview-value">{{ fullPhonePreview() }}</span>
+    </div>
+  }
+
+</div>
