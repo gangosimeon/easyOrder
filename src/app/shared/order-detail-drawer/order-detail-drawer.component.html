@@ -12,7 +12,8 @@
       <div class="od-hero-imgs">
         @for (item of order.items.slice(0, 4); track item.productId) {
           @if (item.image) {
-            <img class="od-hero-img" [src]="item.image" [alt]="item.productName" loading="lazy" />
+            <img class="od-hero-img od-zoomable" [src]="item.image" [alt]="item.productName" loading="lazy"
+              (click)="openZoom(item.image); stopProp($event)" />
           } @else {
             <div class="od-hero-img od-hero-img--ph">🛍️</div>
           }
@@ -75,7 +76,8 @@
         @for (item of order.items; track item.productId) {
           <div class="od-item-row">
             @if (item.image) {
-              <img class="od-item-img" [src]="item.image" [alt]="item.productName" loading="lazy" />
+              <img class="od-item-img od-zoomable" [src]="item.image" [alt]="item.productName" loading="lazy"
+                (click)="openZoom(item.image)" />
             } @else {
               <div class="od-item-img od-item-img--ph"><mat-icon>inventory_2</mat-icon></div>
             }
@@ -119,4 +121,43 @@
     </div>
 
   </div>
+
+  <!-- ── Image Lightbox ── -->
+  @if (zoomedImage) {
+    <div class="od-lightbox" (click)="closeZoom()">
+
+      <!-- Close -->
+      <button class="od-lightbox-close" (click)="closeZoom()">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <!-- Prev -->
+      @if (zoomedIndex > 0) {
+        <button class="od-lightbox-nav od-lightbox-nav--prev" (click)="prevImage($event)">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+      }
+
+      <!-- Image -->
+      <img class="od-lightbox-img" [src]="zoomedImage" alt="Aperçu" (click)="$event.stopPropagation()" />
+
+      <!-- Next -->
+      @if (zoomedIndex < zoomedImages.length - 1) {
+        <button class="od-lightbox-nav od-lightbox-nav--next" (click)="nextImage($event)">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      }
+
+      <!-- Dots -->
+      @if (zoomedImages.length > 1) {
+        <div class="od-lightbox-dots" (click)="$event.stopPropagation()">
+          @for (img of zoomedImages; track $index) {
+            <span class="od-lightbox-dot" [class.od-lightbox-dot--active]="$index === zoomedIndex"
+              (click)="zoomedIndex = $index"></span>
+          }
+        </div>
+      }
+
+    </div>
+  }
 }

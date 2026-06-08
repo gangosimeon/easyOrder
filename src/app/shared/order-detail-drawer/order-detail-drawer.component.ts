@@ -25,6 +25,36 @@ export class OrderDetailDrawerComponent {
   }>();
 
   showStatusMenu = false;
+  zoomedImages: string[] = [];
+  zoomedIndex = 0;
+
+  get zoomedImage(): string | null {
+    return this.zoomedImages.length > 0 ? this.zoomedImages[this.zoomedIndex] : null;
+  }
+
+  get itemImages(): string[] {
+    return this.order?.items.filter(i => !!i.image).map(i => i.image!) ?? [];
+  }
+
+  openZoom(src: string): void {
+    this.zoomedImages = this.itemImages;
+    this.zoomedIndex = Math.max(0, this.zoomedImages.indexOf(src));
+  }
+
+  closeZoom(): void {
+    this.zoomedImages = [];
+    this.zoomedIndex = 0;
+  }
+
+  prevImage(e: MouseEvent): void {
+    e.stopPropagation();
+    if (this.zoomedIndex > 0) this.zoomedIndex--;
+  }
+
+  nextImage(e: MouseEvent): void {
+    e.stopPropagation();
+    if (this.zoomedIndex < this.zoomedImages.length - 1) this.zoomedIndex++;
+  }
 
   get displayOrderId(): string {
     const id = (this.order as any)?._id;
