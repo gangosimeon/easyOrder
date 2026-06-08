@@ -10,11 +10,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartService, CartItem } from '../../../core/services/cart.service';
 import { OrderService } from '../../../core/services/order.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
+import { PhoneInputComponent } from '../../../shared/phone-input/phone-input.component';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule, MatDialogModule, MatProgressSpinnerModule, FormsModule],
+  imports: [MatIconModule, MatButtonModule, MatDialogModule, MatProgressSpinnerModule, FormsModule, PhoneInputComponent],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
@@ -32,11 +33,16 @@ export class CartComponent {
   readonly showOrderForm  = signal(false);
   readonly customerName   = signal('');
   readonly customerPhone  = signal('');
+  readonly countryCode    = signal('226');
   readonly customerNote   = signal('');
+  readonly submitted      = signal(false);
+
+  get phoneDigits(): number {
+    return this.customerPhone().replace(/\D/g, '').length;
+  }
 
   get formValid(): boolean {
-    return this.customerName().trim().length >= 2 &&
-           this.customerPhone().trim().replace(/\D/g, '').length >= 8;
+    return this.customerName().trim().length >= 2 && this.phoneDigits >= 5;
   }
 
   getTotal(): number {
@@ -60,15 +66,17 @@ export class CartComponent {
   }
 
   submitOrder(): void {
+    this.submitted.set(true);
     const company = this.cartService.company();
     const items   = this.cartItems();
-    // || !this.formValid
-    if (!company || items.length === 0 ) return;
+    if (!company || items.length === 0 || !this.formValid) return;
+
+    const fullPhone = this.countryCode() + this.customerPhone();
 
     this.orderService
       .createOrderFromCart(
         this.customerName(),
-        this.customerPhone(),
+        fullPhone,
         items,
         company.slug,
         { note: this.customerNote(), whatsappSent: true },

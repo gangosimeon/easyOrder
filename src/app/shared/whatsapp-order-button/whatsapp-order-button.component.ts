@@ -6,11 +6,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartService, CartItem } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
+import { PhoneInputComponent } from '../phone-input/phone-input.component';
 
 @Component({
   selector: 'app-whatsapp-order-button',
   standalone: true,
-  imports: [FormsModule, MatDialogModule, MatProgressSpinnerModule],
+  imports: [FormsModule, MatDialogModule, MatProgressSpinnerModule, PhoneInputComponent],
   templateUrl: './whatsapp-order-button.component.html',
   styleUrls: ['./whatsapp-order-button.component.scss'],
 })
@@ -28,7 +29,9 @@ export class WhatsAppOrderButtonComponent {
   readonly showForm = signal(false);
   readonly customerName = signal('');
   readonly customerPhone = signal('');
+  readonly countryCode = signal('226');
   readonly customerNote = signal('');
+  readonly submitted = signal(false);
 
   readonly submitting = this.orderService.submitting;
   readonly submitError = this.orderService.submitError;
@@ -58,9 +61,12 @@ export class WhatsAppOrderButtonComponent {
 
   // ── Form validation ───────────────────────────────────────────────────────
 
+  get phoneDigits(): number {
+    return this.customerPhone().replace(/\D/g, '').length;
+  }
+
   get formValid(): boolean {
-    return this.customerName().trim().length >= 2 &&
-           this.customerPhone().trim().replace(/\D/g, '').length >= 8;
+    return this.customerName().trim().length >= 2 && this.phoneDigits >= 5;
   }
 
   // ── Actions ────────────────────────────────────────────────────────────────
@@ -77,19 +83,24 @@ export class WhatsAppOrderButtonComponent {
     this.showForm.set(false);
     this.customerName.set('');
     this.customerPhone.set('');
+    this.countryCode.set('226');
     this.customerNote.set('');
+    this.submitted.set(false);
     this.orderService.submitError.set(null);
   }
 
   submitOrder(): void {
+    this.submitted.set(true);
     const company = this.company();
     const items = this.cartItems();
     if (!company || items.length === 0 || !this.formValid) return;
 
+    const fullPhone = this.countryCode() + this.customerPhone();
+
     this.orderService
       .createOrderFromCart(
         this.customerName(),
-        this.customerPhone(),
+        fullPhone,
         items,
         company.slug,
         { note: this.customerNote(), whatsappSent: true },

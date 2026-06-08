@@ -166,20 +166,15 @@
         </div>
 
         <!-- Téléphone -->
-        <label class="field-label" for="cust-phone">Numéro WhatsApp </label>
-        <div class="input-wrap" [class.input-filled]="customerPhone().length > 0">
-          <mat-icon class="input-icon">phone</mat-icon>
-          <input
-            id="cust-phone"
-            type="tel"
-            class="form-input"
-            placeholder="Ex : 226 70 00 00 00"
-            autocomplete="tel"
-            inputmode="tel"
-            [value]="customerPhone()"
-            (input)="customerPhone.set($any($event.target).value)"
-          />
-        </div>
+        <label class="field-label">Numéro WhatsApp</label>
+        <app-phone-input
+          [ngModel]="customerPhone()"
+          (ngModelChange)="customerPhone.set($event)"
+          (countryCodeChange)="countryCode.set($event)">
+        </app-phone-input>
+        @if (customerPhone().length > 0 && phoneDigits < 5) {
+          <span class="phone-error">Numéro trop court (min. 5 chiffres locaux)</span>
+        }
 
         <!-- Note optionnelle -->
         <label class="field-label" for="cust-note">Note (optionnel)</label>

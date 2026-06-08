@@ -68,20 +68,14 @@
 
       <!-- Phone Input -->
       <label class="field-label">Numéro WhatsApp *</label>
-      <div class="input-wrap" [class.input-filled]="customerPhone().length > 0">
-        <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-        </svg>
-        <input
-          type="tel"
-          class="form-input"
-          placeholder="Ex : 226 70 00 00 00"
-          autocomplete="tel"
-          inputmode="tel"
-          [value]="customerPhone()"
-          (input)="customerPhone.set($any($event.target).value)"
-        />
-      </div>
+      <app-phone-input
+        [ngModel]="customerPhone()"
+        (ngModelChange)="customerPhone.set($event)"
+        (countryCodeChange)="countryCode.set($event)">
+      </app-phone-input>
+      @if (customerPhone().length > 0 && phoneDigits < 5) {
+        <span class="phone-error">Numéro trop court (min. 5 chiffres locaux)</span>
+      }
 
       <!-- Note Input (Optional) -->
       <label class="field-label">Note (optionnel)</label>
