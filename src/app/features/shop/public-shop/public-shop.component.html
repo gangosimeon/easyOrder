@@ -288,5 +288,16 @@
   }
 }
 
+<!-- ── INFINITE SCROLL SENTINEL (toujours dans le DOM) ── -->
+<div #productSentinel class="product-sentinel">
+  @if (loadingMoreProducts()) {
+    <div class="loading-more-products">
+      <span class="lmp-dot"></span>
+      <span class="lmp-dot"></span>
+      <span class="lmp-dot"></span>
+    </div>
+  }
+</div>
+
 
 

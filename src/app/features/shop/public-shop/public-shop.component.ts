@@ -1,4 +1,7 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import {
+  AfterViewInit, Component, ElementRef, inject,
+  OnDestroy, OnInit, signal, computed, ViewChild,
+} from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -31,26 +34,35 @@ registerLocaleData(localeFr);
   templateUrl: './public-shop.component.html',
   styleUrls: ['./public-shop.component.scss'],
 })
-export class PublicShopComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private shopService = inject(PublicShopService);
+export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
+  private route        = inject(ActivatedRoute);
+  private router       = inject(Router);
+  private shopService  = inject(PublicShopService);
   readonly cartService = inject(CartService);
-  private snackBar = inject(MatSnackBar);
-  private http = inject(HttpClient);
+  private snackBar     = inject(MatSnackBar);
+  private http         = inject(HttpClient);
   private visitorService = inject(VisitorService);
+
+  @ViewChild('productSentinel') private sentinelRef!: ElementRef<HTMLDivElement>;
 
   readonly ANNONCE_TYPE_CONFIG = ANNONCE_TYPE_CONFIG;
   readonly skeletonAnn      = Array(2).fill(0);
   readonly skeletonCats     = Array(4).fill(0);
   readonly skeletonProducts = Array(4).fill(0);
 
-  readonly loading = signal(true);
-  readonly error = signal<string | null>(null);
-  readonly shopData = signal<ShopData | null>(null);
-  readonly selectedAnn = signal<Annonce | null>(null);
+  readonly loading             = signal(true);
+  readonly error               = signal<string | null>(null);
+  readonly shopData            = signal<ShopData | null>(null);
+  readonly allProducts         = signal<Product[]>([]);
+  readonly productHasMore      = signal(false);
+  readonly loadingMoreProducts = signal(false);
+  readonly selectedAnn         = signal<Annonce | null>(null);
   readonly selectedDetailProduct = signal<Product | null>(null);
-  readonly searchQuery = signal('');
+  readonly searchQuery         = signal('');
+
+  private currentProductPage = 1;
+  private shopSlug           = '';
+  private observer: IntersectionObserver | null = null;
 
   openAnn(ann: Annonce): void  { this.selectedAnn.set(ann); }
   closeAnn(): void             { this.selectedAnn.set(null); }
@@ -73,10 +85,10 @@ export class PublicShopComponent implements OnInit {
     return new Date(date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
   }
 
-  readonly cartItems = toSignal(this.cartService.items$, { initialValue: [] });
+  readonly cartItems   = toSignal(this.cartService.items$, { initialValue: [] });
   readonly cartItemIds = computed(() => new Set(this.cartItems().map(i => i.product.id)));
 
-  readonly company = computed(() => this.shopData()?.company ?? null);
+  readonly company    = computed(() => this.shopData()?.company ?? null);
   readonly categories = computed(() => this.shopData()?.categories ?? []);
 
   readonly announcements = computed(() => {
@@ -98,12 +110,13 @@ export class PublicShopComponent implements OnInit {
   });
 
   readonly productsByCategory = computed(() => {
-    const allProducts = this.shopData()?.products ?? [];
-    const cats = this.categories();
+    const cats  = this.categories();
     const catId = this.cartService.selectedCategoryId();
-    const q = this.searchQuery().trim().toLowerCase();
+    const q     = this.searchQuery().trim().toLowerCase();
 
-    let filtered = catId ? allProducts.filter(p => p.categoryId === catId) : allProducts;
+    let filtered = catId
+      ? this.allProducts().filter(p => p.categoryId === catId)
+      : this.allProducts();
     if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q));
 
     const groups: { category: Category; products: Product[] }[] = [];
@@ -114,10 +127,7 @@ export class PublicShopComponent implements OnInit {
     const uncategorized = filtered.filter(p => !cats.find(c => c.id === p.categoryId));
     if (uncategorized.length > 0) {
       groups.push({
-        category: {
-          id: '__none__', name: 'Autres', icon: 'inventory_2',
-          color: '#9CA3AF', createdAt: new Date(),
-        },
+        category: { id: '__none__', name: 'Autres', icon: 'inventory_2', color: '#9CA3AF', createdAt: new Date() },
         products: uncategorized,
       });
     }
@@ -129,12 +139,25 @@ export class PublicShopComponent implements OnInit {
 
   ngOnInit(): void {
     this.cartService.selectCategory(null);
-    const slug = this.route.snapshot.paramMap.get('slug') ?? '';
+    const slug   = this.route.snapshot.paramMap.get('slug') ?? '';
     const source = this.route.snapshot.queryParamMap.get('source') ?? undefined;
+    this.shopSlug = slug;
+
     this.shopService.getShop(slug).subscribe({
       next: data => {
         this.shopData.set(data);
-        this.cartService.setCompany({ name: data.company.name, phone: data.company.phone, slug: data.company.slug, coverColor: data.company.coverColor, description: data.company.description, address: data.company.address, logo: data.company.logo });
+        this.allProducts.set(data.products);
+        this.productHasMore.set(data.productHasMore ?? false);
+        this.currentProductPage = 1;
+        this.cartService.setCompany({
+          name:        data.company.name,
+          phone:       data.company.phone,
+          slug:        data.company.slug,
+          coverColor:  data.company.coverColor,
+          description: data.company.description,
+          address:     data.company.address,
+          logo:        data.company.logo,
+        });
         this.cartService.setCategories(data.categories);
         this.loading.set(false);
         this.trackVisit(data.company.id, source);
@@ -146,11 +169,49 @@ export class PublicShopComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.observer = new IntersectionObserver(
+      entries => {
+        if (
+          entries[0].isIntersecting &&
+          this.productHasMore() &&
+          !this.loadingMoreProducts() &&
+          !this.loading()
+        ) {
+          this.loadMoreProducts();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    this.observer.observe(this.sentinelRef.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+  }
+
+  private loadMoreProducts(): void {
+    if (!this.productHasMore() || this.loadingMoreProducts()) return;
+    this.loadingMoreProducts.set(true);
+    const nextPage = this.currentProductPage + 1;
+
+    this.shopService.getShop(this.shopSlug, nextPage).subscribe({
+      next: data => {
+        this.allProducts.update(list => [...list, ...data.products]);
+        this.productHasMore.set(data.productHasMore ?? false);
+        this.currentProductPage = nextPage;
+        this.loadingMoreProducts.set(false);
+      },
+      error: () => {
+        this.loadingMoreProducts.set(false);
+      },
+    });
+  }
+
   private trackVisit(shopId: string | undefined, source?: string): void {
-    if (!shopId) return; 
+    if (!shopId) return;
     const visitorId = this.visitorService.getVisitorId();
-    this.http.post(`${environment.apiUrl}/shops/visit`, { shopId, visitorId, source })
-      .subscribe({});
+    this.http.post(`${environment.apiUrl}/shops/visit`, { shopId, visitorId, source }).subscribe({});
   }
 
   selectCategory(id: string | null): void {
@@ -160,13 +221,8 @@ export class PublicShopComponent implements OnInit {
   toggleProduct(product: Product): void {
     if (this.cartItems().some(i => i.product.id === product.id)) {
       this.cartService.removeProduct(product.id);
-      // this.snackBar.open(`${product.name} retiré du panier`, '', { duration: 1500 });
     } else {
       this.cartService.addProduct(product);
-      // this.snackBar.open(`✅ ${product.name} ajouté au panier !`, '', {
-      //   duration: 1800,
-      //   panelClass: ['snack-success'],
-      // });
     }
   }
 
