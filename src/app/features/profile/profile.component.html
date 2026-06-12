@@ -37,10 +37,18 @@
   }
 
   <div class="page-header">
-    <h1 class="page-title">
-      <mat-icon class="title-icon">manage_accounts</mat-icon> Mon Profil
-    </h1>
-    <p class="page-subtitle">Modifiez les informations de votre boutique</p>
+    <div class="page-header-left">
+      <h1 class="page-title">
+        <mat-icon class="title-icon">manage_accounts</mat-icon> Mon Profil
+      </h1>
+      <p class="page-subtitle">Modifiez les informations de votre boutique</p>
+    </div>
+    @if (shopUrl()) {
+      <a [href]="shopUrl()" target="_blank" class="btn-view-shop" matRipple>
+        <mat-icon>store</mat-icon>
+        <span>Voir ma boutique</span>
+      </a>
+    }
   </div>
 
   <div class="profile-card">
