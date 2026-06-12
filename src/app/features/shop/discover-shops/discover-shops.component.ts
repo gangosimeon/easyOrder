@@ -1,33 +1,34 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit, Component, ElementRef, inject,
+  OnDestroy, OnInit, signal, ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
-import { catchError, map, of } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import {
-  PublicShopService, PublicShopInfo, PublicCategory,
+  PublicShopService, PublicShopInfo, PublicCategory, ShopsListResponse,
 } from '../../../core/services/public-shop.service';
 import { AdminService, AdminShop } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Product } from '../../../models/product.model';
 import { LandingNavComponent } from '../../landing/components/landing-nav/landing-nav.component';
 
 interface ShopCard {
-  info:            PublicShopInfo;
-  products:        Product[];
-  productsLoading: boolean;
+  info: PublicShopInfo;
 }
 
 function toPublicShopInfo(shop: AdminShop): PublicShopInfo {
   return {
-    id:           shop.id,
-    name:         shop.name,
-    slug:         shop.slug,
-    address:      shop.address,
-    logo:         shop.logo,
-    coverColor:   shop.coverColor,
-    productCount: shop.productCount,
-    status:       shop.status,
-    categories:   [],
+    id:              shop.id,
+    name:            shop.name,
+    slug:            shop.slug,
+    address:         shop.address,
+    logo:            shop.logo,
+    coverColor:      shop.coverColor,
+    productCount:    shop.productCount,
+    status:          shop.status,
+    categories:      [],
+    previewProducts: [],
   };
 }
 
@@ -38,33 +39,52 @@ function toPublicShopInfo(shop: AdminShop): PublicShopInfo {
   templateUrl: './discover-shops.component.html',
   styleUrls: ['./discover-shops.component.scss'],
 })
-export class DiscoverShopsComponent implements OnInit, OnDestroy {
+export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy {
   private publicShopService = inject(PublicShopService);
   private adminService      = inject(AdminService);
   private authService       = inject(AuthService);
   private router            = inject(Router);
 
-  readonly loading         = signal(true);
-  readonly reloading       = signal(false);
-  readonly error           = signal<string | null>(null);
-  readonly shops           = signal<ShopCard[]>([]);
-  readonly allCategories   = signal<PublicCategory[]>([]);
-  readonly searchQuery     = signal('');
-  readonly activeCategory  = signal('all');
-  readonly skeletonRows    = Array(6).fill(0);
+  @ViewChild('infiniteSentinel') private sentinelRef!: ElementRef<HTMLDivElement>;
 
+  readonly loading        = signal(true);
+  readonly loadingMore    = signal(false);
+  readonly reloading      = signal(false);
+  readonly error          = signal<string | null>(null);
+  readonly shops          = signal<ShopCard[]>([]);
+  readonly allCategories  = signal<PublicCategory[]>([]);
+  readonly searchQuery    = signal('');
+  readonly activeCategory = signal('all');
+  readonly hasMore        = signal(false);
+  readonly skeletonRows   = Array(6).fill(0);
+
+  private currentPage = 1;
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
+  private observer: IntersectionObserver | null = null;
 
   ngOnInit(): void {
     this.loadCategories();
     this.loadShops(true);
   }
 
-  ngOnDestroy(): void {
-    if (this.searchTimer) clearTimeout(this.searchTimer);
+  ngAfterViewInit(): void {
+    this.observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && this.hasMore() && !this.loadingMore() && !this.loading()) {
+          this.loadMoreShops();
+        }
+      },
+      { rootMargin: '400px' }
+    );
+    this.observer.observe(this.sentinelRef.nativeElement);
   }
 
-  // ── Charger la liste des catégories disponibles (filter bar) ──────────────
+  ngOnDestroy(): void {
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    this.observer?.disconnect();
+  }
+
+  // ── Catégories ────────────────────────────────────────────────────────────
 
   loadCategories(): void {
     this.publicShopService.getPublicCategories().subscribe({
@@ -73,43 +93,19 @@ export class DiscoverShopsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ── Charger les boutiques avec filtres backend ────────────────────────────
+  // ── Chargement initial / rechargement (reset page 1) ─────────────────────
 
   loadShops(firstLoad = false): void {
+    this.currentPage = 1;
     firstLoad ? this.loading.set(true) : this.reloading.set(true);
     this.error.set(null);
 
-    const search   = this.searchQuery().trim();
-    const category = this.activeCategory() !== 'all' ? this.activeCategory() : '';
-
-    const shops$ = this.publicShopService.getShopsList({ search, category }).pipe(
-      catchError(() => {
-        if (this.authService.isLoggedIn()) {
-          return this.adminService.getShops({ search, status: 'active', limit: 50 }).pipe(
-            map(data => data.shops.map(toPublicShopInfo))
-          );
-        }
-        return of(null);
-      })
-    );
-
-    shops$.subscribe({
-      next: (shopInfos) => {
-        if (!shopInfos) {
-          this.error.set('Impossible de charger les boutiques.');
-          this.loading.set(false);
-          this.reloading.set(false);
-          return;
-        }
-        const cards: ShopCard[] = shopInfos.map(shop => ({
-          info:            shop,
-          products:        [],
-          productsLoading: true,
-        }));
-        this.shops.set(cards);
+    this.fetchPage(1).subscribe({
+      next: response => {
+        this.shops.set(response.shops.map(s => ({ info: s })));
+        this.hasMore.set(response.hasMore);
         this.loading.set(false);
         this.reloading.set(false);
-        this.loadProductDetails(shopInfos);
       },
       error: () => {
         this.error.set('Impossible de charger les boutiques.');
@@ -119,28 +115,51 @@ export class DiscoverShopsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loadProductDetails(shopInfos: PublicShopInfo[]): void {
-    shopInfos.forEach(shop => {
-      this.publicShopService.getShop(shop.slug).subscribe({
-        next: data => {
-          const products = data.products.filter(p => this.isUrl(p.image));
-          this.shops.update(list =>
-            list.map(s =>
-              s.info.slug === shop.slug
-                ? { ...s, products, productsLoading: false }
-                : s
-            )
-          );
-        },
-        error: () => {
-          this.shops.update(list =>
-            list.map(s =>
-              s.info.slug === shop.slug ? { ...s, productsLoading: false } : s
-            )
-          );
-        },
-      });
+  // ── Chargement page suivante (déclenché par le sentinel) ─────────────────
+
+  private loadMoreShops(): void {
+    if (!this.hasMore() || this.loadingMore()) return;
+    this.loadingMore.set(true);
+    const nextPage = this.currentPage + 1;
+
+    this.fetchPage(nextPage).subscribe({
+      next: response => {
+        this.shops.update(list => [...list, ...response.shops.map(s => ({ info: s }))]);
+        this.hasMore.set(response.hasMore);
+        this.currentPage = nextPage;
+        this.loadingMore.set(false);
+      },
+      error: () => {
+        this.loadingMore.set(false);
+      },
     });
+  }
+
+  // ── Requête commune ───────────────────────────────────────────────────────
+
+  private fetchPage(page: number): Observable<ShopsListResponse> {
+    const search   = this.searchQuery().trim();
+    const category = this.activeCategory() !== 'all' ? this.activeCategory() : '';
+
+    return this.publicShopService.getShopsList({ search, category, page, limit: 25 }).pipe(
+      catchError(() => {
+        if (page === 1 && this.authService.isLoggedIn()) {
+          return this.adminService.getShops({ search, status: 'active', limit: 50 }).pipe(
+            map(data => ({
+              shops:      data.shops.map(toPublicShopInfo),
+              page:       1,
+              limit:      50,
+              totalPages: 1,
+              totalItems: data.shops.length,
+              hasMore:    false,
+            } satisfies ShopsListResponse))
+          );
+        }
+        return of<ShopsListResponse>({
+          shops: [], page, limit: 25, totalPages: 0, totalItems: 0, hasMore: false,
+        });
+      })
+    );
   }
 
   // ── Actions utilisateur ───────────────────────────────────────────────────
@@ -182,7 +201,7 @@ export class DiscoverShopsComponent implements OnInit, OnDestroy {
   }
 
   getBannerImage(card: ShopCard): string {
-    return card.products[0]?.image ?? '';
+    return card.info.previewProducts?.find(p => this.isUrl(p.image))?.image ?? '';
   }
 
   getBannerBackground(card: ShopCard): string {

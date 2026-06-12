@@ -60,7 +60,7 @@
   <!-- ── CONTENT AREA ── -->
   <div class="content-area">
 
-    <!-- Skeletons -->
+    <!-- Skeletons (premier chargement) -->
     @if (loading()) {
       <div class="shops-grid">
         @for (row of skeletonRows; track $index) {
@@ -116,9 +116,7 @@
 
             <!-- ── BANNER ── -->
             <div class="card-banner">
-              @if (card.productsLoading) {
-                <div class="banner-skel skel-block"></div>
-              } @else if (getBannerImage(card)) {
+              @if (getBannerImage(card)) {
                 <img class="banner-img" [src]="getBannerImage(card)" [alt]="card.info.name" loading="eager" />
               } @else {
                 <div class="banner-gradient" [style.background]="getBannerBackground(card)">
@@ -129,7 +127,7 @@
                   }
                 </div>
               }
-              @if (!card.productsLoading && card.info.status === 'inactive') {
+              @if (card.info.status === 'inactive') {
                 <div class="inactive-overlay">Inactif</div>
               }
             </div>
@@ -165,7 +163,7 @@
                 </div>
               </div>
 
-              <!-- Stats : adresse + nombre produits -->
+              <!-- Stats -->
               <div class="card-stats">
                 @if (card.info.address) {
                   <span class="stat-loc">
@@ -179,7 +177,7 @@
                 </span>
               </div>
 
-              <!-- Carousel produits -->
+              <!-- Carousel previewProducts — inclus dans la réponse, 0 requête extra -->
               <div class="carousel-wrapper">
                 <button class="carousel-btn carousel-prev"
                         (click)="carouselPrev(card.info.slug, $event)">
@@ -187,17 +185,13 @@
                 </button>
 
                 <div class="carousel-track" [id]="'carousel-' + card.info.slug">
-                  @if (card.productsLoading) {
-                    @for (i of [0,1,2,3]; track i) {
-                      <div class="skel-block carousel-skel"></div>
-                    }
-                  } @else if (card.products.length > 0) {
-                    @for (p of card.products.slice(0, 4); track p.id; let i = $index) {
+                  @if (card.info.previewProducts && card.info.previewProducts.length > 0) {
+                    @for (p of card.info.previewProducts; track p.id; let i = $index) {
                       <div class="carousel-item">
                         <img [src]="p.image" [alt]="p.name" loading="lazy" />
-                        @if (i === 3 && card.products.length > 4) {
+                        @if (i === 3 && card.info.productCount > 4) {
                           <div class="more-overlay">
-                            +{{ card.products.length - 4 }}<br>produits
+                            +{{ card.info.productCount - 4 }}<br>produits
                           </div>
                         }
                       </div>
@@ -227,6 +221,18 @@
         }
       </div>
     }
+
+    <!-- ── INFINITE SCROLL SENTINEL ── -->
+    <!-- Toujours présent dans le DOM — IntersectionObserver l'observe en permanence -->
+    <div #infiniteSentinel class="infinite-sentinel">
+      @if (loadingMore()) {
+        <div class="loading-more">
+          <span class="lm-dot"></span>
+          <span class="lm-dot"></span>
+          <span class="lm-dot"></span>
+        </div>
+      }
+    </div>
 
   </div>
 </div>
