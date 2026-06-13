@@ -60,7 +60,7 @@
   height: 36px;
   padding: 0 14px;
   border-radius: var(--radius-sm, 9px);
-  background: var(--primary, #C2410C);
+  background: var(--cover, var(--primary));
   color: #FFFFFF;
   font-family: var(--font-display);
   font-weight: 700;
@@ -770,7 +770,7 @@
 
   mat-icon { font-size: 20px; width: 20px; height: 20px; }
 
-  &:hover { border-color: var(--primary); color: white; background: var(--primary-light, #eff6ff); }
+  &:hover { border-color: var(--cover, var(--primary)); color: white; background: var(--cover, var(--primary)); }
 }
 
 /* ── Stats section ── */
