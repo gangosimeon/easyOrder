@@ -35,7 +35,7 @@
           @if (form.get('phone')?.hasError('required') && (form.get('phone')?.touched || submitted())) {
             <span class="phone-error">Le numéro est requis</span>
           }
-          @if (form.get('phone')?.hasError('invalidPhone') && (form.get('phone')?.touched || submitted())) {
+          @if (form.get('phone')?.hasError('invalidPhone') && submitted()) {
             <span class="phone-error">Numéro invalide pour le pays sélectionné</span>
           }
         </div>
