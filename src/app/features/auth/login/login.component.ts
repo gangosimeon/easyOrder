@@ -49,6 +49,7 @@ export class LoginComponent {
     this.form.valueChanges.subscribe(() => {
       if (this.errorMsg()) this.errorMsg.set(null);
     });
+    this.form.get('phone')?.valueChanges.subscribe(() => this.submitted.set(false));
   }
 
   onCountryChange(code: string): void {

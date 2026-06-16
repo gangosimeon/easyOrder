@@ -81,6 +81,10 @@ export class RegisterComponent {
     { validators: passwordMatchValidator },
   );
 
+  constructor() {
+    this.form.get('phone')?.valueChanges.subscribe(() => this.submitted.set(false));
+  }
+
   onCountryChange(code: string): void {
     this.countryCode.set(code);
     this.form.get('phone')?.updateValueAndValidity();

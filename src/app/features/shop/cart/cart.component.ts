@@ -38,6 +38,11 @@ export class CartComponent {
   readonly customerNote   = signal('');
   readonly submitted      = signal(false);
 
+  onPhoneChange(val: string): void {
+    this.customerPhone.set(val);
+    this.submitted.set(false);
+  }
+
   get isPhoneValid(): boolean {
     return isValidPhone(this.countryCode(), this.customerPhone());
   }

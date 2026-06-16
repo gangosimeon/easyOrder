@@ -62,6 +62,11 @@ export class WhatsAppOrderButtonComponent {
 
   // ── Form validation ───────────────────────────────────────────────────────
 
+  onPhoneChange(val: string): void {
+    this.customerPhone.set(val);
+    this.submitted.set(false);
+  }
+
   get isPhoneValid(): boolean {
     return isValidPhone(this.countryCode(), this.customerPhone());
   }

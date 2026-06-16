@@ -70,7 +70,7 @@
       <label class="field-label">Numéro WhatsApp *</label>
       <app-phone-input
         [ngModel]="customerPhone()"
-        (ngModelChange)="customerPhone.set($event)"
+        (ngModelChange)="onPhoneChange($event)"
         (countryCodeChange)="countryCode.set($event)">
       </app-phone-input>
       @if (submitted() && !isPhoneValid) {
