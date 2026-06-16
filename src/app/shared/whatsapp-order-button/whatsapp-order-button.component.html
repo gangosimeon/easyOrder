@@ -73,7 +73,7 @@
         (ngModelChange)="customerPhone.set($event)"
         (countryCodeChange)="countryCode.set($event)">
       </app-phone-input>
-      @if (customerPhone().length > 0 && !isPhoneValid) {
+      @if (submitted() && !isPhoneValid) {
         <span class="phone-error">Numéro invalide pour le pays sélectionné</span>
       }
 
@@ -106,7 +106,7 @@
       <button
         class="confirm-btn"
         (click)="submitOrder()"
-        [disabled]="!formValid || submitting()"
+        [disabled]="submitting()"
       >
         @if (submitting()) {
           <mat-spinner diameter="20" strokeWidth="3" />
