@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { phoneNumberValidator } from '../../../shared/phone-input/phone-validator';
 import { Router, RouterLink } from '@angular/router';
 import { MatFormFieldModule }       from '@angular/material/form-field';
 import { MatInputModule }           from '@angular/material/input';
@@ -40,7 +41,7 @@ export class LoginComponent {
   readonly submitted    = signal(false);
 
   readonly form = this.fb.group({
-    phone:    ['', [Validators.required, Validators.pattern(/^[0-9]{5,15}$/)]],
+    phone:    ['', [Validators.required, phoneNumberValidator(() => this.countryCode())]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
@@ -48,6 +49,11 @@ export class LoginComponent {
     this.form.valueChanges.subscribe(() => {
       if (this.errorMsg()) this.errorMsg.set(null);
     });
+  }
+
+  onCountryChange(code: string): void {
+    this.countryCode.set(code);
+    this.form.get('phone')?.updateValueAndValidity();
   }
 
   togglePassword(): void { this.showPassword.update(v => !v); }

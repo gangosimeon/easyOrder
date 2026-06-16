@@ -11,6 +11,7 @@ import { CartService, CartItem } from '../../../core/services/cart.service';
 import { OrderService } from '../../../core/services/order.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { PhoneInputComponent } from '../../../shared/phone-input/phone-input.component';
+import { isValidPhone } from '../../../shared/phone-input/phone-validator';
 
 @Component({
   selector: 'app-cart',
@@ -37,12 +38,12 @@ export class CartComponent {
   readonly customerNote   = signal('');
   readonly submitted      = signal(false);
 
-  get phoneDigits(): number {
-    return this.customerPhone().replace(/\D/g, '').length;
+  get isPhoneValid(): boolean {
+    return isValidPhone(this.countryCode(), this.customerPhone());
   }
 
   get formValid(): boolean {
-    return this.customerName().trim().length >= 2 && this.phoneDigits >= 5;
+    return this.customerName().trim().length >= 2 && this.isPhoneValid;
   }
 
   getTotal(): number {

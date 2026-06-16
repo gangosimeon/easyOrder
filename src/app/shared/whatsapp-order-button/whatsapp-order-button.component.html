@@ -73,8 +73,8 @@
         (ngModelChange)="customerPhone.set($event)"
         (countryCodeChange)="countryCode.set($event)">
       </app-phone-input>
-      @if (customerPhone().length > 0 && phoneDigits < 5) {
-        <span class="phone-error">Numéro trop court (min. 5 chiffres locaux)</span>
+      @if (customerPhone().length > 0 && !isPhoneValid) {
+        <span class="phone-error">Numéro invalide pour le pays sélectionné</span>
       }
 
       <!-- Note Input (Optional) -->

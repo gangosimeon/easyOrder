@@ -7,6 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartService, CartItem } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
 import { PhoneInputComponent } from '../phone-input/phone-input.component';
+import { isValidPhone } from '../phone-input/phone-validator';
 
 @Component({
   selector: 'app-whatsapp-order-button',
@@ -61,12 +62,12 @@ export class WhatsAppOrderButtonComponent {
 
   // ── Form validation ───────────────────────────────────────────────────────
 
-  get phoneDigits(): number {
-    return this.customerPhone().replace(/\D/g, '').length;
+  get isPhoneValid(): boolean {
+    return isValidPhone(this.countryCode(), this.customerPhone());
   }
 
   get formValid(): boolean {
-    return this.customerName().trim().length >= 2 && this.phoneDigits >= 5;
+    return this.customerName().trim().length >= 2 && this.isPhoneValid;
   }
 
   // ── Actions ────────────────────────────────────────────────────────────────

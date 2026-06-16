@@ -68,13 +68,13 @@
           <label class="phone-field-label">Numéro de téléphone</label>
           <app-phone-input
             formControlName="phone"
-            (countryCodeChange)="countryCode.set($event)">
+            (countryCodeChange)="onCountryChange($event)">
           </app-phone-input>
           @if (form.get('phone')?.hasError('required') && (form.get('phone')?.touched || submitted())) {
             <span class="phone-error">Le numéro est requis</span>
           }
-          @if (form.get('phone')?.hasError('pattern') && (form.get('phone')?.touched || submitted())) {
-            <span class="phone-error">Format invalide (5 à 15 chiffres)</span>
+          @if (form.get('phone')?.hasError('invalidPhone') && (form.get('phone')?.touched || submitted())) {
+            <span class="phone-error">Numéro invalide pour le pays sélectionné</span>
           }
         </div>
 

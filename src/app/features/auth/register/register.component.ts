@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, ReactiveFormsModule, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
+import { phoneNumberValidator } from '../../../shared/phone-input/phone-validator';
 import { Router, RouterLink } from '@angular/router';
 import { MatFormFieldModule }       from '@angular/material/form-field';
 import { MatInputModule }           from '@angular/material/input';
@@ -71,7 +72,7 @@ export class RegisterComponent {
   readonly form = this.fb.group(
     {
       name:            ['', [Validators.required, Validators.minLength(3)]],
-      phone:           ['', [Validators.required, Validators.pattern(/^[0-9]{5,15}$/)]],
+      phone:           ['', [Validators.required, phoneNumberValidator(() => this.countryCode())]],
       password:        ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required],
       description:     [''],
@@ -79,6 +80,11 @@ export class RegisterComponent {
     },
     { validators: passwordMatchValidator },
   );
+
+  onCountryChange(code: string): void {
+    this.countryCode.set(code);
+    this.form.get('phone')?.updateValueAndValidity();
+  }
 
   selectLogo(logo: string):   void { this.selectedLogo.set(logo); }
   selectColor(color: string): void { this.selectedColor.set(color); }
