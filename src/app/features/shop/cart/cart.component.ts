@@ -104,8 +104,9 @@ export class CartComponent {
       });
   }
 
-  private openWhatsApp(items: CartItem[], company: { phone: string; name: string }): void {
-    const url = this.orderService.buildWhatsAppUrl(company.phone, items, company.name);
+  private openWhatsApp(items: CartItem[], company: { phone: string; fullPhone?: string; name: string }): void {
+    const phone = (company.fullPhone ?? company.phone).replace(/\D/g, '');
+    const url   = this.orderService.buildWhatsAppUrl(phone, items, company.name);
     window.open(url, '_blank');
   }
   clearCart(): void {

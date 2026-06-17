@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartService, CartItem } from '../../core/services/cart.service';
@@ -20,7 +20,6 @@ export class WhatsAppOrderButtonComponent {
   private cartService = inject(CartService);
   private orderService = inject(OrderService);
   private snackBar = inject(MatSnackBar);
-  private dialog = inject(MatDialog);
 
   // ── State ────────────────────────────────────────────────────────────────
 
@@ -128,8 +127,9 @@ export class WhatsAppOrderButtonComponent {
       });
   }
 
-  private openWhatsApp(items: CartItem[], company: { phone: string; name: string }): void {
-    const url = this.orderService.buildWhatsAppUrl(company.phone, items, company.name);
+  private openWhatsApp(items: CartItem[], company: { phone: string; fullPhone?: string; name: string }): void {
+    const phone = (company.fullPhone ?? company.phone).replace(/\D/g, '');
+    const url   = this.orderService.buildWhatsAppUrl(phone, items, company.name);
     window.open(url, '_blank');
   }
 
