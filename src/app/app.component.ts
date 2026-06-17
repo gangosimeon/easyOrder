@@ -125,7 +125,8 @@ export class AppComponent implements OnInit, OnDestroy {
     const company = this.cartService.company();
     if (!company) return;
     const msg = encodeURIComponent('Bonjour, je viens de votre boutique en ligne');
-    window.open(`https://wa.me/${company.phone}?text=${msg}`, '_blank');
+    const phone =(company.fullPhone ?? company.phone);
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   }
   
   isUrl(value?: string): boolean {
