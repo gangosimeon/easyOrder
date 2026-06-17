@@ -6,6 +6,7 @@ import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Meta, Title } from '@angular/platform-browser';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -42,6 +43,8 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   private snackBar     = inject(MatSnackBar);
   private http         = inject(HttpClient);
   private visitorService = inject(VisitorService);
+  private meta         = inject(Meta);
+  private titleService = inject(Title);
 
   @ViewChild('productSentinel') private sentinelRef!: ElementRef<HTMLDivElement>;
 
@@ -161,6 +164,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cartService.setCategories(data.categories);
         this.loading.set(false);
         this.trackVisit(data.company.id, source);
+        this.updateOgTags(data);
       },
       error: () => {
         this.error.set('Boutique introuvable ou erreur de chargement.');
@@ -188,6 +192,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.resetOgTags();
   }
 
   private loadMoreProducts(): void {
@@ -212,6 +217,59 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!shopId) return;
     const visitorId = this.visitorService.getVisitorId();
     this.http.post(`${environment.apiUrl}/shops/visit`, { shopId, visitorId, source }).subscribe({});
+  }
+
+  private updateOgTags(data: ShopData): void {
+    const base    = 'https://www.jecreemaboutique.com';
+    const slug    = data.company.slug;
+    const name    = data.company.name;
+    const desc    = data.company.description?.trim()
+      || `Découvrez ${name} — commandez facilement via WhatsApp.`;
+    const url     = `${base}/shop/${slug}`;
+    const image   = this.resolveOgImage(data, base);
+
+    this.titleService.setTitle(`${name} — Boutique en ligne`);
+
+    const tags: { [key: string]: string } = {
+      'og:title':       `${name} — Boutique en ligne`,
+      'og:description': desc,
+      'og:url':         url,
+      'og:image':       image,
+      'og:image:secure_url': image,
+      'og:type':        'website',
+      'twitter:title':       `${name} — Boutique en ligne`,
+      'twitter:description': desc,
+      'twitter:image':       image,
+      'twitter:url':         url,
+    };
+
+    for (const [prop, content] of Object.entries(tags)) {
+      const attr = prop.startsWith('twitter:') ? 'name' : 'property';
+      this.meta.updateTag({ [attr]: prop, content });
+    }
+  }
+
+  private resolveOgImage(data: ShopData, base: string): string {
+    const fallback = `${base}/assets/icons/web-app-manifest-512x512.png`;
+    if (data.company.logo?.startsWith('http')) return data.company.logo;
+    const firstWithImg = data.products.find(p => (p as any).image?.startsWith('http'));
+    return (firstWithImg as any)?.image ?? fallback;
+  }
+
+  private resetOgTags(): void {
+    const base  = 'https://www.jecreemaboutique.com';
+    const title = 'JeCreeMaBoutique — Créez votre boutique en ligne gratuitement';
+    const desc  = 'Créez votre boutique, partagez votre lien et commencez à vendre dès aujourd\'hui.';
+    const image = `${base}/assets/icons/web-app-manifest-512x512.png`;
+
+    this.titleService.setTitle(title);
+    this.meta.updateTag({ property: 'og:title',       content: title });
+    this.meta.updateTag({ property: 'og:description', content: desc });
+    this.meta.updateTag({ property: 'og:url',         content: `${base}/` });
+    this.meta.updateTag({ property: 'og:image',       content: image });
+    this.meta.updateTag({ name: 'twitter:title',       content: title });
+    this.meta.updateTag({ name: 'twitter:description', content: desc });
+    this.meta.updateTag({ name: 'twitter:image',       content: image });
   }
 
   selectCategory(id: string | null): void {
