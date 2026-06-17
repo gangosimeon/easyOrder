@@ -11,11 +11,12 @@ export interface CartItem {
 export interface CompanyRef {
   name: string;
   phone: string;
+  fullPhone?: string;
   slug: string;
   coverColor: string;
   description?: string;
   address?: string;
-  logo?: string;   
+  logo?: string;
 }
 
 @Injectable({ providedIn: 'root' })

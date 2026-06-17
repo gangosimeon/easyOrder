@@ -155,6 +155,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cartService.setCompany({
           name:        data.company.name,
           phone:       data.company.phone,
+          fullPhone:   data.company.fullPhone,
           slug:        data.company.slug,
           coverColor:  data.company.coverColor,
           description: data.company.description,
@@ -291,8 +292,9 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   contactViaWhatsApp(): void {
     const company = this.company();
     if (!company) return;
-    const msg = encodeURIComponent('Bonjour, je viens de votre boutique en ligne');
-    window.open(`https://wa.me/${company.phone}?text=${msg}`, '_blank');
+    const phone = (company.fullPhone ?? company.phone).replace(/\D/g, '');
+    const msg   = encodeURIComponent('Bonjour, je viens de votre boutique en ligne');
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   }
 
   formatPrice(price: number): string {

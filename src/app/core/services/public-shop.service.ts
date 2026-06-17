@@ -11,6 +11,7 @@ export interface CompanyInfo {
   name:        string;
   slug:        string;
   phone:       string;
+  fullPhone?:  string;
   description: string;
   address:     string;
   logo:        string;
