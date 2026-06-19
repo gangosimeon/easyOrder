@@ -1,0 +1,57 @@
+<header class="pub-topbar" [style.--cover-color]="coverColor()">
+
+  <!-- ── Breadcrumb ── -->
+  <nav class="pub-breadcrumb" aria-label="Navigation boutique">
+    <div class="pub-shop-logo">
+      @if (isUrl(cartService.company()?.logo)) {
+        <img [src]="cartService.company()?.logo"
+             [alt]="cartService.company()?.name"
+             (error)="onImgError($event)" />
+      } @else {
+        <span class="pub-logo-emoji">{{ cartService.company()?.logo || '🏪' }}</span>
+      }
+    </div>
+    <span class="pub-crumb pub-crumb-shop">
+      {{ cartService.company()?.name ?? 'Boutique' }}
+    </span>
+    <mat-icon class="pub-crumb-sep">chevron_right</mat-icon>
+    <span class="pub-crumb pub-crumb-active">
+      <mat-icon class="pub-crumb-icon">{{ crumbIcon() }}</mat-icon>
+      {{ crumbLabel() }}
+    </span>
+  </nav>
+
+  <!-- ── Right actions ── -->
+  <div class="pub-actions">
+
+    <!-- WhatsApp -->
+    @if (cartService.company()?.phone || cartService.company()?.fullPhone) {
+      <button class="pub-btn pub-wa" (click)="contactWhatsApp()" matRipple>
+        <svg class="pub-wa-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.668 4.61 1.822 6.51L4 29l7.695-1.793A11.94 11.94 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 22a9.94 9.94 0 0 1-5.09-1.396l-.364-.216-4.566 1.064 1.088-4.44-.237-.373A9.96 9.96 0 0 1 6 15c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10zm5.47-7.47c-.3-.15-1.77-.873-2.044-.972-.273-.1-.472-.15-.67.15-.2.298-.772.972-.946 1.17-.174.2-.348.224-.647.075-.3-.15-1.265-.466-2.41-1.485-.89-.794-1.491-1.774-1.665-2.073-.175-.3-.019-.462.131-.61.135-.134.3-.35.45-.524.15-.175.2-.3.3-.498.1-.2.05-.374-.025-.524-.075-.15-.67-1.614-.917-2.21-.242-.58-.488-.5-.67-.51l-.57-.01c-.2 0-.524.075-.798.374-.273.3-1.04 1.017-1.04 2.48s1.065 2.877 1.213 3.075c.15.2 2.096 3.2 5.077 4.487.71.307 1.263.49 1.695.627.712.227 1.36.195 1.872.118.571-.085 1.77-.724 2.02-1.422.248-.698.248-1.297.174-1.422-.075-.124-.273-.2-.572-.348z" fill="currentColor"/>
+        </svg>
+        <span class="pub-btn-label">WhatsApp</span>
+      </button>
+    }
+
+    <!-- Cart -->
+    <button class="pub-btn pub-cart" matRipple
+            (click)="openCart()"
+            [class.pub-cart-filled]="cartCount() > 0">
+      <div class="pub-cart-icon-wrap">
+        <mat-icon>shopping_cart</mat-icon>
+        @if (cartCount() > 0) {
+          <span class="pub-badge">{{ cartCount() }}</span>
+        }
+      </div>
+      <span class="pub-btn-label">
+        @if (cartCount() > 0) {
+          {{ cartCount() }} article{{ cartCount() > 1 ? 's' : '' }}
+        } @else {
+          Panier
+        }
+      </span>
+    </button>
+
+  </div>
+</header>

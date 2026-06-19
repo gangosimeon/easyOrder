@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PublicShopService, ShopData } from '../../../core/services/public-shop.service';
 import { CartService } from '../../../core/services/cart.service';
+import { CartDrawerService } from '../../../core/services/cart-drawer.service';
 import { Annonce, ANNONCE_TYPE_CONFIG } from '../../../models/annonce.model';
 import { Category } from '../../../models/category.model';
 import { Product } from '../../../models/product.model';
@@ -39,7 +40,8 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   private route        = inject(ActivatedRoute);
   private router       = inject(Router);
   private shopService  = inject(PublicShopService);
-  readonly cartService = inject(CartService);
+  readonly cartService  = inject(CartService);
+  private readonly cartDrawer = inject(CartDrawerService);
   private snackBar     = inject(MatSnackBar);
   private http         = inject(HttpClient);
   private visitorService = inject(VisitorService);
@@ -286,7 +288,11 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goToCart(): void {
-    this.router.navigate(['/cart']);
+    if (window.innerWidth > 768) {
+      this.cartDrawer.open();
+    } else {
+      this.router.navigate(['/cart']);
+    }
   }
 
   contactViaWhatsApp(): void {

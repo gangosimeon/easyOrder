@@ -1,0 +1,169 @@
+<header class="topbar" [style.--cover-color]="coverColor()">
+
+  <!-- ── Breadcrumb ── -->
+  <nav class="tb-breadcrumb" aria-label="Fil d'Ariane">
+    @for (crumb of breadcrumb(); track crumb.label; let last = $last) {
+      @if (!last) {
+        <span class="crumb crumb-parent">{{ crumb.label }}</span>
+        <mat-icon class="crumb-sep">chevron_right</mat-icon>
+      } @else {
+        <span class="crumb crumb-current">
+          <mat-icon class="crumb-icon">{{ pageIcon() }}</mat-icon>
+          {{ crumb.label }}
+        </span>
+      }
+    }
+  </nav>
+
+  <!-- ── Right actions ── -->
+  <div class="tb-actions">
+
+    <!-- Quick add -->
+    <div class="tb-group">
+      <button class="tb-btn tb-btn-add"
+              (click)="toggle('quick')"
+              [class.is-open]="showQuick()"
+              matRipple
+              matTooltip="Actions rapides"
+              matTooltipPosition="below">
+        <mat-icon>{{ showQuick() ? 'close' : 'add' }}</mat-icon>
+      </button>
+
+      @if (showQuick()) {
+        <div class="tb-drop tb-drop-quick">
+          <p class="tb-drop-heading">Actions rapides</p>
+          @for (a of quickActions; track a.route) {
+            <a [routerLink]="a.route" class="tb-quick-row" (click)="closeAll()">
+              <span class="tb-quick-icon"
+                    [style.background]="a.color + '1a'"
+                    [style.color]="a.color">
+                <mat-icon>{{ a.icon }}</mat-icon>
+              </span>
+              <span class="tb-quick-label">{{ a.label }}</span>
+              <mat-icon class="tb-quick-arr">arrow_forward</mat-icon>
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Notifications -->
+    <div class="tb-group">
+      <button class="tb-btn tb-btn-notif"
+              (click)="toggle('notif')"
+              [class.is-open]="showNotif()"
+              matRipple
+              matTooltip="Notifications"
+              matTooltipPosition="below">
+        <mat-icon>notifications</mat-icon>
+        @if (pendingCount() > 0) {
+          <span class="tb-badge">{{ pendingCount() }}</span>
+        }
+      </button>
+
+      @if (showNotif()) {
+        <div class="tb-drop tb-drop-notif">
+          <div class="tb-drop-header">
+            <span class="tb-drop-heading">Notifications</span>
+            @if (pendingCount() > 0) {
+              <span class="tb-new-pill">{{ pendingCount() }} nouvelles</span>
+            }
+          </div>
+
+          @if (pendingCount() > 0) {
+            <a routerLink="/orders" class="tb-notif-row" (click)="closeAll()">
+              <div class="tb-notif-icon">
+                <mat-icon>receipt_long</mat-icon>
+              </div>
+              <div class="tb-notif-body">
+                <p class="tb-notif-text">{{ pendingCount() }} commande(s) en attente</p>
+                <span class="tb-notif-sub">À traiter maintenant</span>
+              </div>
+              <mat-icon class="tb-notif-arr">chevron_right</mat-icon>
+            </a>
+          } @else {
+            <div class="tb-empty">
+              <mat-icon>notifications_none</mat-icon>
+              <p>Aucune notification</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Divider -->
+    <div class="tb-divider"></div>
+
+    <!-- User menu -->
+    <div class="tb-group">
+      <button class="tb-user-btn"
+              (click)="toggle('user')"
+              [class.is-open]="showUser()"
+              matRipple>
+        <div class="tb-avatar">
+          @if (isUrl(authService.company()?.logo)) {
+            <img [src]="authService.company()?.logo"
+                 [alt]="authService.company()?.name"
+                 (error)="onImgError($event)" />
+          } @else {
+            <span class="tb-avatar-emoji">{{ authService.company()?.logo || '🏪' }}</span>
+          }
+        </div>
+        <div class="tb-user-meta">
+          <span class="tb-user-name">{{ authService.company()?.name ?? 'Boutique' }}</span>
+          <span class="tb-user-role">{{ isAdmin() ? 'Administrateur' : 'Gérant' }}</span>
+        </div>
+        <mat-icon class="tb-chevron" [class.rotated]="showUser()">
+          keyboard_arrow_down
+        </mat-icon>
+      </button>
+
+      @if (showUser()) {
+        <div class="tb-drop tb-drop-user">
+          <div class="tb-user-head">
+            <div class="tb-user-avatar-lg">
+              @if (isUrl(authService.company()?.logo)) {
+                <img [src]="authService.company()?.logo" (error)="onImgError($event)" />
+              } @else {
+                <span>{{ authService.company()?.logo || '🏪' }}</span>
+              }
+            </div>
+            <div class="tb-user-head-info">
+              <p class="tb-user-hname">{{ authService.company()?.name }}</p>
+              <p class="tb-user-hslug">@{{ authService.company()?.slug }}</p>
+            </div>
+          </div>
+
+          <div class="tb-hr"></div>
+
+          @if (authService.company()?.slug) {
+            <a [routerLink]="['/shop', authService.company()?.slug]"
+               class="tb-menu-item" (click)="closeAll()">
+              <mat-icon>storefront</mat-icon>
+              <span>Voir ma boutique</span>
+              <mat-icon class="tb-ext">open_in_new</mat-icon>
+            </a>
+          }
+
+          <a routerLink="/profile" class="tb-menu-item" (click)="closeAll()">
+            <mat-icon>manage_accounts</mat-icon>
+            <span>Mon profil</span>
+          </a>
+
+          <div class="tb-hr"></div>
+
+          <button class="tb-menu-item tb-logout" (click)="authService.logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Se déconnecter</span>
+          </button>
+        </div>
+      }
+    </div>
+
+  </div><!-- /tb-actions -->
+</header>
+
+<!-- Transparent backdrop — closes any open dropdown -->
+@if (showQuick() || showNotif() || showUser()) {
+  <div class="tb-backdrop" (click)="closeAll()"></div>
+}

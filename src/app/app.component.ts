@@ -8,6 +8,10 @@ import { CartService } from './core/services/cart.service';
 import { AuthService } from './core/services/auth.service';
 import { ShopOrdersService } from './core/services/shop-orders.service';
 import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
+import { TopbarComponent } from './shared/topbar/topbar.component';
+import { PublicTopbarComponent } from './shared/public-topbar/public-topbar.component';
+import { CartDrawerComponent } from './shared/cart-drawer/cart-drawer.component';
+import { CartDrawerService } from './core/services/cart-drawer.service';
 import { ProductService } from './core/services/product.service';
 import { CategoryService } from './core/services/category.service';
 import { PushNotificationService } from './core/services/push-notification.service';
@@ -21,14 +25,15 @@ interface NavItem {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent, TopbarComponent, PublicTopbarComponent, CartDrawerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
   private router = inject(Router);
-  readonly cartService  = inject(CartService);
-  readonly authService  = inject(AuthService);
+  readonly cartService    = inject(CartService);
+  readonly authService    = inject(AuthService);
+  readonly cartDrawer     = inject(CartDrawerService);
   readonly ordersService = inject(ShopOrdersService);
   readonly productService = inject(ProductService);
   readonly categoryService = inject(CategoryService);
@@ -58,16 +63,25 @@ export class AppComponent implements OnInit, OnDestroy {
   );
 
   readonly navItems: NavItem[] = [
-    { label: 'Catégories', icon: 'category',        route: '/categories' },
-    { label: 'Produits',   icon: 'inventory_2',     route: '/products'   },
-    { label: 'Annonces',   icon: 'campaign',        route: '/annonces'   },
-    { label: 'Mes Commandes', icon: 'receipt_long', route: '/orders'     },
-    { label: 'Mon Profil', icon: 'manage_accounts', route: '/profile'   },
+    // { label: 'Tableau de bord', icon: 'dashboard',       route: '/dashboard'     },
+    { label: 'Catégories',      icon: 'category',        route: '/categories' },
+    { label: 'Produits',        icon: 'inventory_2',     route: '/products'   },
+    { label: 'Annonces',        icon: 'campaign',        route: '/annonces'   },
+    { label: 'Mes Commandes',   icon: 'receipt_long',    route: '/orders'     },
+    { label: 'Mon Profil',      icon: 'manage_accounts', route: '/profile'    },
   ];
 
   readonly adminNavItems: NavItem[] = [
-    { label: 'Boutiques', icon: 'storefront', route: '/admin/shops'          },
-    { label: 'Annonces',  icon: 'flag',       route: '/admin/announcements'  },
+    { label: 'Boutiques', icon: 'storefront', route: '/admin/shops'         },
+    { label: 'Annonces',  icon: 'campaign',   route: '/admin/announcements' },
+  ];
+
+  readonly mobileNavItems: NavItem[] = [
+    { label: 'Catégories', icon: 'category',        route: '/categories' },
+    { label: 'Produits',   icon: 'inventory_2',     route: '/products'   },
+    { label: 'Commandes',  icon: 'receipt_long',    route: '/orders'     },
+    { label: 'Annonces',   icon: 'campaign',        route: '/annonces'   },
+    { label: 'Profil',     icon: 'manage_accounts', route: '/profile'    },
   ];
 
   readonly isAdmin = computed(() => this.authService.company()?.role === 'admin');
@@ -118,6 +132,14 @@ export class AppComponent implements OnInit, OnDestroy {
     const slug = this.cartService.company()?.slug;
     if (slug && !this.router.url.startsWith('/shop')) {
       this.router.navigate(['/shop', slug]);
+    }
+  }
+
+  openCart(): void {
+    if (window.innerWidth > 768) {
+      this.cartDrawer.open();
+    } else {
+      this.router.navigate(['/cart']);
     }
   }
 

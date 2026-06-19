@@ -5,6 +5,7 @@
     <!-- ===== SIDEBAR ===== -->
     <aside
       class="sidebar"
+      [class.sidebar-admin]="!isPublicRoute()"
       [style.--cover-color]="coverColor()"
     >
       <div class="header-bg"></div>
@@ -80,10 +81,9 @@
               <span class="nav-label">{{ cat.name }}</span>
             </button>
           }
-          <a
-            routerLink="/cart"
-            routerLinkActive="active"
+          <button
             class="nav-item nav-cart"
+            (click)="openCart()"
             matRipple
           >
             <mat-icon class="nav-icon">shopping_cart</mat-icon>
@@ -91,12 +91,15 @@
             @if (cartService.getItems().length > 0) {
               <span class="nav-badge">{{ cartService.getItems().length }}</span>
             }
-          </a>
+          </button>
         </nav>
 
         <div class="sidebar-footer">
           <button class="wa-sidebar-btn" (click)="contactWhatsApp()">
-            <span>💬</span> Contacter via WhatsApp
+            <svg class="wa-sidebar-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 3C9.373 3 4 8.373 4 15c0 2.385.668 4.61 1.822 6.51L4 29l7.695-1.793A11.94 11.94 0 0 0 16 27c6.627 0 12-5.373 12-12S22.627 3 16 3zm0 22a9.94 9.94 0 0 1-5.09-1.396l-.364-.216-4.566 1.064 1.088-4.44-.237-.373A9.96 9.96 0 0 1 6 15c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10zm5.47-7.47c-.3-.15-1.77-.873-2.044-.972-.273-.1-.472-.15-.67.15-.2.298-.772.972-.946 1.17-.174.2-.348.224-.647.075-.3-.15-1.265-.466-2.41-1.485-.89-.794-1.491-1.774-1.665-2.073-.175-.3-.019-.462.131-.61.135-.134.3-.35.45-.524.15-.175.2-.3.3-.498.1-.2.05-.374-.025-.524-.075-.15-.67-1.614-.917-2.21-.242-.58-.488-.5-.67-.51l-.57-.01c-.2 0-.524.075-.798.374-.273.3-1.04 1.017-1.04 2.48s1.065 2.877 1.213 3.075c.15.2 2.096 3.2 5.077 4.487.71.307 1.263.49 1.695.627.712.227 1.36.195 1.872.118.571-.085 1.77-.724 2.02-1.422.248-.698.248-1.297.174-1.422-.075-.124-.273-.2-.572-.348z" fill="currentColor"/>
+            </svg>
+            Contacter via WhatsApp
           </button>
           <!-- <div class="country-badge">
             <span>🇧🇫</span>
@@ -169,6 +172,16 @@
         </nav>
 
         <div class="sidebar-footer">
+          <!-- Help widget -->
+          <div class="help-widget">
+            <p class="help-widget-title">Besoin d'aide ?</p>
+            <p class="help-widget-sub">Notre équipe est là pour vous accompagner.</p>
+            <a href="tel:+22665704896" class="help-widget-btn">
+              <mat-icon>phone</mat-icon>
+              <span>Contact assistance +226 65 70 48 96</span>
+            </a>
+          </div>
+
           @if (authService.isLoggedIn()) {
             <button class="btn-logout" (click)="authService.logout()" matRipple>
               <mat-icon>logout</mat-icon>
@@ -180,16 +193,31 @@
               <span>Se connecter</span>
             </a>
           }
-          <!-- <div class="country-badge">
-            <span>🇧🇫</span>
-            <span>Burkina Faso</span>
-          </div> -->
         </div>
       }
     </aside>
 
     <!-- ===== MAIN CONTENT ===== -->
-    <main class="main-content">
+    <main class="main-content" [class.with-topbar]="authService.isLoggedIn() || isPublicRoute()" [style.--cover-color]="coverColor()">
+
+      <!-- Desktop Admin Topbar -->
+      @if (!isPublicRoute() && authService.isLoggedIn()) {
+        <app-topbar
+          [coverColor]="coverColor()"
+          [isAdmin]="isAdmin()"
+        />
+      }
+
+      <!-- Desktop Public Topbar -->
+      @if (isPublicRoute() && cartService.company()) {
+        <app-public-topbar [coverColor]="coverColor()" />
+      }
+
+      <!-- Cart Drawer (desktop only, hidden on mobile via CSS) -->
+      @if (isPublicRoute()) {
+        <app-cart-drawer />
+      }
+
       <!-- Mobile Header -->
       <header
         class="mobile-header"
@@ -242,34 +270,6 @@
               </div>
             </div>
 
-            <div class="mobile-nav">
-              <a
-                [routerLink]="['/shop', cartService.company()?.slug]"
-                routerLinkActive="active-mobile"
-                class="mobile-nav-item"
-                (click)="cartService.selectCategory(null)"
-              >
-                <mat-icon>store</mat-icon>
-                <span>Produits</span>
-              </a>
-              <a
-                routerLink="/cart"
-                routerLinkActive="active-mobile"
-                class="mobile-nav-item"
-              >
-                <span class="mobile-cart-icon">
-                  <mat-icon>shopping_cart</mat-icon>
-                  @if (cartCount() > 0) {
-                    <span class="mobile-badge">{{ cartCount() }}</span>
-                  }
-                </span>
-                <span>Panier</span>
-              </a>
-              <button class="mobile-nav-item" (click)="contactWhatsApp()">
-                <mat-icon>chat</mat-icon>
-                <span>Contactez-nous</span>
-              </button>
-            </div>
           } @else {
             <!-- ── MOBILE HEADER ADMIN ── -->
             <div
@@ -319,63 +319,65 @@
                 }
               </div>
             </div>
-            <div class="mobile-nav">
-              @for (item of navItems; track item.route) {
-                @if (item.route !== '/orders') {
-                  <a
-                    [routerLink]="item.route"
-                    routerLinkActive="active-mobile"
-                    class="mobile-nav-item"
-                  >
-                    <mat-icon>{{ item.icon }}</mat-icon>
-                    <span>{{ item.label }}</span>
-                  </a>
-                }
-              }
-            </div>
-
-            @if (isAdmin()) {
-              <div class="mobile-admin-bar">
-                <span class="admin-bar-label">
-                  <mat-icon>admin_panel_settings</mat-icon>
-                  Admin
-                </span>
-                @for (item of adminNavItems; track item.route) {
-                  <a
-                    [routerLink]="item.route"
-                    routerLinkActive="active-admin-mobile"
-                    class="mobile-admin-item"
-                  >
-                    <mat-icon>{{ item.icon }}</mat-icon>
-                    <span>{{ item.label }}</span>
-                  </a>
-                }
-              </div>
-            }
           }
         </div>
       </header>
 
-      @if (!isPublicRoute() && authService.isLoggedIn()) {
-        <app-announcement-banner />
-      }
-
       <div class="page-container" [class.public-page]="isPublicRoute()">
+        @if (!isPublicRoute() && authService.isLoggedIn()) {
+          <app-announcement-banner />
+        }
         <router-outlet />
       </div>
 
-      <!-- ── Mobile sticky orders bar (admin only) ── -->
+      <!-- ── Mobile bottom nav (admin only) ── -->
       @if (!isPublicRoute() && authService.isLoggedIn()) {
-        <nav class="mobile-orders-bar">
-          <a routerLink="/orders" routerLinkActive="active-orders" class="orders-bar-link">
-            <div class="orders-bar-icon-wrap">
-              <mat-icon>receipt_long</mat-icon>
-              @if (pendingOrdersCount() > 0) {
-                <span class="orders-bar-badge">{{ pendingOrdersCount() }}</span>
+        <nav class="mobile-bottom-nav" [style.--cover-color]="coverColor()">
+          @for (item of mobileNavItems; track item.route) {
+            <a [routerLink]="item.route"
+               routerLinkActive="mbn-active"
+               class="mbn-item">
+              <div class="mbn-icon-wrap">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                @if (item.route === '/orders' && pendingOrdersCount() > 0) {
+                  <span class="mbn-badge">{{ pendingOrdersCount() }}</span>
+                }
+              </div>
+              <span class="mbn-label">{{ item.label }}</span>
+            </a>
+          }
+        </nav>
+      }
+
+      <!-- ── Mobile bottom nav (public shop) ── -->
+      @if (isPublicRoute() && cartService.company()) {
+        <nav class="mobile-bottom-nav" [style.--cover-color]="coverColor()">
+          <a [routerLink]="['/shop', cartService.company()?.slug]"
+             routerLinkActive="mbn-active"
+             class="mbn-item"
+             (click)="cartService.selectCategory(null)">
+            <div class="mbn-icon-wrap">
+              <mat-icon>store</mat-icon>
+            </div>
+            <span class="mbn-label">Boutique</span>
+          </a>
+          <a routerLink="/cart"
+             routerLinkActive="mbn-active"
+             class="mbn-item">
+            <div class="mbn-icon-wrap">
+              <mat-icon>shopping_cart</mat-icon>
+              @if (cartCount() > 0) {
+                <span class="mbn-badge">{{ cartCount() }}</span>
               }
             </div>
-            <span class="orders-bar-label">Mes Commandes</span>
+            <span class="mbn-label">Panier</span>
           </a>
+          <button class="mbn-item" (click)="contactWhatsApp()">
+            <div class="mbn-icon-wrap">
+              <mat-icon>chat</mat-icon>
+            </div>
+            <span class="mbn-label">Contact</span>
+          </button>
         </nav>
       }
 

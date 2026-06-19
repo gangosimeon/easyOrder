@@ -1,13 +1,12 @@
+:host { display: block; width: 100%; }
+
 /* ============================================================
    Shop Orders — Mobile-First Ecommerce Style
    ============================================================ */
 
 .shop-orders-container {
-  min-height: 100vh;
   background: #f8fafc;
   padding: 16px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* ── Header ───────────────────────────────────────────────────────────── */

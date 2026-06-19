@@ -1,6 +1,8 @@
+:host { display: block; width: 100%; }
+
 .page-wrapper {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ===== HEADER ===== */
@@ -24,7 +26,7 @@
       font-size: 30px;
       width: 30px;
       height: 30px;
-      color: var(--primary);
+      color: var(--cover-color, var(--primary));
     }
   }
   .page-subtitle {
@@ -175,14 +177,14 @@
     height: 15px;
   }
   &:hover {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: var(--cover-color, var(--primary));
+    color: var(--cover-color, var(--primary));
   }
   &.active {
-    background: var(--primary);
-    border-color: var(--primary);
+    background: var(--cover-color, var(--primary));
+    border-color: var(--cover-color, var(--primary));
     color: white;
-    box-shadow: 0 3px 10px rgba(232, 82, 26, 0.35);
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--cover-color, var(--primary)) 40%, transparent);
   }
 }
 
@@ -263,7 +265,7 @@
     right: -4px;
     width: 18px;
     height: 18px;
-    background: var(--primary);
+    background: var(--cover-color, var(--primary));
     border-radius: 50%;
     display: flex;
     align-items: center;

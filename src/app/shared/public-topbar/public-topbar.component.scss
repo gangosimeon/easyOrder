@@ -1,0 +1,200 @@
+:host { display: block; }
+
+/* ======================================================
+   PUBLIC TOPBAR
+====================================================== */
+.pub-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #f3f4f6;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Breadcrumb ─────────────────────────────────────── */
+.pub-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.pub-shop-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--cover-color, var(--primary)) 12%, white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 9px;
+  }
+
+  .pub-logo-emoji {
+    font-size: 18px;
+    line-height: 1;
+  }
+}
+
+.pub-crumb {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+.pub-crumb-shop {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.pub-crumb-sep {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #d1d5db;
+  flex-shrink: 0;
+}
+
+.pub-crumb-active {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.pub-crumb-icon {
+  font-size: 17px;
+  width: 17px;
+  height: 17px;
+  color: var(--cover-color, var(--primary));
+  flex-shrink: 0;
+}
+
+/* ── Right actions ──────────────────────────────────── */
+.pub-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Base button ────────────────────────────────────── */
+.pub-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all .15s;
+  white-space: nowrap;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+}
+
+/* ── WhatsApp button ────────────────────────────────── */
+.pub-wa {
+  color: #25D366;
+  border-color: rgba(37, 211, 102, .35);
+  background: rgba(37, 211, 102, .06);
+
+  .pub-wa-logo { width: 20px; height: 20px; flex-shrink: 0; }
+
+  &:hover {
+    background: rgba(37, 211, 102, .12);
+    border-color: rgba(37, 211, 102, .6);
+  }
+}
+
+/* ── Cart button ────────────────────────────────────── */
+.pub-cart {
+  position: relative;
+  color: #374151;
+  border-color: #e5e7eb;
+
+  mat-icon { font-size: 20px; color: #6b7280; }
+
+  &.pub-cart-filled {
+    border-color: var(--cover-color, var(--primary));
+    background: color-mix(in srgb, var(--cover-color, var(--primary)) 8%, white);
+    color: var(--cover-color, var(--primary));
+    mat-icon { color: var(--cover-color, var(--primary)); }
+
+    &:hover {
+      background: color-mix(in srgb, var(--cover-color, var(--primary)) 14%, white);
+    }
+  }
+}
+
+.pub-cart-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Cart badge ─────────────────────────────────────── */
+.pub-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 17px;
+  height: 17px;
+  background: var(--cover-color, var(--primary));
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid #fff;
+  pointer-events: none;
+}
+
+/* ── Responsive: hide labels on medium screens ──────── */
+@media (max-width: 900px) {
+  .pub-btn-label { display: none; }
+  .pub-btn { padding: 8px 10px; }
+  .pub-crumb-shop { max-width: 100px; }
+  .pub-crumb-active { max-width: 120px; }
+}
+
+@media (max-width: 768px) {
+  .pub-topbar { display: none; } /* mobile uses bottom nav */
+}

@@ -1,5 +1,6 @@
 :host {
   display: block;
+  width: 100%;
 }
 
 .admin-shops-page {
@@ -29,11 +30,11 @@
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, var(--cover-color, #6366f1), color-mix(in srgb, var(--cover-color, #6366f1) 70%, white));
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, .35);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--cover-color, #6366f1) 35%, transparent);
   mat-icon { color: #fff; font-size: 26px; width: 26px; height: 26px; }
 }
 

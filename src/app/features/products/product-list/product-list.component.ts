@@ -15,6 +15,7 @@ import { Product }               from '../../../models/product.model';
 import { Category }              from '../../../models/category.model';
 import { ProductService }        from '../../../core/services/product.service';
 import { CategoryService }       from '../../../core/services/category.service';
+import { AuthService }           from '../../../core/services/auth.service';
 import { ProductFormComponent, ProductFormData } from '../product-form/product-form.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { ProductDetailModalComponent } from '../../../shared/product-detail-modal/product-detail-modal.component';
@@ -34,11 +35,14 @@ import { ProductDetailModalComponent } from '../../../shared/product-detail-moda
 export class ProductListComponent implements OnInit {
   private productService  = inject(ProductService);
   private categoryService = inject(CategoryService);
+  private authService     = inject(AuthService);
   private dialog          = inject(MatDialog);
   private snackBar        = inject(MatSnackBar);
   private route           = inject(ActivatedRoute);
   private router          = inject(Router);
-  private destroyRef = inject(DestroyRef);
+  private destroyRef      = inject(DestroyRef);
+
+  readonly coverColor = computed(() => this.authService.company()?.coverColor ?? '');
   // Signals locaux
   selectedCategoryId      = signal<string>('all');
   searchQuery             = signal<string>('');

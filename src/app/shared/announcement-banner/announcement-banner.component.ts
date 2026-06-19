@@ -29,7 +29,7 @@ const STORAGE_KEY = 'bs_seen_admin_ann';
     }
   `,
   styles: [`
-    :host { display: block; }
+    :host { display: block; width: 100%; overflow: hidden; }
 
     .ann-wrap {
       display: flex;
@@ -68,18 +68,26 @@ const STORAGE_KEY = 'bs_seen_admin_ann';
       min-width: 0;
     }
 
-    .ann-title   { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ann-content { font-size: 13px; opacity: .85; line-height: 1.4; }
+    .ann-title   { font-size: 13px; font-weight: 700; line-height: 1.4; word-break: break-word; }
+    .ann-content { font-size: 13px; opacity: .85; line-height: 1.4; word-break: break-word; }
 
     .ann-close {
       flex-shrink: 0;
+      margin-top: -4px;
       opacity: .55;
       transition: opacity .15s;
       &:hover { opacity: 1; }
     }
 
     @media (max-width: 600px) {
-      .ann-wrap { margin: 6px 10px 0; padding: 11px 12px; border-radius: 10px; }
+      .ann-wrap {
+        margin: 6px 8px 0;
+        padding: 10px 10px 10px 12px;
+        border-radius: 10px;
+        gap: 8px;
+      }
+      .ann-title   { font-size: 12px; }
+      .ann-content { font-size: 12px; }
     }
   `],
 })

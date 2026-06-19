@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AdminService, AdminShop, PlatformStats, AggregateShopStats } from '../../../core/services/admin.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { AdminShopDetailDialogComponent } from './admin-shop-detail.dialog';
 
 @Component({
@@ -36,9 +37,11 @@ import { AdminShopDetailDialogComponent } from './admin-shop-detail.dialog';
   styleUrl: './admin-shops.component.scss',
 })
 export class AdminShopsComponent implements OnInit {
-  private adminService = inject(AdminService);
-  private dialog       = inject(MatDialog);
-  private destroyRef   = inject(DestroyRef);
+  private adminService  = inject(AdminService);
+  private authService   = inject(AuthService);
+  private dialog        = inject(MatDialog);
+  private destroyRef    = inject(DestroyRef);
+  readonly coverColor   = computed(() => this.authService.company()?.coverColor ?? '');
 
   readonly loading         = signal(false);
   readonly reloading       = signal(false);
