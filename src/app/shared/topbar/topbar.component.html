@@ -56,10 +56,10 @@
               matTooltip="Notifications"
               matTooltipPosition="below">
         <mat-icon>notifications</mat-icon>
-        @if (pendingCount() > 0) {
-          <span class="tb-badge">{{ pendingCount() }}</span>
-        }
       </button>
+      @if (pendingCount() > 0) {
+        <span class="tb-badge">{{ pendingCount() }}</span>
+      }
 
       @if (showNotif()) {
         <div class="tb-drop tb-drop-notif">
