@@ -10,6 +10,8 @@ import { ShopOrdersService } from './core/services/shop-orders.service';
 import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
 import { TopbarComponent } from './shared/topbar/topbar.component';
 import { PublicTopbarComponent } from './shared/public-topbar/public-topbar.component';
+import { CartDrawerComponent } from './shared/cart-drawer/cart-drawer.component';
+import { CartDrawerService } from './core/services/cart-drawer.service';
 import { ProductService } from './core/services/product.service';
 import { CategoryService } from './core/services/category.service';
 import { PushNotificationService } from './core/services/push-notification.service';
@@ -23,14 +25,15 @@ interface NavItem {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent, TopbarComponent, PublicTopbarComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent, TopbarComponent, PublicTopbarComponent, CartDrawerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
   private router = inject(Router);
-  readonly cartService  = inject(CartService);
-  readonly authService  = inject(AuthService);
+  readonly cartService    = inject(CartService);
+  readonly authService    = inject(AuthService);
+  readonly cartDrawer     = inject(CartDrawerService);
   readonly ordersService = inject(ShopOrdersService);
   readonly productService = inject(ProductService);
   readonly categoryService = inject(CategoryService);
@@ -129,6 +132,14 @@ export class AppComponent implements OnInit, OnDestroy {
     const slug = this.cartService.company()?.slug;
     if (slug && !this.router.url.startsWith('/shop')) {
       this.router.navigate(['/shop', slug]);
+    }
+  }
+
+  openCart(): void {
+    if (window.innerWidth > 768) {
+      this.cartDrawer.open();
+    } else {
+      this.router.navigate(['/cart']);
     }
   }
 

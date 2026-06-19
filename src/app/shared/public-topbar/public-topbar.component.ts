@@ -1,22 +1,24 @@
 import { Component, inject, computed, input } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { CartService } from '../../core/services/cart.service';
+import { CartDrawerService } from '../../core/services/cart-drawer.service';
 
 @Component({
   selector: 'app-public-topbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MatIconModule, MatRippleModule],
+  imports: [RouterLink, MatIconModule, MatRippleModule],
   templateUrl: './public-topbar.component.html',
   styleUrl:    './public-topbar.component.scss',
 })
 export class PublicTopbarComponent {
   readonly coverColor = input<string | undefined>('');
 
-  readonly cartService = inject(CartService);
+  readonly cartService  = inject(CartService);
+  readonly drawerService = inject(CartDrawerService);
   private readonly router = inject(Router);
 
   readonly cartCount = toSignal(
@@ -51,6 +53,14 @@ export class PublicTopbarComponent {
     if (this.isCartPage()) return 'shopping_cart';
     return this.currentCategory()?.icon ?? 'store';
   });
+
+  openCart(): void {
+    if (window.innerWidth > 768) {
+      this.drawerService.open();
+    } else {
+      this.router.navigate(['/cart']);
+    }
+  }
 
   contactWhatsApp(): void {
     const co = this.cartService.company();

@@ -35,8 +35,9 @@
     }
 
     <!-- Cart -->
-    <a routerLink="/cart" class="pub-btn pub-cart" matRipple
-       [class.pub-cart-filled]="cartCount() > 0">
+    <button class="pub-btn pub-cart" matRipple
+            (click)="openCart()"
+            [class.pub-cart-filled]="cartCount() > 0">
       <div class="pub-cart-icon-wrap">
         <mat-icon>shopping_cart</mat-icon>
         @if (cartCount() > 0) {
@@ -50,7 +51,7 @@
           Panier
         }
       </span>
-    </a>
+    </button>
 
   </div>
 </header>

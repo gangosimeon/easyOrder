@@ -81,10 +81,9 @@
               <span class="nav-label">{{ cat.name }}</span>
             </button>
           }
-          <a
-            routerLink="/cart"
-            routerLinkActive="active"
+          <button
             class="nav-item nav-cart"
+            (click)="openCart()"
             matRipple
           >
             <mat-icon class="nav-icon">shopping_cart</mat-icon>
@@ -92,7 +91,7 @@
             @if (cartService.getItems().length > 0) {
               <span class="nav-badge">{{ cartService.getItems().length }}</span>
             }
-          </a>
+          </button>
         </nav>
 
         <div class="sidebar-footer">
@@ -212,6 +211,11 @@
       <!-- Desktop Public Topbar -->
       @if (isPublicRoute() && cartService.company()) {
         <app-public-topbar [coverColor]="coverColor()" />
+      }
+
+      <!-- Cart Drawer (desktop only, hidden on mobile via CSS) -->
+      @if (isPublicRoute()) {
+        <app-cart-drawer />
       }
 
       <!-- Mobile Header -->
