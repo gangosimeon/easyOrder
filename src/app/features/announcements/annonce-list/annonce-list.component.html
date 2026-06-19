@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<div class="page-wrapper" [style.--cover-color]="coverColor()">
 
   <!-- Header -->
   <div class="page-header">
@@ -12,7 +12,8 @@
         <span class="active-count">{{ countActives() }} active{{ countActives() > 1 ? 's' : '' }}</span>
       </p>
     </div>
-    <button mat-raised-button color="primary" class="btn-add" (click)="openAddDialog()">
+    <button mat-raised-button class="btn-add" (click)="openAddDialog()"
+            [style.background]="coverColor()" style="color:white">
       <mat-icon>add</mat-icon> Nouvelle Annonce
     </button>
   </div>
@@ -180,7 +181,8 @@
         <mat-icon class="empty-icon">campaign</mat-icon>
         <h3>Aucune annonce</h3>
         <p>Publiez votre première annonce pour informer vos clients</p>
-        <button mat-raised-button color="primary" (click)="openAddDialog()" style="margin-top:20px">
+        <button mat-raised-button (click)="openAddDialog()" style="margin-top:20px"
+                [style.background]="coverColor()" style="color:white;margin-top:20px">
           <mat-icon>add</mat-icon> Créer une annonce
         </button>
       </div>

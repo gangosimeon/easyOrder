@@ -1,4 +1,4 @@
-<div class="page-wrapper">
+<div class="page-wrapper" [style.--cover-color]="coverColor()">
 
   <!-- Header -->
   <div class="page-header">
@@ -22,7 +22,8 @@
       </h1>
       <p class="page-subtitle">{{ filteredProducts().length }} produit{{ filteredProducts().length > 1 ? 's' : '' }}</p>
     </div>
-    <button mat-raised-button color="primary" class="btn-add" (click)="openAddDialog()">
+    <button mat-raised-button class="btn-add" (click)="openAddDialog()"
+            [style.background]="coverColor()" style="color:white">
       <mat-icon>add</mat-icon> Nouveau Produit
     </button>
   </div>

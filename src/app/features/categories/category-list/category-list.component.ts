@@ -12,6 +12,7 @@ import { MatSnackBarModule }   from '@angular/material/snack-bar';
 import { Category }            from '../../../models/category.model';
 import { CategoryService }     from '../../../core/services/category.service';
 import { ProductService }      from '../../../core/services/product.service';
+import { AuthService }         from '../../../core/services/auth.service';
 import { CategoryFormComponent, CategoryFormData } from '../category-form/category-form.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
@@ -29,9 +30,12 @@ export class CategoryListComponent {
   // ✅ Angular 20 — inject() function (pas de constructeur)
   private categoryService = inject(CategoryService);
   private productService  = inject(ProductService);
+  private authService     = inject(AuthService);
   private dialog          = inject(MatDialog);
   private snackBar        = inject(MatSnackBar);
   private router          = inject(Router);
+
+  readonly coverColor = computed(() => this.authService.company()?.coverColor ?? '');
 
   // Signals consommés directement dans le template
   readonly categories   = this.categoryService.categories;

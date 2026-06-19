@@ -1,41 +1,6 @@
 <div class="profile-page" [style.--cover]="selectedColor()">
- <!-- Section partage boutique -->
-  @if (shopUrl()) {
-    <div class="share-card">
-      <div class="share-header">
-        <mat-icon class="share-icon">link</mat-icon>
-        <div>
-          <h2 class="share-title">Lien de votre boutique</h2>
-          <p class="share-sub">Partagez ce lien pour que vos clients accèdent à votre vitrine</p>
-        </div>
-      </div>
 
-      <div class="slug-row">
-        <div class="slug-box">
-          <mat-icon>storefront</mat-icon>
-          <span class="slug-url">{{ shopUrl() }}</span>
-        </div>
-        <button type="button" class="btn-copy" mat-stroked-button matRipple (click)="copyLink()">
-          @if (linkCopied()) {
-            <mat-icon>check</mat-icon>
-          } @else {
-            <mat-icon>content_copy</mat-icon>
-          }
-          {{ linkCopied() ? 'Copié !' : 'Copier' }}
-        </button>
-      </div>
-
-      <div class="share-actions">
-        <button type="button" class="btn-whatsapp" mat-raised-button matRipple (click)="shareWhatsApp()">
-          <mat-icon>chat</mat-icon> Partager sur WhatsApp
-        </button>
-        <button type="button" class="btn-facebook" mat-raised-button matRipple (click)="shareFacebook()">
-          <mat-icon>thumb_up</mat-icon> Partager sur Facebook
-        </button>
-      </div>
-    </div>
-  }
-
+  <!-- Page header -->
   <div class="page-header">
     <div class="page-header-left">
       <h1 class="page-title">
@@ -51,161 +16,273 @@
     }
   </div>
 
-  <div class="profile-card">
-
-    <!-- Logo + Couleur -->
+  <!-- Cover card — layout horizontal -->
+  <div class="cover-card">
     <div class="visual-section" [style.--cover]="selectedColor()">
-      <div class="cover-preview">
-        <div class="logo-preview">
-          @if (logoMode() === 'upload' && uploadedLogo()) {
-            <img [src]="uploadedLogo()" alt="logo" class="logo-img" />
-          } @else {
-            {{ selectedLogo() }}
-          }
-        </div>
-        <p class="shop-name-preview">{{ form.get('name')?.value || 'Votre boutique' }}</p>
-      </div>
-
-      <!-- Input file caché -->
       <input #logoFileRef type="file" accept="image/*" class="hidden-input" (change)="onLogoFileSelected($event)" />
 
-      <div class="pickers-row">
-        <!-- Logo -->
-        <div class="picker-block">
-          <div class="logo-mode-header">
-            <p class="picker-label"><mat-icon>storefront</mat-icon> Logo</p>
-            <div class="logo-mode-tabs">
-              <button type="button" class="mode-tab-sm" [class.active]="logoMode() === 'emoji'" (click)="setLogoMode('emoji')">
-                <mat-icon>emoji_emotions</mat-icon> Icône
-              </button>
-              <button type="button" class="mode-tab-sm" [class.active]="logoMode() === 'upload'" (click)="setLogoMode('upload')">
-                <mat-icon>add_photo_alternate</mat-icon> Photo
-              </button>
-            </div>
+      <!-- Colonne gauche : logo -->
+      <div class="cover-col-logo">
+        <div class="logo-circle-wrap">
+          <div class="logo-circle">
+            @if (logoMode() === 'upload' && uploadedLogo()) {
+              <img [src]="uploadedLogo()" alt="logo" class="logo-img" />
+            } @else {
+              <span>{{ selectedLogo() }}</span>
+            }
           </div>
+          <button class="logo-camera-btn" (click)="triggerLogoUpload()" type="button" aria-label="Changer logo">
+            <mat-icon>photo_camera</mat-icon>
+          </button>
+        </div>
+        <button class="btn-change-photo" (click)="triggerLogoUpload()" type="button">
+          <mat-icon>lock</mat-icon>
+          Changer la photo
+        </button>
+        @if (logoUploading()) {
+          <span class="upload-ok-sm"><mat-icon class="spin">sync</mat-icon> Envoi…</span>
+        }
+        @if (uploadedLogo() && !logoUploading() && logoMode() === 'upload') {
+          <span class="upload-ok-sm"><mat-icon>check_circle</mat-icon> Chargée</span>
+        }
+      </div>
 
-          @if (logoMode() === 'emoji') {
-            <div class="logo-grid">
-              @for (logo of shopLogos; track logo) {
-                <button type="button" class="logo-btn" matRipple
-                        [class.selected]="selectedLogo() === logo"
-                        (click)="selectLogo(logo)">{{ logo }}</button>
+      <!-- Colonne centrale : infos boutique -->
+      <div class="cover-col-info">
+        <h2 class="cover-name">{{ form.get('name')?.value || 'Votre boutique' }}</h2>
+        @if (form.get('description')?.value) {
+          <p class="cover-tagline">{{ form.get('description')?.value }}</p>
+        }
+        @if (form.get('address')?.value) {
+          <div class="cover-location">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ form.get('address')?.value }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Colonne droite : couleurs + onglets logo -->
+      <div class="cover-col-right">
+        <!-- Couleurs -->
+        <div class="color-grid-cover">
+          @for (color of coverColors; track color) {
+            <button type="button" class="color-dot-cover" matRipple
+                    [style.background]="color"
+                    [class.selected]="selectedColor() === color"
+                    (click)="selectColor(color)">
+              @if (selectedColor() === color) {
+                <mat-icon>check</mat-icon>
               }
-            </div>
-          } @else {
-            <div class="logo-upload-zone">
-              <button type="button" class="logo-upload-btn" (click)="triggerLogoUpload()" [disabled]="logoUploading()" matRipple>
-                @if (logoUploading()) {
-                  <mat-icon class="spin">sync</mat-icon>
-                  <span>Envoi en cours…</span>
-                } @else {
-                  <mat-icon>upload_file</mat-icon>
-                  <span>{{ uploadedLogo() ? 'Changer la photo' : 'Choisir / Prendre une photo' }}</span>
-                }
-              </button>
-              @if (uploadedLogo() && !logoUploading()) {
-                <p class="upload-ok-sm"><mat-icon>check_circle</mat-icon> Photo chargée</p>
-              }
-              @if (logoUploadErr()) {
-                <p class="upload-ok-sm" style="color:#c62828"><mat-icon>error</mat-icon> {{ logoUploadErr() }}</p>
-              }
-            </div>
+            </button>
           }
         </div>
 
-        <!-- Couleur -->
-        <div class="picker-block">
-          <p class="picker-label"><mat-icon>palette</mat-icon> Couleur</p>
-          <div class="color-grid">
-            @for (color of coverColors; track color) {
-              <button type="button" class="color-dot" matRipple
-                      [style.background]="color"
-                      [class.selected]="selectedColor() === color"
-                      (click)="selectColor(color)">
-              </button>
+        <!-- Tabs Icône / Photo / Couleur -->
+        <div class="cover-tabs-row">
+          <button type="button" class="cover-tab" [class.active]="logoMode() === 'emoji'" (click)="setLogoMode('emoji')">
+            <mat-icon>emoji_emotions</mat-icon> Icône
+          </button>
+          <button type="button" class="cover-tab" [class.active]="logoMode() === 'upload'" (click)="setLogoMode('upload')">
+            <mat-icon>add_photo_alternate</mat-icon> Photo
+          </button>
+          <button type="button" class="cover-tab active">
+            <mat-icon>palette</mat-icon> Couleur
+          </button>
+        </div>
+
+        <!-- Grille emoji (si mode icône) -->
+        @if (logoMode() === 'emoji') {
+          <div class="logo-grid-cover">
+            @for (logo of shopLogos; track logo) {
+              <button type="button" class="logo-btn" matRipple
+                      [class.selected]="selectedLogo() === logo"
+                      (click)="selectLogo(logo)">{{ logo }}</button>
             }
           </div>
-        </div>
+        }
       </div>
     </div>
+  </div><!-- /cover-card -->
 
-    <!-- Formulaire -->
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="profile-form">
-
-      <!-- Téléphone (readonly) -->
-      <div class="readonly-field">
-        <mat-icon>phone</mat-icon>
-        <div>
-          <span class="readonly-label">Numéro de téléphone</span>
-          <span class="readonly-value">{{ company()?.phone }}</span>
+  <!-- Section URL — 2 colonnes -->
+  @if (shopUrl()) {
+    <div class="share-url-card">
+      <!-- Gauche : lien -->
+      <div class="share-url-left">
+        <div class="share-url-header">
+          <mat-icon class="share-icon" [style.color]="selectedColor()">link</mat-icon>
+          <div>
+            <h2 class="share-title">Lien de votre boutique</h2>
+            <p class="share-sub">Partagez ce lien pour que vos clients accèdent à votre vitrine</p>
+          </div>
         </div>
-        <span class="readonly-badge">Non modifiable</span>
+        <div class="slug-row">
+          <div class="slug-box">
+            <mat-icon>storefront</mat-icon>
+            <span class="slug-url">{{ shopUrl() }}</span>
+          </div>
+          <button type="button" class="btn-copy" mat-stroked-button matRipple (click)="copyLink()">
+            @if (linkCopied()) { <mat-icon>check</mat-icon> } @else { <mat-icon>content_copy</mat-icon> }
+            {{ linkCopied() ? 'Copié !' : 'Copier' }}
+          </button>
+        </div>
+      </div>
+      <!-- Droite : boutons partage -->
+      <div class="share-url-right">
+        <button type="button" class="btn-whatsapp" matRipple (click)="shareWhatsApp()">
+          <mat-icon>chat</mat-icon> Partager sur WhatsApp
+        </button>
+        <button type="button" class="btn-facebook" matRipple (click)="shareFacebook()">
+          <mat-icon>thumb_up</mat-icon> Partager sur Facebook
+        </button>
+        <button type="button" class="btn-other-share" matRipple>
+          <mat-icon>share</mat-icon> Autres options
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Info cards grid (3 colonnes) -->
+  <div class="info-cards-grid">
+
+    <!-- Carte Informations générales -->
+    <div class="info-section-card">
+      <div class="info-section-header">
+        <div class="info-section-icon" [style.background]="selectedColor() + '18'">
+          <mat-icon [style.color]="selectedColor()">storefront</mat-icon>
+        </div>
+        <div>
+          <h3 class="info-section-title">Informations générales</h3>
+          <p class="info-section-sub">Gérez vos informations</p>
+        </div>
+        <button class="info-edit-btn" type="button" (click)="isEditingInfo.set(!isEditingInfo())">
+          <mat-icon>{{ isEditingInfo() ? 'close' : 'edit' }}</mat-icon>
+        </button>
       </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Nom de la boutique</mat-label>
-        <input matInput formControlName="name" placeholder="Ex: Boutique Kaboré" />
-        <mat-icon matSuffix>store</mat-icon>
-        @if (form.get('name')?.hasError('required')) {
-          <mat-error>Le nom est requis</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Description (optionnel)</mat-label>
-        <textarea matInput formControlName="description" rows="3"
-                  placeholder="Décrivez votre boutique…"></textarea>
-        <mat-icon matSuffix>description</mat-icon>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Adresse (optionnel)</mat-label>
-        <input matInput formControlName="address" placeholder="Ex: Secteur 15, Ouagadougou" />
-        <mat-icon matSuffix>location_on</mat-icon>
-      </mat-form-field>
-
-      @if (errorMsg()) {
-        <div class="error-banner"><mat-icon>error</mat-icon> {{ errorMsg() }}</div>
+      <!-- Mode affichage (par défaut) -->
+      @if (!isEditingInfo()) {
+        <div class="info-view-rows">
+          <div class="info-view-row">
+            <mat-icon class="info-row-icon">phone</mat-icon>
+            <div class="info-row-content">
+              <span class="info-row-label">Numéro de téléphone</span>
+              <span class="info-row-value">{{ company()?.phone }}</span>
+            </div>
+            <span class="verified-badge"><mat-icon>check_circle</mat-icon> Vérifié</span>
+          </div>
+          <div class="info-view-row">
+            <mat-icon class="info-row-icon">store</mat-icon>
+            <div class="info-row-content">
+              <span class="info-row-label">Nom de la boutique</span>
+              <span class="info-row-value">{{ company()?.name || '—' }}</span>
+            </div>
+          </div>
+          @if (company()?.description) {
+            <div class="info-view-row">
+              <mat-icon class="info-row-icon">description</mat-icon>
+              <div class="info-row-content">
+                <span class="info-row-label">Description</span>
+                <span class="info-row-value">{{ company()?.description }}</span>
+              </div>
+            </div>
+          }
+          @if (company()?.address) {
+            <div class="info-view-row">
+              <mat-icon class="info-row-icon">location_on</mat-icon>
+              <div class="info-row-content">
+                <span class="info-row-label">Adresse</span>
+                <span class="info-row-value">{{ company()?.address }}</span>
+              </div>
+              <mat-icon style="color:#9ca3af;font-size:18px">place</mat-icon>
+            </div>
+          }
+        </div>
       }
 
-      <button type="submit" mat-raised-button class="btn-save"
-              [disabled]="form.invalid || loading() || logoUploading()"
-              [style.background]="selectedColor()">
-        @if (loading()) {
-          <mat-icon class="spin">sync</mat-icon>
-        } @else {
-          <mat-icon>save</mat-icon>
-        }
-        {{ loading() ? 'Enregistrement…' : 'Enregistrer les modifications' }}
-      </button>
-    </form>
+      <!-- Mode édition -->
+      @if (isEditingInfo()) {
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="profile-form">
+          <div class="readonly-field">
+            <mat-icon>phone</mat-icon>
+            <div>
+              <span class="readonly-label">Numéro de téléphone</span>
+              <span class="readonly-value">{{ company()?.phone }}</span>
+            </div>
+            <span class="readonly-badge">Non modifiable</span>
+          </div>
 
-  </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Nom de la boutique</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Boutique Kaboré" />
+            <mat-icon matSuffix>store</mat-icon>
+            @if (form.get('name')?.hasError('required')) {
+              <mat-error>Le nom est requis</mat-error>
+            }
+          </mat-form-field>
 
-  <!-- ── Carte Sécurité ── -->
-  <div class="security-card">
-    <div class="security-header">
-      <mat-icon class="security-icon">lock</mat-icon>
-      <div>
-        <h3 class="security-title">Sécurité du compte</h3>
-        <p class="security-sub">Gérez votre mot de passe</p>
+          <mat-form-field appearance="outline">
+            <mat-label>Description (optionnel)</mat-label>
+            <textarea matInput formControlName="description" rows="3" placeholder="Décrivez votre boutique…"></textarea>
+            <mat-icon matSuffix>description</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Adresse (optionnel)</mat-label>
+            <input matInput formControlName="address" placeholder="Ex: Secteur 15, Ouagadougou" />
+            <mat-icon matSuffix>location_on</mat-icon>
+          </mat-form-field>
+
+          @if (errorMsg()) {
+            <div class="error-banner"><mat-icon>error</mat-icon> {{ errorMsg() }}</div>
+          }
+
+          <button type="submit" mat-raised-button class="btn-save"
+                  [disabled]="form.invalid || loading() || logoUploading()"
+                  [style.background]="selectedColor()">
+            @if (loading()) { <mat-icon class="spin">sync</mat-icon> } @else { <mat-icon>save</mat-icon> }
+            {{ loading() ? 'Enregistrement…' : 'Enregistrer' }}
+          </button>
+        </form>
+      }
+    </div><!-- /info-section-card Informations -->
+
+    <!-- Carte Sécurité du compte -->
+    <div class="info-section-card security-card">
+      <div class="info-section-header">
+        <div class="info-section-icon" [style.background]="selectedColor() + '18'">
+          <mat-icon [style.color]="selectedColor()">lock</mat-icon>
+        </div>
+        <div>
+          <h3 class="info-section-title">Sécurité du compte</h3>
+          <p class="info-section-sub">Gérez votre mot de passe</p>
+        </div>
+        <button class="info-edit-btn" type="button" (click)="navigateToChangePassword()">
+          <mat-icon>edit</mat-icon>
+        </button>
       </div>
-    </div>
-    <button type="button" class="btn-change-password" mat-stroked-button matRipple (click)="navigateToChangePassword()">
-      <mat-icon>vpn_key</mat-icon>
-      Changer mon mot de passe
-    </button>
-  </div>
-
-  <!-- ── Carte Email de récupération ── -->
-  <div class="recovery-email-card">
-    <div class="recovery-header">
-      <mat-icon class="recovery-icon">email</mat-icon>
-      <div>
-        <h3 class="recovery-title">Email de récupération</h3>
-        <p class="recovery-sub">Sécurisez votre compte avec un email pour récupérer votre mot de passe</p>
+      <div class="security-body">
+        <button type="button" class="btn-change-password" mat-stroked-button matRipple (click)="navigateToChangePassword()">
+          <mat-icon>vpn_key</mat-icon>
+          Changer mon mot de passe
+        </button>
       </div>
-    </div>
+    </div><!-- /security-card -->
+
+    <!-- Carte Email de récupération -->
+    <div class="info-section-card recovery-email-card">
+      <div class="info-section-header">
+        <div class="info-section-icon" [style.background]="selectedColor() + '18'">
+          <mat-icon [style.color]="selectedColor()">email</mat-icon>
+        </div>
+        <div>
+          <h3 class="info-section-title">Email de récupération</h3>
+          <p class="info-section-sub">Sécurisez votre compte avec un email</p>
+        </div>
+        <button class="info-edit-btn" type="button">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
 
     <!-- CAS 1: Aucun email existant -->
     @if (!hasRecoveryEmail()) {
@@ -229,7 +306,7 @@
 
         <button type="submit" mat-raised-button class="btn-add-recovery"
                 [disabled]="recoveryEmailForm.invalid || recoveryLoading()"
-                color="primary">
+                [style.background]="selectedColor()" style="color:white">
           @if (recoveryLoading()) {
             <mat-icon class="spin">sync</mat-icon>
           } @else {
@@ -275,7 +352,7 @@
             <button type="button" mat-raised-button class="btn-resend-otp" matRipple
                     (click)="onResendOtp()"
                     [disabled]="recoveryLoading()"
-                    color="primary">
+                    [style.background]="selectedColor()" style="color:white">
               @if (recoveryLoading()) {
                 <mat-icon class="spin">sync</mat-icon>
               } @else {
@@ -287,7 +364,9 @@
         </div>
       </div>
     }
-  </div>
+    </div><!-- /recovery-email-card -->
+
+  </div><!-- /info-cards-grid -->
 
   <!-- Modal de vérification OTP -->
   @if (showOtpModal()) {
@@ -326,7 +405,7 @@
             </button>
             <button type="submit" mat-raised-button class="btn-verify-otp"
                     [disabled]="otpForm.invalid || otpLoading()"
-                    color="primary">
+                    [style.background]="selectedColor()" style="color:white">
               @if (otpLoading()) {
                 <mat-icon class="spin">sync</mat-icon>
               } @else {
@@ -340,7 +419,10 @@
     </div>
   }
 
-  <!-- ── Carte Liens de partage ── -->
+  <!-- ── Grille bas de page : Partage + Stats ── -->
+  <div class="bottom-grid">
+
+  <!-- Carte Liens de partage -->
   <div class="share-card">
     <div class="share-card-header">
       <mat-icon>share</mat-icon>
@@ -391,15 +473,8 @@
     </div>
   </div>
 
-  <!-- ── Bouton Voir statistiques ── -->
-  <button type="button" class="btn-stats-toggle" (click)="toggleStats()" matRipple>
-    <mat-icon>{{ statsOpen() ? 'expand_less' : 'bar_chart' }}</mat-icon>
-    {{ statsOpen() ? 'Masquer les statistiques' : 'Voir les statistiques' }}
-  </button>
-
-  <!-- ── Section Analytics ── -->
-  @if (statsOpen()) {
-    <div class="stats-section">
+  <!-- Section Statistiques -->
+  <div class="stats-section">
 
       <div class="stats-header">
         <mat-icon class="stats-header-icon">insights</mat-icon>
@@ -513,7 +588,8 @@
         </div>
       }
 
-    </div>
-  }
+    </div><!-- /stats-section -->
 
-</div>
+  </div><!-- /bottom-grid -->
+
+</div><!-- /profile-page -->

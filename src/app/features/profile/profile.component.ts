@@ -79,7 +79,9 @@ export class ProfileComponent implements OnInit {
   logoUploadErr = signal<string>('');
   errorMsg      = signal<string | null>(null);
 
-  statsOpen    = signal(false);
+  isEditingInfo = signal(false);
+
+  statsOpen    = signal(true);
   stats        = signal<ShopStats | null>(null);
   statsLoading = signal(false);
   statsError   = signal<string | null>(null);
@@ -205,6 +207,9 @@ export class ProfileComponent implements OnInit {
       otp: ['', [Validators.required, Validators.minLength(6)]],
     });
 
+    // Charger les stats au démarrage
+    this.loadStats();
+
     // Load recovery email data from company
     // Note: This data should come from the API when user profile is loaded
     // For now, we'll initialize with empty values
@@ -275,6 +280,7 @@ export class ProfileComponent implements OnInit {
       this.loading.set(false);
       if (result.success) {
         this.snackBar.open('Profil mis à jour !', 'OK', { duration: 3000 });
+        this.isEditingInfo.set(false);
       } else {
         this.errorMsg.set(result.error ?? 'Erreur lors de la mise à jour');
       }

@@ -58,16 +58,17 @@ export class AppComponent implements OnInit, OnDestroy {
   );
 
   readonly navItems: NavItem[] = [
-    { label: 'Catégories', icon: 'category',        route: '/categories' },
-    { label: 'Produits',   icon: 'inventory_2',     route: '/products'   },
-    { label: 'Annonces',   icon: 'campaign',        route: '/annonces'   },
-    { label: 'Mes Commandes', icon: 'receipt_long', route: '/orders'     },
-    { label: 'Mon Profil', icon: 'manage_accounts', route: '/profile'   },
+    { label: 'Tableau de bord', icon: 'dashboard',       route: '/dashboard'     },
+    { label: 'Catégories',      icon: 'category',        route: '/categories' },
+    { label: 'Produits',        icon: 'inventory_2',     route: '/products'   },
+    { label: 'Annonces',        icon: 'campaign',        route: '/annonces'   },
+    { label: 'Mes Commandes',   icon: 'receipt_long',    route: '/orders'     },
+    { label: 'Mon Profil',      icon: 'manage_accounts', route: '/profile'    },
   ];
 
   readonly adminNavItems: NavItem[] = [
-    { label: 'Boutiques', icon: 'storefront', route: '/admin/shops'          },
-    { label: 'Annonces',  icon: 'flag',       route: '/admin/announcements'  },
+    { label: 'Boutiques', icon: 'storefront', route: '/admin/shops'         },
+    { label: 'Annonces',  icon: 'campaign',   route: '/admin/announcements' },
   ];
 
   readonly isAdmin = computed(() => this.authService.company()?.role === 'admin');

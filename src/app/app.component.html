@@ -5,6 +5,7 @@
     <!-- ===== SIDEBAR ===== -->
     <aside
       class="sidebar"
+      [class.sidebar-admin]="!isPublicRoute()"
       [style.--cover-color]="coverColor()"
     >
       <div class="header-bg"></div>
@@ -169,6 +170,16 @@
         </nav>
 
         <div class="sidebar-footer">
+          <!-- Help widget -->
+          <div class="help-widget">
+            <p class="help-widget-title">Besoin d'aide ?</p>
+            <p class="help-widget-sub">Notre équipe est là pour vous accompagner.</p>
+            <a href="tel:+22665704896" class="help-widget-btn">
+              <mat-icon>phone</mat-icon>
+              <span>Contact assistance +226 65 70 48 96</span>
+            </a>
+          </div>
+
           @if (authService.isLoggedIn()) {
             <button class="btn-logout" (click)="authService.logout()" matRipple>
               <mat-icon>logout</mat-icon>
@@ -180,16 +191,48 @@
               <span>Se connecter</span>
             </a>
           }
-          <!-- <div class="country-badge">
-            <span>🇧🇫</span>
-            <span>Burkina Faso</span>
-          </div> -->
         </div>
       }
     </aside>
 
     <!-- ===== MAIN CONTENT ===== -->
-    <main class="main-content">
+    <main class="main-content" [class.with-topbar]="!isPublicRoute() && authService.isLoggedIn()" [style.--cover-color]="coverColor()">
+
+      <!-- Desktop Admin Topbar -->
+      @if (!isPublicRoute() && authService.isLoggedIn()) {
+        <header class="admin-topbar">
+          <div class="topbar-left">
+            <!-- <mat-icon class="topbar-menu-icon">menu</mat-icon> -->
+          </div>
+          <div class="topbar-right">
+            <!-- <button class="topbar-notif" matRipple>
+              <mat-icon>notifications</mat-icon>
+              @if (pendingOrdersCount() > 0) {
+                <span class="topbar-notif-badge">{{ pendingOrdersCount() }}</span>
+              }
+            </button> -->
+            <div class="topbar-user">
+              <div class="topbar-avatar">
+                @if (isUrl(authService.company()?.logo)) {
+                  <img [src]="authService.company()?.logo" [alt]="authService.company()?.name" (error)="onImgError($event)" />
+                } @else {
+                  <span class="topbar-avatar-emoji">{{ authService.company()?.logo || '🏪' }}</span>
+                }
+              </div>
+              <div class="topbar-user-info">
+                <span class="topbar-user-name">{{ authService.company()?.name ?? 'Boutique' }}</span>
+                @if (authService.company()?.slug) {
+                  <a [routerLink]="['/shop', authService.company()?.slug]" class="topbar-shop-link">
+                    Voir ma boutique
+                  </a>
+                }
+              </div>
+              <mat-icon class="topbar-chevron">keyboard_arrow_down</mat-icon>
+            </div>
+          </div>
+        </header>
+      }
+
       <!-- Mobile Header -->
       <header
         class="mobile-header"

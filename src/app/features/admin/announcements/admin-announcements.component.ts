@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -16,6 +16,7 @@ import {
   AdminAnnouncementFormDialogComponent,
   AnnouncementDialogData,
 } from './admin-announcement-form.dialog';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-admin-announcements',
@@ -29,9 +30,11 @@ import {
   styleUrl:    './admin-announcements.component.scss',
 })
 export class AdminAnnouncementsComponent implements OnInit {
-  private svc        = inject(AdminAnnouncementService);
-  private dialog     = inject(MatDialog);
-  private destroyRef = inject(DestroyRef);
+  private svc         = inject(AdminAnnouncementService);
+  private authService = inject(AuthService);
+  private dialog      = inject(MatDialog);
+  private destroyRef  = inject(DestroyRef);
+  readonly coverColor = computed(() => this.authService.company()?.coverColor ?? '');
 
   readonly loading       = signal(false);
   readonly saving        = signal(false);

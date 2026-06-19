@@ -10,6 +10,7 @@ import { MatSnackBarModule }  from '@angular/material/snack-bar';
 
 import { Annonce, AnnonceType, ANNONCE_TYPE_CONFIG } from '../../../models/annonce.model';
 import { AnnonceService }     from '../../../core/services/annonce.service';
+import { AuthService }        from '../../../core/services/auth.service';
 import { AnnonceFormComponent, AnnonceFormData } from '../annonce-form/annonce-form.component';
 
 type FilterTab = 'toutes' | 'actives' | 'epinglees' | AnnonceType;
@@ -26,8 +27,11 @@ type FilterTab = 'toutes' | 'actives' | 'epinglees' | AnnonceType;
 })
 export class AnnonceListComponent {
   private annonceService = inject(AnnonceService);
+  private authService    = inject(AuthService);
   private dialog         = inject(MatDialog);
   private snackBar       = inject(MatSnackBar);
+
+  readonly coverColor = computed(() => this.authService.company()?.coverColor ?? '');
 
   readonly typeConfig = ANNONCE_TYPE_CONFIG;
 
