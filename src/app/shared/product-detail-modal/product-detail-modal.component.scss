@@ -252,11 +252,32 @@
 .pd-footer {
   padding: 12px 20px 24px;
   display: flex;
+  align-items: center;
   gap: 10px;
   flex-shrink: 0;
 }
 
-.pd-btn-close {
+.pd-btn-back {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  border: 2px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.15s;
+  color: #374151;
+
+  mat-icon { font-size: 22px; }
+
+  &:hover  { background: #f3f4f6; }
+  &:active { transform: scale(0.94); }
+}
+
+.pd-btn-cart {
   flex: 1;
   padding: 14px;
   border: none;
@@ -274,8 +295,50 @@
 
   mat-icon { font-size: 20px; }
 
-  &:hover  { opacity: 0.9; }
-  &:active { transform: scale(0.97); }
+  &:hover:not(:disabled)  { opacity: 0.88; }
+  &:active:not(:disabled) { transform: scale(0.97); }
+
+  &:disabled {
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.pd-qty-control {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 2px solid currentColor;
+  border-radius: 14px;
+  padding: 6px 8px;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.pd-qty-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: background 0.12s, transform 0.12s;
+
+  mat-icon { font-size: 20px; }
+
+  &:hover  { background: rgba(0, 0, 0, 0.06); }
+  &:active { transform: scale(0.88); }
+}
+
+.pd-qty-count {
+  font-size: 18px;
+  font-weight: 800;
+  min-width: 28px;
+  text-align: center;
 }
 
 /* ============================================================
