@@ -132,7 +132,7 @@
   border-color: rgba(37, 211, 102, .35);
   background: rgba(37, 211, 102, .06);
 
-  .pub-wa-emoji { font-size: 16px; line-height: 1; }
+  .pub-wa-logo { width: 20px; height: 20px; flex-shrink: 0; }
 
   &:hover {
     background: rgba(37, 211, 102, .12);

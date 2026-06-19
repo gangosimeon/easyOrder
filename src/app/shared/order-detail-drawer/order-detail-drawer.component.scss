@@ -503,6 +503,21 @@
 }
 
 /* ============================================================
+   Mobile — sheet stops above bottom nav
+   ============================================================ */
+@media (max-width: 639px) {
+  .od-sheet {
+    bottom: 70px;
+    border-radius: 20px 20px 16px 16px;
+    max-height: calc(92dvh - 70px);
+  }
+
+  .od-footer {
+    padding-bottom: 16px;
+  }
+}
+
+/* ============================================================
    Desktop — centred dialog (same as ProductDetailModal)
    ============================================================ */
 @media (min-width: 640px) {

@@ -275,6 +275,12 @@ $skel-white-gradient: linear-gradient(
   cursor: pointer;
   transition: var(--transition);
   &:hover { opacity: .9; transform: translateY(-1px); }
+
+  .wa-sidebar-logo {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
 }
 
 /* ── User card (sidebar admin) ── */
