@@ -254,9 +254,10 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private resolveOgImage(data: ShopData, base: string): string {
     const fallback = `${base}/assets/icons/web-app-manifest-512x512.png`;
-    if (data.company.logo?.startsWith('http')) return data.company.logo;
     const firstWithImg = data.products.find(p => (p as any).image?.startsWith('http'));
-    return (firstWithImg as any)?.image ?? fallback;
+    if (firstWithImg) return (firstWithImg as any).image;
+    if (data.company.logo?.startsWith('http')) return data.company.logo;
+    return fallback;
   }
 
   private resetOgTags(): void {
