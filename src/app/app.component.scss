@@ -541,124 +541,7 @@ $skel-white-gradient: linear-gradient(
   }
 }
 
-/* ===== ADMIN TOPBAR ===== */
-.admin-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 64px;
-  padding: 0 24px;
-  background: #ffffff;
-  border-bottom: 1px solid #f3f4f6;
-  box-shadow: 0 1px 4px rgba(0,0,0,.06);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  flex-shrink: 0;
-}
-
-.topbar-left {
-  display: flex;
-  align-items: center;
-}
-
-.topbar-menu-icon {
-  font-size: 24px;
-  color: #6b7280;
-  cursor: pointer;
-  transition: color .15s;
-  &:hover { color: #111827; }
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.topbar-notif {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: 1.5px solid #e5e7eb;
-  background: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background .15s;
-
-  mat-icon { font-size: 22px; color: #374151; }
-
-  &:hover { background: #f9fafb; }
-}
-
-.topbar-notif-badge {
-  position: absolute;
-  top: -4px; right: -4px;
-  background: var(--cover-color, var(--primary));
-  color: #fff;
-  font-size: 9px;
-  font-weight: 800;
-  min-width: 16px; height: 16px;
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0 3px;
-  border: 1.5px solid #fff;
-}
-
-.topbar-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 12px;
-  border-radius: 10px;
-  border: 1.5px solid #e5e7eb;
-  background: #fff;
-  cursor: pointer;
-  transition: background .15s;
-  &:hover { background: #f9fafb; }
-}
-
-.topbar-avatar {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: #f3f4f6;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  img { width: 100%; height: 100%; object-fit: cover; }
-  .topbar-avatar-emoji { font-size: 18px; }
-}
-
-.topbar-user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-
-  .topbar-user-name {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 13px;
-    color: #111827;
-    white-space: nowrap;
-  }
-
-  .topbar-shop-link {
-    font-size: 11px;
-    color: var(--cover-color, var(--primary));
-    font-weight: 600;
-    text-decoration: none;
-    &:hover { text-decoration: underline; }
-  }
-}
-
-.topbar-chevron {
-  font-size: 18px;
-  color: #9ca3af;
-}
+/* ===== ADMIN TOPBAR → styles in TopbarComponent ===== */
 
 /* ===== MAIN ===== */
 .main-content {
@@ -823,80 +706,92 @@ $skel-white-gradient: linear-gradient(
     }
   }
 
-  .page-container { padding: 16px; margin-bottom: 60px;}
+  .page-container { padding: 16px; margin-bottom: 70px; min-height: auto; }
+}
 
-  /* ── Mobile Sticky Orders Bar ─────────────────────────────────────────── */
-  .mobile-orders-bar {
+/* ===== MOBILE BOTTOM NAV ===== */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+    bottom: 0; left: 0; right: 0;
+    width: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-top: 1px solid #f3f4f6;
+    box-shadow: 0 -4px 20px rgba(0,0,0,.10);
     z-index: 100;
-    padding: 8px 16px max(8px, env(safe-area-inset-bottom));
-    display: flex;
-    justify-content: center;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    overflow: hidden;
   }
+}
 
-  .orders-bar-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    color: #111827;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 14px;
-    padding: 10px 20px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #f9fafb, #f3f4f6);
-    border: 1.5px solid #e5e7eb;
-    transition: var(--transition);
+.mbn-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px 6px;
+  text-decoration: none;
+  color: #9ca3af;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  transition: color .15s;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
 
-    &.active-orders {
-      background: linear-gradient(135deg, var(--cover-color, var(--primary)), color-mix(in srgb, var(--cover-color, var(--primary)) 80%, white));
-      color: #fff;
-      border-color: var(--cover-color, var(--primary));
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-    }
-  }
-
-  .orders-bar-icon-wrap {
+  .mbn-icon-wrap {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    transition: background .15s;
+    mat-icon { font-size: 22px; width: 22px; height: 22px; }
   }
 
-  .orders-bar-badge {
-    position: absolute;
-    top: -6px;
-    right: -8px;
-    background: #f59e0b;
-    color: #fff;
-    font-size: 10px;
-    font-weight: 800;
-    min-width: 18px;
-    height: 18px;
-    border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 5px;
-    box-shadow: 0 2px 6px rgba(245,158,11,0.4);
-  }
-
-  .orders-bar-link.active-orders .orders-bar-badge {
-    background: #fff;
+  &.mbn-active {
     color: var(--cover-color, var(--primary));
+    .mbn-icon-wrap {
+      background: color-mix(in srgb, var(--cover-color, var(--primary)) 12%, white);
+    }
   }
-
-  
 }
-/* Hide mobile orders bar on desktop */
-@media (min-width: 768px) {
-  .mobile-orders-bar {
-    display: none;
-  }
+
+.mbn-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+  font-size: clamp(8px, 2.5vw, 10px);
+}
+
+.mbn-badge {
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  background: var(--cover-color, var(--primary));
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1.5px solid #fff;
 }

@@ -1,0 +1,54 @@
+<header class="pub-topbar" [style.--cover-color]="coverColor()">
+
+  <!-- ── Breadcrumb ── -->
+  <nav class="pub-breadcrumb" aria-label="Navigation boutique">
+    <div class="pub-shop-logo">
+      @if (isUrl(cartService.company()?.logo)) {
+        <img [src]="cartService.company()?.logo"
+             [alt]="cartService.company()?.name"
+             (error)="onImgError($event)" />
+      } @else {
+        <span class="pub-logo-emoji">{{ cartService.company()?.logo || '🏪' }}</span>
+      }
+    </div>
+    <span class="pub-crumb pub-crumb-shop">
+      {{ cartService.company()?.name ?? 'Boutique' }}
+    </span>
+    <mat-icon class="pub-crumb-sep">chevron_right</mat-icon>
+    <span class="pub-crumb pub-crumb-active">
+      <mat-icon class="pub-crumb-icon">{{ crumbIcon() }}</mat-icon>
+      {{ crumbLabel() }}
+    </span>
+  </nav>
+
+  <!-- ── Right actions ── -->
+  <div class="pub-actions">
+
+    <!-- WhatsApp -->
+    @if (cartService.company()?.phone || cartService.company()?.fullPhone) {
+      <button class="pub-btn pub-wa" (click)="contactWhatsApp()" matRipple>
+        <span class="pub-wa-emoji">💬</span>
+        <span class="pub-btn-label">WhatsApp</span>
+      </button>
+    }
+
+    <!-- Cart -->
+    <a routerLink="/cart" class="pub-btn pub-cart" matRipple
+       [class.pub-cart-filled]="cartCount() > 0">
+      <div class="pub-cart-icon-wrap">
+        <mat-icon>shopping_cart</mat-icon>
+        @if (cartCount() > 0) {
+          <span class="pub-badge">{{ cartCount() }}</span>
+        }
+      </div>
+      <span class="pub-btn-label">
+        @if (cartCount() > 0) {
+          {{ cartCount() }} article{{ cartCount() > 1 ? 's' : '' }}
+        } @else {
+          Panier
+        }
+      </span>
+    </a>
+
+  </div>
+</header>

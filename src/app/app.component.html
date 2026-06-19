@@ -196,41 +196,19 @@
     </aside>
 
     <!-- ===== MAIN CONTENT ===== -->
-    <main class="main-content" [class.with-topbar]="!isPublicRoute() && authService.isLoggedIn()" [style.--cover-color]="coverColor()">
+    <main class="main-content" [class.with-topbar]="authService.isLoggedIn() || isPublicRoute()" [style.--cover-color]="coverColor()">
 
       <!-- Desktop Admin Topbar -->
       @if (!isPublicRoute() && authService.isLoggedIn()) {
-        <header class="admin-topbar">
-          <div class="topbar-left">
-            <!-- <mat-icon class="topbar-menu-icon">menu</mat-icon> -->
-          </div>
-          <div class="topbar-right">
-            <!-- <button class="topbar-notif" matRipple>
-              <mat-icon>notifications</mat-icon>
-              @if (pendingOrdersCount() > 0) {
-                <span class="topbar-notif-badge">{{ pendingOrdersCount() }}</span>
-              }
-            </button> -->
-            <div class="topbar-user">
-              <div class="topbar-avatar">
-                @if (isUrl(authService.company()?.logo)) {
-                  <img [src]="authService.company()?.logo" [alt]="authService.company()?.name" (error)="onImgError($event)" />
-                } @else {
-                  <span class="topbar-avatar-emoji">{{ authService.company()?.logo || '🏪' }}</span>
-                }
-              </div>
-              <div class="topbar-user-info">
-                <span class="topbar-user-name">{{ authService.company()?.name ?? 'Boutique' }}</span>
-                @if (authService.company()?.slug) {
-                  <a [routerLink]="['/shop', authService.company()?.slug]" class="topbar-shop-link">
-                    Voir ma boutique
-                  </a>
-                }
-              </div>
-              <mat-icon class="topbar-chevron">keyboard_arrow_down</mat-icon>
-            </div>
-          </div>
-        </header>
+        <app-topbar
+          [coverColor]="coverColor()"
+          [isAdmin]="isAdmin()"
+        />
+      }
+
+      <!-- Desktop Public Topbar -->
+      @if (isPublicRoute() && cartService.company()) {
+        <app-public-topbar [coverColor]="coverColor()" />
       }
 
       <!-- Mobile Header -->
@@ -285,34 +263,6 @@
               </div>
             </div>
 
-            <div class="mobile-nav">
-              <a
-                [routerLink]="['/shop', cartService.company()?.slug]"
-                routerLinkActive="active-mobile"
-                class="mobile-nav-item"
-                (click)="cartService.selectCategory(null)"
-              >
-                <mat-icon>store</mat-icon>
-                <span>Produits</span>
-              </a>
-              <a
-                routerLink="/cart"
-                routerLinkActive="active-mobile"
-                class="mobile-nav-item"
-              >
-                <span class="mobile-cart-icon">
-                  <mat-icon>shopping_cart</mat-icon>
-                  @if (cartCount() > 0) {
-                    <span class="mobile-badge">{{ cartCount() }}</span>
-                  }
-                </span>
-                <span>Panier</span>
-              </a>
-              <button class="mobile-nav-item" (click)="contactWhatsApp()">
-                <mat-icon>chat</mat-icon>
-                <span>Contactez-nous</span>
-              </button>
-            </div>
           } @else {
             <!-- ── MOBILE HEADER ADMIN ── -->
             <div
@@ -362,63 +312,65 @@
                 }
               </div>
             </div>
-            <div class="mobile-nav">
-              @for (item of navItems; track item.route) {
-                @if (item.route !== '/orders') {
-                  <a
-                    [routerLink]="item.route"
-                    routerLinkActive="active-mobile"
-                    class="mobile-nav-item"
-                  >
-                    <mat-icon>{{ item.icon }}</mat-icon>
-                    <span>{{ item.label }}</span>
-                  </a>
-                }
-              }
-            </div>
-
-            @if (isAdmin()) {
-              <div class="mobile-admin-bar">
-                <span class="admin-bar-label">
-                  <mat-icon>admin_panel_settings</mat-icon>
-                  Admin
-                </span>
-                @for (item of adminNavItems; track item.route) {
-                  <a
-                    [routerLink]="item.route"
-                    routerLinkActive="active-admin-mobile"
-                    class="mobile-admin-item"
-                  >
-                    <mat-icon>{{ item.icon }}</mat-icon>
-                    <span>{{ item.label }}</span>
-                  </a>
-                }
-              </div>
-            }
           }
         </div>
       </header>
 
-      @if (!isPublicRoute() && authService.isLoggedIn()) {
-        <app-announcement-banner />
-      }
-
       <div class="page-container" [class.public-page]="isPublicRoute()">
+        @if (!isPublicRoute() && authService.isLoggedIn()) {
+          <app-announcement-banner />
+        }
         <router-outlet />
       </div>
 
-      <!-- ── Mobile sticky orders bar (admin only) ── -->
+      <!-- ── Mobile bottom nav (admin only) ── -->
       @if (!isPublicRoute() && authService.isLoggedIn()) {
-        <nav class="mobile-orders-bar">
-          <a routerLink="/orders" routerLinkActive="active-orders" class="orders-bar-link">
-            <div class="orders-bar-icon-wrap">
-              <mat-icon>receipt_long</mat-icon>
-              @if (pendingOrdersCount() > 0) {
-                <span class="orders-bar-badge">{{ pendingOrdersCount() }}</span>
+        <nav class="mobile-bottom-nav" [style.--cover-color]="coverColor()">
+          @for (item of mobileNavItems; track item.route) {
+            <a [routerLink]="item.route"
+               routerLinkActive="mbn-active"
+               class="mbn-item">
+              <div class="mbn-icon-wrap">
+                <mat-icon>{{ item.icon }}</mat-icon>
+                @if (item.route === '/orders' && pendingOrdersCount() > 0) {
+                  <span class="mbn-badge">{{ pendingOrdersCount() }}</span>
+                }
+              </div>
+              <span class="mbn-label">{{ item.label }}</span>
+            </a>
+          }
+        </nav>
+      }
+
+      <!-- ── Mobile bottom nav (public shop) ── -->
+      @if (isPublicRoute() && cartService.company()) {
+        <nav class="mobile-bottom-nav" [style.--cover-color]="coverColor()">
+          <a [routerLink]="['/shop', cartService.company()?.slug]"
+             routerLinkActive="mbn-active"
+             class="mbn-item"
+             (click)="cartService.selectCategory(null)">
+            <div class="mbn-icon-wrap">
+              <mat-icon>store</mat-icon>
+            </div>
+            <span class="mbn-label">Boutique</span>
+          </a>
+          <a routerLink="/cart"
+             routerLinkActive="mbn-active"
+             class="mbn-item">
+            <div class="mbn-icon-wrap">
+              <mat-icon>shopping_cart</mat-icon>
+              @if (cartCount() > 0) {
+                <span class="mbn-badge">{{ cartCount() }}</span>
               }
             </div>
-            <span class="orders-bar-label">Mes Commandes</span>
+            <span class="mbn-label">Panier</span>
           </a>
+          <button class="mbn-item" (click)="contactWhatsApp()">
+            <div class="mbn-icon-wrap">
+              <mat-icon>chat</mat-icon>
+            </div>
+            <span class="mbn-label">Contact</span>
+          </button>
         </nav>
       }
 

@@ -8,6 +8,8 @@ import { CartService } from './core/services/cart.service';
 import { AuthService } from './core/services/auth.service';
 import { ShopOrdersService } from './core/services/shop-orders.service';
 import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
+import { TopbarComponent } from './shared/topbar/topbar.component';
+import { PublicTopbarComponent } from './shared/public-topbar/public-topbar.component';
 import { ProductService } from './core/services/product.service';
 import { CategoryService } from './core/services/category.service';
 import { PushNotificationService } from './core/services/push-notification.service';
@@ -21,7 +23,7 @@ interface NavItem {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent, TopbarComponent, PublicTopbarComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -58,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
   );
 
   readonly navItems: NavItem[] = [
-    { label: 'Tableau de bord', icon: 'dashboard',       route: '/dashboard'     },
+    // { label: 'Tableau de bord', icon: 'dashboard',       route: '/dashboard'     },
     { label: 'Catégories',      icon: 'category',        route: '/categories' },
     { label: 'Produits',        icon: 'inventory_2',     route: '/products'   },
     { label: 'Annonces',        icon: 'campaign',        route: '/annonces'   },
@@ -69,6 +71,14 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly adminNavItems: NavItem[] = [
     { label: 'Boutiques', icon: 'storefront', route: '/admin/shops'         },
     { label: 'Annonces',  icon: 'campaign',   route: '/admin/announcements' },
+  ];
+
+  readonly mobileNavItems: NavItem[] = [
+    { label: 'Catégories', icon: 'category',        route: '/categories' },
+    { label: 'Produits',   icon: 'inventory_2',     route: '/products'   },
+    { label: 'Commandes',  icon: 'receipt_long',    route: '/orders'     },
+    { label: 'Annonces',   icon: 'campaign',        route: '/annonces'   },
+    { label: 'Profil',     icon: 'manage_accounts', route: '/profile'    },
   ];
 
   readonly isAdmin = computed(() => this.authService.company()?.role === 'admin');
