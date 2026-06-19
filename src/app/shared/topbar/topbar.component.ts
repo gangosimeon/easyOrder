@@ -16,7 +16,7 @@ interface QuickAction    { label: string; icon: string; route: string; color: st
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, MatTooltipModule],
+  imports: [RouterLink, MatIconModule, MatRippleModule, MatTooltipModule],
   templateUrl: './topbar.component.html',
   styleUrl:    './topbar.component.scss',
 })

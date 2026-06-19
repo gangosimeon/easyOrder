@@ -10,7 +10,7 @@ import { CartDrawerService } from '../../core/services/cart-drawer.service';
 @Component({
   selector: 'app-public-topbar',
   standalone: true,
-  imports: [RouterLink, MatIconModule, MatRippleModule],
+  imports: [ MatIconModule, MatRippleModule],
   templateUrl: './public-topbar.component.html',
   styleUrl:    './public-topbar.component.scss',
 })
