@@ -66,7 +66,7 @@
 
       <!-- Meta chips -->
       <div class="pd-meta">
-        @if (product.stock !== undefined) {
+        @if (product.stock !== undefined && product.stock !==0) {
           <span class="pd-chip">
             <mat-icon>warehouse</mat-icon>
             Stock : {{ product.stock }}
@@ -90,10 +90,31 @@
 
     <!-- Footer -->
     <div class="pd-footer">
-      <button class="pd-btn-close" (click)="close()" [style.background]="accentColor">
+      <button class="pd-btn-back" (click)="close()" aria-label="Retour">
         <mat-icon>arrow_back</mat-icon>
-        Retour
       </button>
+
+      @if (isInCart()) {
+        <div class="pd-qty-control" [style.border-color]="accentColor">
+          <button class="pd-qty-btn" (click)="decrement()" [style.color]="accentColor">
+            <mat-icon>{{ cartQuantity() === 1 ? 'delete_outline' : 'remove' }}</mat-icon>
+          </button>
+          <span class="pd-qty-count" [style.color]="accentColor">{{ cartQuantity() }}</span>
+          <button class="pd-qty-btn" (click)="increment()" [style.color]="accentColor">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      } @else {
+        <button
+          class="pd-btn-cart"
+          (click)="addToCart()"
+          [disabled]="!product.inStock"
+          [style.background]="product.inStock ? accentColor : '#9ca3af'"
+        >
+          <mat-icon>{{ addedFeedback() ? 'check_circle' : 'shopping_cart' }}</mat-icon>
+          {{ addedFeedback() ? 'Ajouté !' : 'Ajouter au panier' }}
+        </button>
+      }
     </div>
 
   </div>
