@@ -1,0 +1,198 @@
+$primary:       var(--primary);
+$primary-light: var(--primary-light);
+$text:          var(--text-primary);
+$muted:         var(--text-secondary);
+
+/* ── Section wrapper ──────────────────────────────────── */
+.lp-vc {
+  background: var(--bg-main);
+  padding: 64px 0;
+}
+
+.lp-vc__container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ── Section header ──────────────────────────────────── */
+.lp-vc__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.lp-section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--secondary);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.lp-section-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.25;
+
+  @media (min-width: 768px) {
+    font-size: 34px;
+  }
+}
+
+/* ── 2-column grid (stacked on mobile) ───────────────── */
+.lp-vc__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+}
+
+/* ── Shared card ─────────────────────────────────────── */
+.lp-vc__card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (min-width: 768px) {
+    padding: 32px;
+  }
+}
+
+.lp-vc__card-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: $text;
+  margin: 0;
+  line-height: 1.3;
+
+  @media (min-width: 768px) {
+    font-size: 22px;
+  }
+}
+
+.lp-vc__card-desc {
+  font-size: 14px;
+  color: $muted;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Video embed ─────────────────────────────────────── */
+.lp-vc__video-wrap {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  line-height: 0;
+}
+
+.lp-vc__video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* ── Contact rows ────────────────────────────────────── */
+.lp-vc__contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lp-vc__contact-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+
+  &[href]:hover {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 4%, white);
+    transform: translateX(3px);
+  }
+}
+
+.lp-vc__contact-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
+.lp-vc__contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lp-vc__contact-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: $muted;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.lp-vc__contact-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Primary CTA (contact card) ─────────────────────── */
+.lp-vc__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid $primary;
+  background: transparent;
+  color: $primary;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+  margin-top: auto;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &:hover {
+    background: $primary;
+    color: #fff;
+  }
+}

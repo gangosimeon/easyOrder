@@ -10,8 +10,9 @@ import { RouterLink, Router } from '@angular/router';
 })
 export class LandingNavComponent {
   private router = inject(Router);
-  menuOpen = signal(false);
+  menuOpen  = signal(false);
   scrolled  = signal(false);
+  activeTab = signal<string>(sessionStorage.getItem('landing_active_tab') ?? '');
 
   @HostListener('window:scroll')
   onScroll(): void {
@@ -23,6 +24,8 @@ export class LandingNavComponent {
 
   scrollTo(id: string): void {
     this.closeMenu();
+    this.activeTab.set(id);
+    sessionStorage.setItem('landing_active_tab', id);
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
@@ -33,6 +36,8 @@ export class LandingNavComponent {
 
   goToShops(): void {
     this.closeMenu();
-    this.router.navigate(['/shops']);
+    this.activeTab.set('shops');
+    sessionStorage.setItem('landing_active_tab', 'shops');
+    setTimeout(() => this.router.navigate(['/shops']));
   }
 }

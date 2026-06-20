@@ -1,0 +1,80 @@
+<section class="lp-vc">
+  <div class="lp-vc__container">
+
+    <div class="lp-vc__header">
+      <span class="lp-section-label">VIDÉO & CONTACT</span>
+      <h2 class="lp-section-title">Découvre la plateforme et contacte-nous</h2>
+    </div>
+
+    <div class="lp-vc__grid">
+
+      <!-- ── Video Card ──────────────────────────────── -->
+      <div class="lp-vc__card">
+        <h2 class="lp-vc__card-title">Démonstration d'une boutique déjà créée&nbsp;:</h2>
+        <p class="lp-vc__card-desc">
+          Regarde cette démonstration rapide et créer votre boutique aussi en moins de 60 secondes.
+        </p>
+
+        <div class="lp-vc__video-wrap">
+          <video
+            class="lp-vc__video"
+            src="assets/videos/demonstrating.mp4"
+            poster="assets/videos/demo.png"
+            controls
+            preload="metadata"
+            playsinline>
+            Votre navigateur ne supporte pas la lecture vidéo.
+          </video>
+        </div>
+      </div>
+
+      <!-- ── Contact Card ────────────────────────────── -->
+      <div class="lp-vc__card">
+        <h2 class="lp-vc__card-title">Une question&nbsp;? Parlons-en&nbsp;!</h2>
+        <p class="lp-vc__card-desc">
+          Notre équipe est là pour t'accompagner et répondre à
+          toutes tes questions.
+        </p>
+
+        <div class="lp-vc__contacts">
+          @for (item of contactItems; track item.label) {
+            @if (item.href) {
+              <a [href]="item.href"
+                 class="lp-vc__contact-row"
+                 target="{{ item.href.startsWith('http') ? '_blank' : '_self' }}"
+                 rel="noopener">
+                <span class="lp-vc__contact-icon" [style.color]="item.color"
+                      [style.background]="item.color + '18'">
+                  <mat-icon>{{ item.icon }}</mat-icon>
+                </span>
+                <span class="lp-vc__contact-info">
+                  <span class="lp-vc__contact-label">{{ item.label }}</span>
+                  <span class="lp-vc__contact-value">{{ item.value }}</span>
+                </span>
+              </a>
+            } @else {
+              <div class="lp-vc__contact-row">
+                <span class="lp-vc__contact-icon" [style.color]="item.color"
+                      [style.background]="item.color + '18'">
+                  <mat-icon>{{ item.icon }}</mat-icon>
+                </span>
+                <span class="lp-vc__contact-info">
+                  <span class="lp-vc__contact-label">{{ item.label }}</span>
+                  <span class="lp-vc__contact-value">{{ item.value }}</span>
+                </span>
+              </div>
+            }
+          }
+        </div>
+
+        <a href="https://wa.me/2250712345678"
+           class="lp-vc__btn-primary"
+           target="_blank" rel="noopener">
+          Nous contacter
+          <mat-icon>arrow_forward</mat-icon>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
