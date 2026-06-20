@@ -23,7 +23,7 @@ export interface OrderResult {
   customerPhone?:string;
   items:        OrderItem[];
   total:        number;
-  status:       'pending' | 'confirmed' | 'delivered' | 'cancelled';
+  status:       'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
   whatsappSent: boolean;
   note?:        string;
   createdAt:    string;

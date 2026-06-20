@@ -275,56 +275,67 @@
 }
 
 /* ---------- Status change ---------- */
-.od-status-row {
-  position: relative;
+/* ── Status tile grid ─────────────────────────────────────────────────────── */
+
+.od-status-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
   margin-bottom: 20px;
 }
 
-.od-status-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background: #fff;
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #6b7280;
-  cursor: pointer;
-  transition: background 0.15s;
-
-  mat-icon { font-size: 16px; width: 16px; height: 16px; }
-  &:hover { background: #f9fafb; }
-}
-
-.od-status-dropdown {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.14);
-  padding: 8px;
-  z-index: 20;
+.od-status-tile {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px 10px 10px;
+  border-radius: 12px;
+  border: 1.5px solid color-mix(in srgb, var(--tile-color) 30%, #e5e7eb);
+  background: color-mix(in srgb, var(--tile-color) 10%, #fff);
+  color: var(--tile-color);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+
+  &:active { transform: scale(0.96); }
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--tile-color) 18%, #fff);
+    border-color: var(--tile-color);
+  }
+
+  &--active {
+    background: var(--tile-color);
+    border-color: var(--tile-color);
+    color: #fff;
+    cursor: default;
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--tile-color) 40%, transparent);
+  }
+
+  &:disabled { opacity: 1; }
 }
 
-.od-status-option {
-  width: 100%;
-  padding: 11px 14px;
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 14px;
+.od-tile-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.od-tile-label {
+  font-size: 11px;
   font-weight: 700;
-  cursor: pointer;
-  text-align: left;
-  transition: opacity 0.15s;
-  &:hover { opacity: 0.88; }
+  line-height: 1.2;
+}
+
+.od-tile-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* ---------- Section title ---------- */

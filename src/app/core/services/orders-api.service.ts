@@ -22,7 +22,7 @@ export interface Order {
   customerPhone?: string;
   items: OrderItem[];
   total: number;
-  status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
   whatsappSent: boolean;
   note?: string;
   createdAt: string;
@@ -30,7 +30,7 @@ export interface Order {
 }
 
 export interface OrderFilters {
-  status?: 'pending' | 'confirmed' | 'delivered' | 'cancelled' | 'all';
+  status?: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' | 'all';
   search?: string;
   dateFrom?: string;
   dateTo?: string;
@@ -39,7 +39,7 @@ export interface OrderFilters {
 }
 
 export interface UpdateStatusInput {
-  status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
 }
 
 // ── Service ──────────────────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ export class OrdersApiService {
     return order._id || (order as any).id || '';
   }
 
-  updateOrderStatus(orderId: string, status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'): Observable<Order> {
+  updateOrderStatus(orderId: string, status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled'): Observable<Order> {
     const snapshot = this.orders();
     this.updatingOrderId.set(orderId);
     this.orders.update(orders =>
@@ -205,22 +205,26 @@ export class OrdersApiService {
   }
 
   getStatusColor(status: string): string {
-    const colors = {
-      pending: '#f59e0b',
-      confirmed: '#10b981',
-      delivered: '#3b82f6',
-      cancelled: '#ef4444',
+    const colors: Record<string, string> = {
+      pending:    '#f59e0b',
+      confirmed:  '#10b981',
+      preparing:  '#8b5cf6',
+      delivering: '#3b82f6',
+      delivered:  '#059669',
+      cancelled:  '#ef4444',
     };
-    return colors[status as keyof typeof colors] || '#6b7280';
+    return colors[status] || '#6b7280';
   }
 
   getStatusLabel(status: string): string {
-    const labels = {
-      pending: 'En attente',
-      confirmed: 'Confirmé',
-      delivered: 'Livré',
-      cancelled: 'Annulé',
+    const labels: Record<string, string> = {
+      pending:    'En attente',
+      confirmed:  'Confirmé',
+      preparing:  'En préparation',
+      delivering: 'En livraison',
+      delivered:  'Livré',
+      cancelled:  'Annulé',
     };
-    return labels[status as keyof typeof labels] || status;
+    return labels[status] || status;
   }
 }

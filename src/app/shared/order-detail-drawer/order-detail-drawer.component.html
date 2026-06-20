@@ -53,20 +53,21 @@
         </span>
       </div>
 
-      <!-- Status change -->
-      <div class="od-status-row">
-        <button class="od-status-btn" (click)="toggleStatusMenu()">
-          <mat-icon>autorenew</mat-icon>
-          Modifier le statut
-        </button>
-        @if (showStatusMenu) {
-          <div class="od-status-dropdown">
-            @for (s of statuses; track s.value) {
-              <button class="od-status-option" [style.background]="s.color" (click)="selectStatus(s.value)">
-                {{ s.label }}
-              </button>
+      <!-- Status selector -->
+      <p class="od-section-title">Statut de la commande</p>
+      <div class="od-status-grid">
+        @for (s of statuses; track s.value) {
+          <button class="od-status-tile"
+                  [class.od-status-tile--active]="order.status === s.value"
+                  [style.--tile-color]="s.color"
+                  [disabled]="order.status === s.value"
+                  (click)="selectStatus(s.value)">
+            <mat-icon class="od-tile-icon">{{ s.icon }}</mat-icon>
+            <span class="od-tile-label">{{ s.label }}</span>
+            @if (order.status === s.value) {
+              <mat-icon class="od-tile-check">check</mat-icon>
             }
-          </div>
+          </button>
         }
       </div>
 

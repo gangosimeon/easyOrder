@@ -188,6 +188,17 @@
   display: flex;
   gap: 8px;
   flex-shrink: 0;
+
+  &--three {
+    gap: 6px;
+
+    .next-action-btn {
+      padding: 0 10px 0 8px;
+      height: 38px;
+
+      .nab-label { font-size: 11px; }
+    }
+  }
 }
 
 .action-btn {
@@ -226,19 +237,108 @@
   }
 }
 
-.status-btn {
-  background: #f3f4f6;
-  color: #6b7280;
+/* ── Next-action pill button ──────────────────────────────────────────────── */
 
-  &:active {
-    background: #e5e7eb;
+.next-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 14px 0 10px;
+  height: 40px;
+  border-radius: 20px;
+  border: none;
+  background: var(--nab-color, #6b7280);
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .15s, transform .1s;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
   }
 
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
+  .nab-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .2px;
+  }
+
+  &:active  { transform: scale(0.95); opacity: .9; }
+  &:disabled { opacity: .55; cursor: not-allowed; }
+}
+
+/* ── 2-step confirm row ───────────────────────────────────────────────────── */
+
+.confirm-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: slideInRight .15s ease;
+
+  .confirm-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .confirm-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    white-space: nowrap;
+    flex: 1;
   }
 }
+
+.confirm-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .1s, transform .1s;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  &:active  { transform: scale(0.9); }
+}
+
+.confirm-yes {
+  background: #10b981;
+  color: #fff;
+  &:active { background: #059669; }
+}
+
+.confirm-no {
+  background: #f3f4f6;
+  color: #6b7280;
+  &:active { background: #e5e7eb; }
+}
+
+/* ── Terminal status chip ─────────────────────────────────────────────────── */
+
+.terminal-chip {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+  &--done     { background: #ecfdf5; color: #059669; }
+  &--cancelled { background: #fef2f2; color: #ef4444; }
+}
+
+/* ── Animations ───────────────────────────────────────────────────────────── */
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -248,6 +348,11 @@
 .spinning {
   animation: spin 0.7s linear infinite;
   display: inline-block;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0);   }
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────── */

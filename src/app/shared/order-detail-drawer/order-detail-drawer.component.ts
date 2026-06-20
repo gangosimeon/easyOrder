@@ -21,10 +21,9 @@ export class OrderDetailDrawerComponent {
   @Output() closed = new EventEmitter<void>();
   @Output() statusChanged = new EventEmitter<{
     orderId: string;
-    status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+    status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
   }>();
 
-  showStatusMenu = false;
   zoomedImages: string[] = [];
   zoomedIndex = 0;
 
@@ -100,22 +99,18 @@ export class OrderDetailDrawerComponent {
     );
   }
 
-  toggleStatusMenu(): void {
-    this.showStatusMenu = !this.showStatusMenu;
-  }
-
-  selectStatus(status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'): void {
-    this.showStatusMenu = false;
+  selectStatus(status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled'): void {
+    if (this.order?.status === status) return;
     const orderId = (this.order as any)?._id || (this.order as any)?.id;
     if (!orderId) return;
     this.statusChanged.emit({ orderId, status });
     this.closed.emit();
   }
 
-  readonly statuses: { value: 'pending' | 'confirmed' | 'delivered' | 'cancelled'; label: string; color: string }[] = [
-    { value: 'pending',   label: 'En attente', color: '#f59e0b' },
-    { value: 'confirmed', label: 'Confirmé',   color: '#10b981' },
-    { value: 'delivered', label: 'Livré',       color: '#3b82f6' },
-    { value: 'cancelled', label: 'Annulé',      color: '#ef4444' },
+  readonly statuses: { value: 'pending' | 'confirmed' | 'delivered' | 'cancelled'; label: string; color: string; icon: string }[] = [
+    { value: 'pending',   label: 'En attente', color: '#f59e0b', icon: 'hourglass_empty' },
+    { value: 'confirmed', label: 'Confirmé',   color: '#10b981', icon: 'check_circle'    },
+    { value: 'delivered', label: 'Livré',      color: '#059669', icon: 'done_all'        },
+    { value: 'cancelled', label: 'Annulé',     color: '#ef4444', icon: 'cancel'          },
   ];
 }
