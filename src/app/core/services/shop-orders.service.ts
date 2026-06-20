@@ -21,7 +21,7 @@ export interface Order {
   customerPhone?: string;
   items: OrderItem[];
   total: number;
-  status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
   whatsappSent: boolean;
   note?: string;
   createdAt: string;
@@ -29,7 +29,7 @@ export interface Order {
 }
 
 export interface OrderFilters {
-  status?: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+  status?: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
   search?: string;
 }
 
@@ -98,7 +98,7 @@ export class ShopOrdersService {
   // ── Filters ─────────────────────────────────────────────────────────────
 
   readonly searchQuery = signal('');
-  readonly statusFilter = signal<'pending' | 'confirmed' | 'delivered' | 'cancelled' | ''>('');
+  readonly statusFilter = signal<'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' | ''>('');
 
   // ── Initialization ───────────────────────────────────────────────────────
 
@@ -171,7 +171,7 @@ export class ShopOrdersService {
     this.searchQuery.set(query);
   }
 
-  onStatusChange(status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' | ''): void {
+  onStatusChange(status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' | ''): void {
     this.statusFilter.set(status);
   }
 
@@ -213,7 +213,7 @@ export class ShopOrdersService {
 
   // ── Update Status ─────────────────────────────────────────────────────
 
-  updateOrderStatus(orderId: string, status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'): Observable<Order> {
+  updateOrderStatus(orderId: string, status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled'): Observable<Order> {
     return this.http.patch<Order>(`${environment.apiUrl}/orders/${orderId}`, { status }).pipe(
       tap(updatedOrder => {
         this.orders.update(orders =>

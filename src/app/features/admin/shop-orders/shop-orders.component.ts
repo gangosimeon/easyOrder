@@ -82,7 +82,7 @@ export class ShopOrdersComponent implements OnInit {
     this.ordersService.onSearchChange(value);
   }
 
-  onStatusChange(value: 'pending' | 'confirmed' | 'delivered' | 'cancelled' | ''): void {
+  onStatusChange(value: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' | ''): void {
     this.statusValue = value;
     this.ordersService.onStatusChange(value);
   }
@@ -116,12 +116,12 @@ export class ShopOrdersComponent implements OnInit {
     this.selectedOrder.set(null);
   }
 
-  onStatusChangedFromDrawer(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
-    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe();
+  onStatusChangedFromDrawer(data: { orderId: string; status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' }): void {
+    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe(() => this.manualRefresh());
   }
 
-  onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
-    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe();
+  onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' }): void {
+    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe(() => this.manualRefresh());
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────

@@ -55,7 +55,7 @@ export class OrdersDashboardComponent implements OnInit {
   // ── Filters ───────────────────────────────────────────────────────────────
 
   readonly searchQuery = signal('');
-  readonly statusFilter = signal<'all' | 'pending' | 'confirmed' | 'delivered' | 'cancelled'>('all');
+  readonly statusFilter = signal<'all' | 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled'>('all');
   readonly dateFilter = signal<'all' | 'today' | 'week' | 'month'>('all');
   readonly minAmount = signal<number | undefined>(undefined);
   readonly maxAmount = signal<number | undefined>(undefined);
@@ -119,7 +119,7 @@ export class OrdersDashboardComponent implements OnInit {
     this.loadOrders();
   }
 
-  onStatusChange(status: 'all' | 'pending' | 'confirmed' | 'delivered' | 'cancelled'): void {
+  onStatusChange(status: 'all' | 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled'): void {
     this.statusFilter.set(status);
     this.loadOrders();
   }
@@ -157,12 +157,12 @@ export class OrdersDashboardComponent implements OnInit {
     this.selectedOrder.set(null);
   }
 
-  onStatusChangedFromDrawer(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
-    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe();
+  onStatusChangedFromDrawer(data: { orderId: string; status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' }): void {
+    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe(() => this.loadOrders());
   }
 
-  onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'delivered' | 'cancelled' }): void {
-    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe();
+  onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' }): void {
+    this.ordersApi.updateOrderStatus(data.orderId, data.status).subscribe(() => this.loadOrders());
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
