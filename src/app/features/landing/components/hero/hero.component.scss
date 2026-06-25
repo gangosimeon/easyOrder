@@ -114,6 +114,21 @@ $muted:         var(--text-secondary);
   }
 }
 
+
+.lp-hero__shops-tagline {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text;
+  margin: 8px 0 4px;
+  line-height: 1.5;
+
+  em {
+    font-style: normal;
+    color: var(--primary);
+    font-weight: 700;
+  }
+}
+
 .lp-hero__proof {
   display: flex;
   align-items: center;
