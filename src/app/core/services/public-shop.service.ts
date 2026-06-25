@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Annonce } from '../../models/annonce.model';
 import { Category } from '../../models/category.model';
 import { Product } from '../../models/product.model';
@@ -83,8 +83,6 @@ export class PublicShopService {
   private http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  private categories$?: Observable<PublicCategory[]>;
-
   getShop(slug: string, productPage = 1, productLimit = 20): Observable<ShopData> {
     let p = new HttpParams();
     if (productPage  > 1)    p = p.set('productPage',  String(productPage));
@@ -101,18 +99,9 @@ export class PublicShopService {
     return this.http.get<ShopsListResponse>(`${this.apiUrl}/public/shops`, { params: p });
   }
 
-  /** Mise en cache mémoire — les catégories changent rarement */
   getPublicCategories(): Observable<PublicCategory[]> {
-    if (!this.categories$) {
-      this.categories$ = this.http
-        .get<PublicCategory[]>(`${this.apiUrl}/public/categories`)
-        .pipe(shareReplay(1));
-    }
-    return this.categories$;
+    return this.http.get<PublicCategory[]>(`${this.apiUrl}/public/categories`);
   }
 
-  /** Invalider le cache catégories si nécessaire */
-  invalidateCategoriesCache(): void {
-    this.categories$ = undefined;
-  }
+  invalidateCategoriesCache(): void {}
 }
