@@ -377,6 +377,41 @@ $skel-white-gradient: linear-gradient(
   }
 }
 
+.mobile-header-public {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-bottom: 12px;
+
+  .mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 0;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.mobile-wa-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #25d366;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+  svg { width: 22px; height: 22px; }
+  &:hover { background: #1ebe5d; }
+  &:active { background: #17a852; }
+}
+
 .mobile-logout-btn {
   display: flex;
   align-items: center;
