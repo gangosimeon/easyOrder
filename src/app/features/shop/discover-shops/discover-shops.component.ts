@@ -63,6 +63,7 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
   private observer: IntersectionObserver | null = null;
 
   ngOnInit(): void {
+    this.publicShopService.invalidateCategoriesCache();
     this.loadCategories();
     this.loadShops(true);
   }
