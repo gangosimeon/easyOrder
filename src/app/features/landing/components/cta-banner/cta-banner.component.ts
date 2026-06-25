@@ -8,4 +8,8 @@ import { RouterLink } from '@angular/router';
   templateUrl: './cta-banner.component.html',
   styleUrl: './cta-banner.component.scss'
 })
-export class CtaBannerComponent {}
+export class CtaBannerComponent {
+  scrollTo(id: string): void {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  }
+}

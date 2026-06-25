@@ -12,7 +12,15 @@ export class LandingNavComponent {
   private router = inject(Router);
   menuOpen  = signal(false);
   scrolled  = signal(false);
-  activeTab = signal<string>(sessionStorage.getItem('landing_active_tab') ?? '');
+  activeTab = signal<string>('');
+
+  constructor() {
+    const fromUrl     = this.router.url.startsWith('/shops') ? 'shops' : '';
+    const fromStorage = sessionStorage.getItem('landing_active_tab') ?? '';
+    const initial     = fromUrl || fromStorage;
+    this.activeTab.set(initial);
+    if (fromUrl) sessionStorage.setItem('landing_active_tab', 'shops');
+  }
 
   @HostListener('window:scroll')
   onScroll(): void {
