@@ -254,6 +254,10 @@ export class ProfileComponent implements OnInit {
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.shopUrl())}`, '_blank');
   }
 
+  scrollToShareLinks(): void {
+    document.getElementById('share-links-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   async copyLink(): Promise<void> {
     await navigator.clipboard.writeText(this.shopUrl());
     this.linkCopied.set(true);

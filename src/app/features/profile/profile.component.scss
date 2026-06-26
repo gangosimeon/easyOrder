@@ -1126,8 +1126,9 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
+  min-width: 0;
 
-  @media (min-width: 600px) {
+  @media (min-width: 900px) {
     grid-template-columns: 1fr 1fr;
   }
 }
@@ -1205,12 +1206,13 @@
   gap: 16px;
   margin-top: 16px;
 
-  @media (min-width: 900px) {
+  @media (min-width: 1200px) {
     grid-template-columns: 1fr 1fr;
     align-items: start;
   }
 
-  .share-card { margin-bottom: 0; margin-top: 0; }
+  .share-card  { margin-bottom: 0; margin-top: 0; min-width: 0; }
+  .stats-section { min-width: 0; }
 }
 
 /* ── Stats section ── */
@@ -1219,6 +1221,8 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   padding: 20px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 @keyframes fadeSlideIn {
@@ -1261,7 +1265,7 @@
 .kpi-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;
   @media (min-width: 480px) { gap: 10px; }
-  @media (min-width: 640px) { grid-template-columns: repeat(4, 1fr); }
+  @media (min-width: 1400px) { grid-template-columns: repeat(4, 1fr); }
 }
 
 .kpi-card {
