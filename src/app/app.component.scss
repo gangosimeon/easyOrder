@@ -17,7 +17,7 @@
   flex-direction: column;
   position: fixed;
   left: 0; top: 0; bottom: 0;
-  z-index: 100;
+  z-index: 300;
   box-shadow: 4px 0 24px rgba(0,0,0,.2);
 }
 .shop-logo {
@@ -591,6 +591,8 @@ $skel-white-gradient: linear-gradient(
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 .main-content.with-topbar {
@@ -620,6 +622,24 @@ $skel-white-gradient: linear-gradient(
 .page-container.public-page { padding: 0; overflow: hidden; }
 
 /* ===== RESPONSIVE ===== */
+
+/* Écrans moyens : sidebar compacte */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .sidebar { width: 240px; }
+  .main-content { margin-left: 240px; }
+
+  .sidebar-logo {
+    padding: 20px 14px 18px;
+    gap: 10px;
+    .logo-name, .logo-tagline { font-size: 14px; }
+  }
+  .shop-logo { width: 58px; height: 58px; font-size: 36px; }
+  .shop-name  { font-size: 18px; }
+  .shop-desc  { font-size: 12px; }
+  .nav-item   { padding: 11px 12px; font-size: 13px; gap: 10px; }
+  .nav-badge  { font-size: 9px; min-width: 16px; height: 16px; }
+}
+
 @media (max-width: 768px) {
   .sidebar { display: none; }
   .main-content { margin-left: 0; }
