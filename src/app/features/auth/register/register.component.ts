@@ -16,6 +16,8 @@ export const COVER_COLORS = [
   '#a04343', '#E53935', '#D81B60', '#8E24AA', '#5E35B1',
   '#1E88E5', '#039BE5', '#00ACC1', '#00897B', '#43A047',
   '#FFB300', '#FB8C00', '#F4511E', '#6D4C41', '#546E7A',
+  '#1B5E20', '#880E4F', '#0D47A1', '#37474F', '#4A148C',
+  '#BF360C',
 ];
 
 export const SHOP_LOGOS = [
