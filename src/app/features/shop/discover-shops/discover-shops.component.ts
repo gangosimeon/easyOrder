@@ -1,17 +1,19 @@
 import {
   AfterViewInit, Component, ElementRef, inject,
-  OnDestroy, OnInit, signal, ViewChild,
+  OnDestroy, OnInit, computed, signal, ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { MatRippleModule } from '@angular/material/core';
+import { Router }           from '@angular/router';
+import { MatIconModule }    from '@angular/material/icon';
+import { MatRippleModule }  from '@angular/material/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { catchError, map, Observable, of } from 'rxjs';
 import {
   PublicShopService, PublicShopInfo, PublicCategory, ShopsListResponse,
 } from '../../../core/services/public-shop.service';
 import { AdminService, AdminShop } from '../../../core/services/admin.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { LandingNavComponent } from '../../landing/components/landing-nav/landing-nav.component';
+import { AuthService }             from '../../../core/services/auth.service';
+import { CountryService }          from '../../../core/services/country.service';
+import { LandingNavComponent }     from '../../landing/components/landing-nav/landing-nav.component';
 
 interface ShopCard {
   info: PublicShopInfo;
@@ -25,6 +27,8 @@ function toPublicShopInfo(shop: AdminShop): PublicShopInfo {
     address:         shop.address,
     logo:            shop.logo,
     coverColor:      shop.coverColor,
+    countryCode:     '',
+    country:         '',
     productCount:    shop.productCount,
     status:          shop.status,
     categories:      [],
@@ -35,7 +39,7 @@ function toPublicShopInfo(shop: AdminShop): PublicShopInfo {
 @Component({
   selector: 'app-discover-shops',
   standalone: true,
-  imports: [MatIconModule, MatRippleModule, LandingNavComponent],
+  imports: [MatIconModule, MatRippleModule, NgTemplateOutlet, LandingNavComponent],
   templateUrl: './discover-shops.component.html',
   styleUrls: ['./discover-shops.component.scss'],
 })
@@ -43,21 +47,52 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
   private publicShopService = inject(PublicShopService);
   private adminService      = inject(AdminService);
   private authService       = inject(AuthService);
+  readonly countryService   = inject(CountryService);
   private router            = inject(Router);
 
   @ViewChild('infiniteSentinel') private sentinelRef!: ElementRef<HTMLDivElement>;
 
+  // ── Chargement ────────────────────────────────────────────────────────────
   readonly loading        = signal(true);
   readonly loadingMore    = signal(false);
   readonly reloading      = signal(false);
   readonly error          = signal<string | null>(null);
+
+  // ── Données brutes (toutes boutiques, triées par backend) ─────────────────
   readonly shops          = signal<ShopCard[]>([]);
+
+  // ── Filtres ───────────────────────────────────────────────────────────────
   readonly allCategories  = signal<PublicCategory[]>([]);
   readonly searchQuery    = signal('');
   readonly activeCategory = signal('all');
   readonly hasMore        = signal(false);
   readonly skeletonRows   = Array(6).fill(0);
 
+  // ── Pays ──────────────────────────────────────────────────────────────────
+  readonly detectedCountryCode = computed(() => this.countryService.detectedDialCode());
+  readonly countryName         = computed(() => this.countryService.countryName());
+  readonly countryFlag         = computed(() => this.countryService.flagEmoji());
+  readonly countryFlagUrl      = computed(() => this.countryService.flagImageUrl());
+  readonly allCountries        = this.countryService.allCountries;
+  readonly showCountrySelector = signal(false);
+
+  /** Boutiques du pays détecté. */
+  readonly localShops = computed(() => {
+    const code = this.detectedCountryCode();
+    if (!code) return [];
+    return this.shops().filter(s => s.info.countryCode === code);
+  });
+
+  /** Boutiques des autres pays (ou toutes si aucun pays détecté). */
+  readonly otherShops = computed(() => {
+    const code = this.detectedCountryCode();
+    if (!code) return this.shops();
+    return this.shops().filter(s => s.info.countryCode !== code);
+  });
+
+  readonly hasLocalShops = computed(() => this.localShops().length > 0);
+
+  // ── Interne ───────────────────────────────────────────────────────────────
   private currentPage = 1;
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
   private observer: IntersectionObserver | null = null;
@@ -65,7 +100,15 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
   ngOnInit(): void {
     this.publicShopService.invalidateCategoriesCache();
     this.loadCategories();
-    this.loadShops(true);
+
+    // Résoudre le pays AVANT de charger les boutiques pour que le backend
+    // puisse trier les boutiques du pays du visiteur en premier.
+    // - localStorage disponible → synchrone (of()), pas de délai perceptible.
+    // - Détection IP → ~300-600ms, le skeleton est affiché pendant ce temps.
+    this.loading.set(true);
+    this.countryService.init().subscribe(() => {
+      this.loadShops(true);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -116,7 +159,7 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   }
 
-  // ── Chargement page suivante (déclenché par le sentinel) ─────────────────
+  // ── Chargement page suivante ──────────────────────────────────────────────
 
   private loadMoreShops(): void {
     if (!this.hasMore() || this.loadingMore()) return;
@@ -130,19 +173,18 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
         this.currentPage = nextPage;
         this.loadingMore.set(false);
       },
-      error: () => {
-        this.loadingMore.set(false);
-      },
+      error: () => { this.loadingMore.set(false); },
     });
   }
 
   // ── Requête commune ───────────────────────────────────────────────────────
 
   private fetchPage(page: number): Observable<ShopsListResponse> {
-    const search   = this.searchQuery().trim();
-    const category = this.activeCategory() !== 'all' ? this.activeCategory() : '';
+    const search      = this.searchQuery().trim();
+    const category    = this.activeCategory() !== 'all' ? this.activeCategory() : '';
+    const countryCode = this.detectedCountryCode() ?? undefined;
 
-    return this.publicShopService.getShopsList({ search, category, page, limit: 25 }).pipe(
+    return this.publicShopService.getShopsList({ search, category, page, limit: 25, countryCode }).pipe(
       catchError(() => {
         if (page === 1 && this.authService.isLoggedIn()) {
           return this.adminService.getShops({ search, status: 'active', limit: 50 }).pipe(
@@ -196,6 +238,25 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
     event.stopPropagation();
     document.getElementById(`carousel-${shopSlug}`)?.scrollBy({ left: -140, behavior: 'smooth' });
   }
+
+  // ── Sélecteur de pays ─────────────────────────────────────────────────────
+
+  toggleCountrySelector(): void {
+    this.showCountrySelector.update(v => !v);
+  }
+
+  closeCountrySelector(): void {
+    this.showCountrySelector.set(false);
+  }
+
+  /** Change le pays manuellement : sauvegarde + rechargement des boutiques. */
+  selectCountry(dialCode: string): void {
+    this.countryService.setCountryByDialCode(dialCode);
+    this.showCountrySelector.set(false);
+    this.loadShops(false);
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
 
   isUrl(value: string): boolean {
     return !!value && (value.startsWith('http') || value.startsWith('data:'));

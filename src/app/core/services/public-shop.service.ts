@@ -16,6 +16,8 @@ export interface CompanyInfo {
   address:     string;
   logo:        string;
   coverColor:  string;
+  countryCode?: string;
+  country?:     string;
 }
 
 export interface PublicShopCategory {
@@ -37,6 +39,10 @@ export interface PublicShopInfo {
   address:         string;
   logo:            string;
   coverColor:      string;
+  /** Indicatif téléphonique du pays (ex: "226"). Vide si non renseigné. */
+  countryCode:     string;
+  /** Nom du pays calculé côté backend, jamais stocké en DB. */
+  country:         string;
   productCount:    number;
   status:          'active' | 'inactive';
   categories:      PublicShopCategory[];
@@ -72,10 +78,12 @@ export interface ShopData {
 }
 
 export interface ShopsListParams {
-  search?:   string;
-  category?: string;
-  limit?:    number;
-  page?:     number;
+  search?:      string;
+  category?:    string;
+  limit?:       number;
+  page?:        number;
+  /** Indicatif du pays visiteur — le backend place les boutiques de ce pays en tête. */
+  countryCode?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -92,10 +100,11 @@ export class PublicShopService {
 
   getShopsList(params: ShopsListParams = {}): Observable<ShopsListResponse> {
     let p = new HttpParams();
-    if (params.search)                 p = p.set('search',    params.search);
-    if (params.category)               p = p.set('category',  params.category);
-    if (params.limit)                  p = p.set('limit',     String(params.limit));
-    if (params.page && params.page > 1) p = p.set('page',     String(params.page));
+    if (params.search)                  p = p.set('search',      params.search);
+    if (params.category)                p = p.set('category',    params.category);
+    if (params.limit)                   p = p.set('limit',       String(params.limit));
+    if (params.page && params.page > 1) p = p.set('page',        String(params.page));
+    if (params.countryCode)             p = p.set('countryCode', params.countryCode);
     return this.http.get<ShopsListResponse>(`${this.apiUrl}/public/shops`, { params: p });
   }
 

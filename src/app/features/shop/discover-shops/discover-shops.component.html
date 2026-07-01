@@ -7,7 +7,46 @@
     <div class="header-left">
       <h1 class="page-title">Découvrir les boutiques</h1>
       <p class="page-subtitle">Parcourez toutes les boutiques disponibles sur notre plateforme</p>
+
+      <!-- ── Sélecteur de pays ── -->
+      <div class="country-selector-wrap">
+        <button class="country-selector-btn" (click)="toggleCountrySelector()" matRipple
+                [attr.aria-expanded]="showCountrySelector()">
+          @if (countryFlagUrl()) {
+            <img class="btn-flag-img" [src]="countryFlagUrl()!" alt="" loading="lazy" />
+          } @else {
+            <mat-icon class="loc-icon">location_on</mat-icon>
+          }
+          <span class="country-label">
+            {{ countryName() || 'Détecter ma position' }}
+          </span>
+          <mat-icon class="arrow-icon">
+            {{ showCountrySelector() ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+        </button>
+
+        @if (showCountrySelector()) {
+          <div class="country-dropdown" role="listbox" aria-label="Choisir un pays">
+            @for (c of allCountries; track c.iso) {
+              <button class="country-option"
+                      role="option"
+                      [class.active]="c.dialCode === detectedCountryCode()"
+                      (click)="selectCountry(c.dialCode)">
+                <img class="opt-flag-img"
+                     [src]="'https://flagcdn.com/24x18/' + c.iso.toLowerCase() + '.png'"
+                     [alt]="c.name"
+                     loading="lazy" />
+                {{ c.name }}
+                @if (c.dialCode === detectedCountryCode()) {
+                  <mat-icon class="check-icon">check</mat-icon>
+                }
+              </button>
+            }
+          </div>
+        }
+      </div>
     </div>
+
     <div class="header-right">
       <div class="search-box">
         <mat-icon class="search-icon">search</mat-icon>
@@ -26,6 +65,11 @@
       </div>
     </div>
   </div>
+
+  <!-- ── Backdrop sélecteur pays ── -->
+  @if (showCountrySelector()) {
+    <div class="dropdown-backdrop" (click)="closeCountrySelector()"></div>
+  }
 
   <!-- ── CATEGORY FILTER BAR ── -->
   @if (allCategories().length > 0) {
@@ -107,123 +151,177 @@
       </div>
     }
 
-    <!-- Shop grid -->
-    @if (!loading() && shops().length > 0) {
-      <div class="shops-grid">
-        @for (card of shops(); track card.info.id) {
+    <!-- ── Template réutilisable pour une carte boutique ── -->
+    <ng-template #shopCardTpl let-card>
+      <div class="shop-card" (click)="visitShop(card.info.slug)">
 
-          <div class="shop-card" (click)="visitShop(card.info.slug)">
-
-            <!-- ── BANNER ── -->
-            <div class="card-banner">
-              @if (getBannerImage(card)) {
-                <img class="banner-img" [src]="getBannerImage(card)" [alt]="card.info.name" loading="eager" />
+        <!-- ── BANNER ── -->
+        <div class="card-banner">
+          @if (getBannerImage(card)) {
+            <img class="banner-img" [src]="getBannerImage(card)" [alt]="card.info.name" loading="eager" />
+          } @else {
+            <div class="banner-gradient" [style.background]="getBannerBackground(card)">
+              @if (isUrl(card.info.logo)) {
+                <img class="banner-logo-img" [src]="card.info.logo" [alt]="card.info.name" />
               } @else {
-                <div class="banner-gradient" [style.background]="getBannerBackground(card)">
-                  @if (isUrl(card.info.logo)) {
-                    <img class="banner-logo-img" [src]="card.info.logo" [alt]="card.info.name" />
-                  } @else {
-                    <span class="banner-logo-big">{{ card.info.logo || '🏪' }}</span>
-                  }
-                </div>
-              }
-              @if (card.info.status === 'inactive') {
-                <div class="inactive-overlay">Inactif</div>
+                <span class="banner-logo-big">{{ card.info.logo || '🏪' }}</span>
               }
             </div>
+          }
+          @if (card.info.status === 'inactive') {
+            <div class="inactive-overlay">Inactif</div>
+          }
+        </div>
 
-            <!-- ── CARD BODY ── -->
-            <div class="card-body">
+        <!-- ── CARD BODY ── -->
+        <div class="card-body">
 
-              <!-- Identity : logo + nom + catégories -->
-              <div class="card-identity">
-                <div class="shop-logo" (click)="visitShop(card.info.slug, $event)">
-                  @if (isUrl(card.info.logo)) {
-                    <img [src]="card.info.logo" [alt]="card.info.name" />
-                  } @else {
-                    <span class="logo-emoji">{{ card.info.logo || '🏪' }}</span>
+          <!-- Identity : logo + nom + catégories -->
+          <div class="card-identity">
+            <div class="shop-logo" (click)="visitShop(card.info.slug, $event)">
+              @if (isUrl(card.info.logo)) {
+                <img [src]="card.info.logo" [alt]="card.info.name" />
+              } @else {
+                <span class="logo-emoji">{{ card.info.logo || '🏪' }}</span>
+              }
+            </div>
+            <div class="shop-meta">
+              <h2 class="shop-name" (click)="visitShop(card.info.slug, $event)">
+                {{ card.info.name }}
+              </h2>
+              @if (card.info.categories.length > 0) {
+                <div class="categories-row">
+                  @for (cat of card.info.categories; track cat.name) {
+                    <span
+                      class="category-badge"
+                      [style.--cat-color]="cat.color"
+                      (click)="selectCategory(cat.name); $event.stopPropagation()">
+                      {{ cat.name }}
+                    </span>
                   }
                 </div>
-                <div class="shop-meta">
-                  <h2 class="shop-name" (click)="visitShop(card.info.slug, $event)">
-                    {{ card.info.name }}
-                  </h2>
-                  @if (card.info.categories.length > 0) {
-                    <div class="categories-row">
-                      @for (cat of card.info.categories; track cat.name) {
-                        <span
-                          class="category-badge"
-                          [style.--cat-color]="cat.color"
-                          (click)="selectCategory(cat.name); $event.stopPropagation()">
-                          {{ cat.name }}
-                        </span>
-                      }
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <!-- Stats -->
-              <div class="card-stats">
-                @if (card.info.address) {
-                  <span class="stat-loc">
-                    <mat-icon>location_on</mat-icon>
-                    {{ card.info.address }}
-                  </span>
-                }
-                <span class="stat-count">
-                  <strong>{{ card.info.productCount }}</strong>
-                  produit{{ card.info.productCount > 1 ? 's' : '' }}
-                </span>
-              </div>
-
-              <!-- Carousel previewProducts — inclus dans la réponse, 0 requête extra -->
-              <div class="carousel-wrapper">
-                <button class="carousel-btn carousel-prev"
-                        (click)="carouselPrev(card.info.slug, $event)">
-                  <mat-icon>chevron_left</mat-icon>
-                </button>
-
-                <div class="carousel-track" [id]="'carousel-' + card.info.slug">
-                  @if (card.info.previewProducts && card.info.previewProducts.length > 0) {
-                    @for (p of card.info.previewProducts; track p.id; let i = $index) {
-                      <div class="carousel-item">
-                        <img [src]="p.image" [alt]="p.name" loading="lazy" />
-                        @if (i === 3 && card.info.productCount > 4) {
-                          <div class="more-overlay">
-                            +{{ card.info.productCount - 4 }}<br>produits
-                          </div>
-                        }
-                      </div>
-                    }
-                  } @else {
-                    <div class="no-products">
-                      <mat-icon>inventory_2</mat-icon>
-                      <span>Aucun produit</span>
-                    </div>
-                  }
-                </div>
-
-                <button class="carousel-btn carousel-next"
-                        (click)="carouselNext(card.info.slug, $event)">
-                  <mat-icon>chevron_right</mat-icon>
-                </button>
-              </div>
-
-              <!-- Bouton visite -->
-              <button class="visit-btn" (click)="visitShop(card.info.slug, $event)" matRipple>
-                Visiter la boutique
-              </button>
-
+              }
             </div>
           </div>
 
-        }
+          <!-- Stats -->
+          <div class="card-stats">
+            @if (card.info.address) {
+              <span class="stat-loc">
+                <mat-icon>location_on</mat-icon>
+                {{ card.info.address }}
+              </span>
+            }
+            <span class="stat-count">
+              <strong>{{ card.info.productCount }}</strong>
+              produit{{ card.info.productCount > 1 ? 's' : '' }}
+            </span>
+          </div>
+
+          <!-- Carousel previewProducts -->
+          <div class="carousel-wrapper">
+            <button class="carousel-btn carousel-prev"
+                    (click)="carouselPrev(card.info.slug, $event)">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <div class="carousel-track" [id]="'carousel-' + card.info.slug">
+              @if (card.info.previewProducts && card.info.previewProducts.length > 0) {
+                @for (p of card.info.previewProducts; track p.id; let i = $index) {
+                  <div class="carousel-item">
+                    <img [src]="p.image" [alt]="p.name" loading="lazy" />
+                    @if (i === 3 && card.info.productCount > 4) {
+                      <div class="more-overlay">
+                        +{{ card.info.productCount - 4 }}<br>produits
+                      </div>
+                    }
+                  </div>
+                }
+              } @else {
+                <div class="no-products">
+                  <mat-icon>inventory_2</mat-icon>
+                  <span>Aucun produit</span>
+                </div>
+              }
+            </div>
+
+            <button class="carousel-btn carousel-next"
+                    (click)="carouselNext(card.info.slug, $event)">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+
+          <!-- Bouton visite -->
+          <button class="visit-btn" (click)="visitShop(card.info.slug, $event)" matRipple>
+            Visiter la boutique
+          </button>
+
+        </div>
       </div>
+    </ng-template>
+
+    <!-- ── GRILLE AVEC SECTIONS PAR PAYS ── -->
+    @if (!loading() && shops().length > 0) {
+
+      <!-- Section "Boutiques près de chez vous" -->
+      @if (hasLocalShops()) {
+        <div class="shops-section">
+          <div class="section-header">
+            @if (countryFlagUrl()) {
+              <img class="section-flag-img" [src]="countryFlagUrl()!" [alt]="countryName() || ''" loading="lazy" />
+            } @else {
+              <span class="section-emoji">🏠</span>
+            }
+            <div class="section-info">
+              <h2 class="section-title">Boutiques près de chez vous</h2>
+              @if (countryName()) {
+                <span class="section-subtitle">{{ countryName() }}</span>
+              }
+            </div>
+            <span class="section-count">{{ localShops().length }}</span>
+          </div>
+
+          <div class="shops-grid">
+            @for (card of localShops(); track card.info.id) {
+              <ng-container
+                [ngTemplateOutlet]="shopCardTpl"
+                [ngTemplateOutletContext]="{ $implicit: card }">
+              </ng-container>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Section "Découvrez d'autres boutiques" / "Toutes les boutiques" -->
+      @if (otherShops().length > 0) {
+        <div class="shops-section">
+          @if (hasLocalShops()) {
+            <div class="section-divider"></div>
+          }
+          <div class="section-header">
+            <span class="section-emoji">🌍</span>
+            <div class="section-info">
+              <h2 class="section-title">
+                {{ hasLocalShops() ? 'Découvrez d\'autres boutiques' : 'Toutes les boutiques' }}
+              </h2>
+            </div>
+            <span class="section-count">{{ otherShops().length }}</span>
+          </div>
+
+          <div class="shops-grid">
+            @for (card of otherShops(); track card.info.id) {
+              <ng-container
+                [ngTemplateOutlet]="shopCardTpl"
+                [ngTemplateOutletContext]="{ $implicit: card }">
+              </ng-container>
+            }
+          </div>
+        </div>
+      }
+
     }
 
     <!-- ── INFINITE SCROLL SENTINEL ── -->
-    <!-- Toujours présent dans le DOM — IntersectionObserver l'observe en permanence -->
     <div #infiniteSentinel class="infinite-sentinel">
       @if (loadingMore()) {
         <div class="loading-more">
