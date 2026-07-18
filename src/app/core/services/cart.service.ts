@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
+import { PreviewProduct } from './public-shop.service';
 
 export interface CartItem {
   product: Product;
@@ -88,6 +89,13 @@ export class CartService {
 
   selectCategory(id: string | null): void {
     this._selectedCategoryId.set(id);
+  }
+
+  private _previewProducts = signal<PreviewProduct[]>([]);
+  readonly previewProducts = this._previewProducts.asReadonly();
+
+  setPreviewProducts(products: PreviewProduct[]): void {
+    this._previewProducts.set(products);
   }
 
   getItems(): CartItem[] {

@@ -123,6 +123,9 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
       ? this.allProducts().filter(p => p.categoryId === catId)
       : this.allProducts();
     if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q));
+    filtered = [...filtered].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
     const groups: { category: Category; products: Product[] }[] = [];
     for (const cat of cats) {
@@ -165,6 +168,13 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
           logo:        data.company.logo,
         });
         this.cartService.setCategories(data.categories);
+        this.cartService.setPreviewProducts(
+          data.products
+            .filter(p => this.isUrl(p.image))
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, 6)
+            .map(p => ({ id: p.id, image: p.image, name: p.name }))
+        );
         this.loading.set(false);
         this.trackVisit(data.company.id, source);
         this.updateOgTags(data);

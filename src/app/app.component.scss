@@ -380,36 +380,231 @@ $skel-white-gradient: linear-gradient(
 .mobile-header-public {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
-  padding-bottom: 12px;
+  gap: 10px;
 
   .mobile-logo {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding-bottom: 0;
+    gap: 8px;
     flex: 1;
     min-width: 0;
   }
 }
 
-.mobile-wa-btn {
+.mobile-menu-btn,
+.icon-btn {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: #25d366;
+  width: 36px;
+  height: 36px;
+  background: none;
   border: none;
-  border-radius: 10px;
-  color: #fff;
+  color: #374151;
   cursor: pointer;
-  transition: background 0.2s;
-  svg { width: 22px; height: 22px; }
-  &:hover { background: #1ebe5d; }
-  &:active { background: #17a852; }
+  text-decoration: none;
+  mat-icon { font-size: 22px; width: 22px; height: 22px; }
+}
+
+.mobile-header-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cart-btn {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.mobile-header-spacer {
+  display: none;
+}
+
+.mobile-shop-banner {
+  display: none;
+  position: relative;
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  background: #e5e7eb;
+
+  .banner-img {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity .6s ease;
+    &.active { opacity: 1; }
+  }
+
+  .banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 55%);
+    pointer-events: none;
+  }
+
+  .banner-shop-name {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    max-width: calc(100% - 70px);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 21px;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,.4);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .banner-dots {
+    position: absolute;
+    right: 16px;
+    bottom: 20px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .banner-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.5);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background .2s, width .2s;
+    &.active { background: #fff; width: 16px; border-radius: 3px; }
+  }
+}
+
+.mobile-shop-card {
+  display: none;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 0 16px 14px;
+  background: #fff;
+}
+
+.mobile-shop-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  background: #f3f4f6;
+
+  .avatar-img-wrap {
+    width: 100%;
+    height: 100%;
+    border-radius: 13px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+  .product-emoji { font-size: 30px; }
+
+  .verified-badge {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: 22px;
+    height: 22px;
+    background: #22c55e;
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    mat-icon {
+      font-size: 13px;
+      width: 13px;
+      height: 13px;
+      line-height: 13px;
+      color: #fff;
+    }
+  }
+}
+
+.mobile-shop-info {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 2px;
+}
+
+.mobile-shop-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  color: #111827;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobile-shop-desc {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  &.expanded {
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    overflow: visible;
+  }
+}
+
+.mobile-shop-desc-toggle {
+  display: block;
+  margin: 2px 0 0;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--cover-color, var(--primary));
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .mobile-logout-btn {
@@ -644,6 +839,10 @@ $skel-white-gradient: linear-gradient(
   .sidebar { display: none; }
   .main-content { margin-left: 0; }
 
+  .mobile-shop-banner { display: block; }
+  .mobile-shop-card { display: flex; }
+  .mobile-header-spacer { display: block; height: 56px; }
+
   .mobile-header {
     display: flex;
     flex-direction: column;
@@ -651,6 +850,43 @@ $skel-white-gradient: linear-gradient(
     padding: 12px 16px 0;
     position: sticky; top: 0; z-index: 50;
     box-shadow: 0 2px 12px rgba(0,0,0,.2);
+
+    &.is-public {
+      background: var(--cover-color, #7a2233);
+      padding: 10px 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.15);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 60;
+
+      .header-bg { display: none; }
+
+      .shop-logo {
+        width: 34px;
+        height: 34px;
+        font-size: 20px;
+        border-radius: 10px;
+        background: rgba(255,255,255,.18);
+        box-shadow: none;
+      }
+
+      .shop-name {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 16px;
+        color: #fff;
+        text-shadow: none;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .mobile-menu-btn,
+      .icon-btn {
+        color: #fff;
+      }
+    }
 
     .mobile-logo {
       display: flex; align-items: center; gap: 10px;

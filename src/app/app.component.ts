@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, effect, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
@@ -86,6 +86,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   readonly isAdmin = computed(() => this.authService.company()?.role === 'admin');
 
+  readonly bannerProducts = computed(() => this.cartService.previewProducts());
+  readonly bannerIndex = signal(0);
+  private bannerTimer?: ReturnType<typeof setInterval>;
+
+  readonly descExpanded = signal(false);
+
   constructor() {
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd)
@@ -101,6 +107,26 @@ export class AppComponent implements OnInit, OnDestroy {
         pathname === '/'
       );
     });
+
+    effect(() => {
+      const count = this.bannerProducts().length;
+      this.bannerIndex.set(0);
+      clearInterval(this.bannerTimer);
+      if (count > 1) {
+        this.bannerTimer = setInterval(() => {
+          this.bannerIndex.update(i => (i + 1) % count);
+        }, 3500);
+      }
+    });
+
+    effect(() => {
+      this.cartService.company()?.slug;
+      this.descExpanded.set(false);
+    });
+  }
+
+  setBannerIndex(i: number): void {
+    this.bannerIndex.set(i);
   }
 
   ngOnInit(): void {
@@ -125,6 +151,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.visibilityHandler) {
       document.removeEventListener('visibilitychange', this.visibilityHandler);
     }
+    clearInterval(this.bannerTimer);
   }
 
   selectPublicCategory(id: string | null): void {
