@@ -46,7 +46,7 @@ export class ProductFormComponent implements OnInit {
 
   private uploadService = inject(UploadService);
 
-  imageMode      = signal<'emoji' | 'url' | 'upload'>('emoji');
+  imageMode      = signal<'emoji' | 'url' | 'upload'>('upload');
   selectedEmoji  = signal<string>('🛍️');
   imageUrl       = signal<string>('');
   uploadedImage  = signal<string>('');
