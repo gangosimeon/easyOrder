@@ -98,6 +98,17 @@ export class CartService {
     this._previewProducts.set(products);
   }
 
+  private _openProductRequest = signal<string | null>(null);
+  readonly openProductRequest = this._openProductRequest.asReadonly();
+
+  requestOpenProduct(productId: string): void {
+    this._openProductRequest.set(productId);
+  }
+
+  clearOpenProductRequest(): void {
+    this._openProductRequest.set(null);
+  }
+
   getItems(): CartItem[] {
     return this._items.getValue();
   }

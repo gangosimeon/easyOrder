@@ -339,6 +339,7 @@
               [class.active]="i === bannerIndex()"
               [src]="product.image"
               [alt]="product.name"
+              (click)="openBannerProduct(product.id)"
             />
           }
           <div class="banner-overlay"></div>

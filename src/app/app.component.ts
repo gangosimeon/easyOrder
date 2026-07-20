@@ -133,6 +133,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.bannerIndex.set(i);
   }
 
+  openBannerProduct(productId: string): void {
+    this.cartService.requestOpenProduct(productId);
+  }
+
   ngOnInit(): void {
     // Initialiser les push notifications si l'utilisateur est déjà connecté
     if (this.authService.isLoggedIn()) {

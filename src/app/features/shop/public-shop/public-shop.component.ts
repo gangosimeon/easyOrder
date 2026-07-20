@@ -1,6 +1,6 @@
 import {
   AfterViewInit, Component, ElementRef, inject,
-  OnDestroy, OnInit, signal, computed, ViewChild,
+  OnDestroy, OnInit, signal, computed, effect, ViewChild,
 } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
@@ -68,6 +68,16 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   private currentProductPage = 1;
   private shopSlug           = '';
   private observer: IntersectionObserver | null = null;
+
+  constructor() {
+    effect(() => {
+      const productId = this.cartService.openProductRequest();
+      if (!productId) return;
+      const product = this.allProducts().find(p => p.id === productId);
+      if (product) this.selectedDetailProduct.set(product);
+      this.cartService.clearOpenProductRequest();
+    });
+  }
 
   openAnn(ann: Annonce): void  { this.selectedAnn.set(ann); }
   closeAnn(): void             { this.selectedAnn.set(null); }
