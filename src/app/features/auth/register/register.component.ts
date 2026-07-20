@@ -68,7 +68,7 @@ export class RegisterComponent {
   readonly errorMsg      = signal<string | null>(null);
   readonly submitted     = signal(false);
 
-  readonly logoMode     = signal<'emoji' | 'upload'>('emoji');
+  readonly logoMode     = signal<'emoji' | 'upload'>('upload');
   readonly uploadedLogo = signal<string | null>(null);
 
   readonly form = this.fb.group(

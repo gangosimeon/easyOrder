@@ -70,7 +70,7 @@ export class ProfileComponent implements OnInit {
   });
 
   form!: FormGroup;
-  logoMode      = signal<'emoji' | 'upload'>('emoji');
+  logoMode      = signal<'emoji' | 'upload'>('upload');
   selectedLogo  = signal<string>('🏪');
   uploadedLogo  = signal<string>('');
   selectedColor = signal<string>('#a04343');
