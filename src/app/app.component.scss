@@ -436,17 +436,13 @@ $skel-white-gradient: linear-gradient(
   padding: 0 4px;
 }
 
-.mobile-header-spacer {
-  display: none;
-}
-
 .mobile-shop-banner {
   display: none;
   position: relative;
   width: 100%;
-  height: 190px;
+  height: 250px;
   overflow: hidden;
-  background: #e5e7eb;
+  background: var(--cover-color, #7a2233);
 
   .banner-img {
     display: block;
@@ -454,7 +450,7 @@ $skel-white-gradient: linear-gradient(
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
     opacity: 0;
     transition: opacity .6s ease;
@@ -841,7 +837,6 @@ $skel-white-gradient: linear-gradient(
 
   .mobile-shop-banner { display: block; }
   .mobile-shop-card { display: flex; }
-  .mobile-header-spacer { display: block; height: 56px; }
 
   .mobile-header {
     display: flex;
@@ -885,6 +880,10 @@ $skel-white-gradient: linear-gradient(
       .mobile-menu-btn,
       .icon-btn {
         color: #fff;
+      }
+
+      .mobile-logo {
+        padding-bottom: 0;
       }
     }
 

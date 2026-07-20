@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, effect, ElementRef, ViewChild, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
@@ -29,7 +29,11 @@ interface NavItem {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('mobileHeaderEl') private mobileHeaderEl?: ElementRef<HTMLElement>;
+  private headerResizeObserver?: ResizeObserver;
+  readonly headerHeight = signal(56);
+
   private router = inject(Router);
   readonly cartService    = inject(CartService);
   readonly authService    = inject(AuthService);
@@ -147,11 +151,22 @@ export class AppComponent implements OnInit, OnDestroy {
     document.addEventListener('visibilitychange', this.visibilityHandler);
   }
 
+  ngAfterViewInit(): void {
+    const el = this.mobileHeaderEl?.nativeElement;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    this.headerResizeObserver = new ResizeObserver(entries => {
+      const height = entries[0]?.contentRect.height;
+      if (height) this.headerHeight.set(Math.ceil(height));
+    });
+    this.headerResizeObserver.observe(el);
+  }
+
   ngOnDestroy(): void {
     if (this.visibilityHandler) {
       document.removeEventListener('visibilitychange', this.visibilityHandler);
     }
     clearInterval(this.bannerTimer);
+    this.headerResizeObserver?.disconnect();
   }
 
   selectPublicCategory(id: string | null): void {

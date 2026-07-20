@@ -220,6 +220,7 @@
 
       <!-- Mobile Header -->
       <header
+        #mobileHeaderEl
         class="mobile-header"
         [class.is-public]="isPublicRoute()"
         [style.--cover-color]="coverColor()"
@@ -330,12 +331,8 @@
         </div>
       </header>
 
-      @if (isPublicRoute()) {
-        <div class="mobile-header-spacer"></div>
-      }
-
       @if (isPublicRoute() && bannerProducts().length > 0) {
-        <div class="mobile-shop-banner">
+        <div class="mobile-shop-banner" [style.margin-top.px]="headerHeight()">
           @for (product of bannerProducts(); track product.id; let i = $index) {
             <img
               class="banner-img"
@@ -363,7 +360,10 @@
       }
 
       @if (isPublicRoute() && cartService.company()) {
-        <div class="mobile-shop-card">
+        <div
+          class="mobile-shop-card"
+          [style.margin-top.px]="bannerProducts().length === 0 ? 56 : 0"
+        >
           <div
             class="mobile-shop-avatar"
             [style.margin-top]="bannerProducts().length > 0 ? '-28px' : '0'"
