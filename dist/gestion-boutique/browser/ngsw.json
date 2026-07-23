@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1784827077562,
+  "timestamp": 1784828269866,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -91,8 +91,11 @@
       },
       "urls": [
         "/assets/favicon-96x96.png",
+        "/assets/icons/apple-touch-icon-180x180.png",
         "/assets/icons/apple-touch-icon.png",
         "/assets/icons/favicon-96x96.png",
+        "/assets/icons/maskable-icon-192x192.png",
+        "/assets/icons/maskable-icon-512x512.png",
         "/assets/icons/web-app-manifest-192x192.png",
         "/assets/icons/web-app-manifest-512x512.png",
         "/assets/images/appli.png",
@@ -104,8 +107,11 @@
   "dataGroups": [],
   "hashTable": {
     "/assets/favicon-96x96.png": "bfdfcf4e09145cc2b1c1589b5e5eaf4f46d26e48",
+    "/assets/icons/apple-touch-icon-180x180.png": "e554ed88cc6004390e5f4e3a8e1d1fb8a82164bf",
     "/assets/icons/apple-touch-icon.png": "ecec37023df86d23126549e75f8c802bcc4cb676",
-    "/assets/icons/favicon-96x96.png": "bfdfcf4e09145cc2b1c1589b5e5eaf4f46d26e48",
+    "/assets/icons/favicon-96x96.png": "90e97f30d95fc65e65832ce4e511f3c97dae310d",
+    "/assets/icons/maskable-icon-192x192.png": "10ee47306189cd373c5790775f66c8a0d89fa413",
+    "/assets/icons/maskable-icon-512x512.png": "68f9bbfb1e1a0bf09ed3f4b310703d47f5825486",
     "/assets/icons/web-app-manifest-192x192.png": "be44e4bc63224e300f188fe0d1dd10eb2de23911",
     "/assets/icons/web-app-manifest-512x512.png": "e685341fa53c21f4e91e66738db569bf2ec38b5f",
     "/assets/images/appli.png": "dd7e08a3091a21d060688c4dc4bf68f7d04f3e71",
@@ -174,7 +180,7 @@
     "/favicon.ico": "d44891721d24ab6a9d73a5e5a9bd3c63576d6ba0",
     "/index.html": "9a3a78e49c5ddd160e43e73b8ee0f7595e3f3e63",
     "/main-W3ITNCE3.js": "9a306e2a6bc8e15c2a07ec8b2956b55400a21250",
-    "/manifest.webmanifest": "de9cf46029090d5816697934853f97c849e8c956",
+    "/manifest.webmanifest": "6dc7467deb15788df0f268715d50016277f653b7",
     "/polyfills-5CFQRCPP.js": "f2241e9a25858f895ce299d15f6f22e849e2fd72",
     "/push-sw.js": "a988a9cd121c2f2cf1b4e945e1b013c01d5aa8b3",
     "/styles-5UNP65YB.css": "83107f76dbdb2e2cfb7e4c2dc27634d81e3b0e8d"
