@@ -456,7 +456,7 @@ $skel-white-gradient: linear-gradient(
     cursor: pointer;
     pointer-events: none;
     transition: opacity .6s ease;
-    &.active { opacity: 1; z-index: 1; pointer-events: auto; }
+    &.active { opacity: 1; pointer-events: auto; }
   }
 
   .banner-overlay {
