@@ -14,7 +14,7 @@ export interface Annonce {
 }
 
 export const ANNONCE_TYPE_CONFIG: Record<AnnonceType, { label: string; color: string; bgColor: string; icon: string }> = {
-  promo:     { label: 'Promotion',  color: '#E8521A', bgColor: '#FFF3EE', icon: 'local_offer' },
+  promo:     { label: 'Promotion',  color: '#008060', bgColor: '#FFF3EE', icon: 'local_offer' },
   info:      { label: 'Info',       color: '#1E88E5', bgColor: '#EEF4FF', icon: 'info' },
   alerte:    { label: 'Alerte',     color: '#F9A825', bgColor: '#FFFBEE', icon: 'warning' },
   evenement: { label: 'Événement',  color: '#43A047', bgColor: '#EEFBEE', icon: 'event' },

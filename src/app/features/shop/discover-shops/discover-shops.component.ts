@@ -267,7 +267,7 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getBannerBackground(card: ShopCard): string {
-    const color = card.info.coverColor || '#E8521A';
+    const color = card.info.coverColor || '#008060';
     return `linear-gradient(135deg, ${color}dd, ${color}88)`;
   }
 }

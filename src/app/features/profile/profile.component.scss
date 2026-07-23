@@ -486,7 +486,7 @@
   height: 32px;
   border-radius: 8px;
   border: none;
-  background: color-mix(in srgb, var(--cover, #e8521a) 12%, white);
+  background: color-mix(in srgb, var(--cover, #008060) 12%, white);
   color: var(--cover, var(--primary));
   cursor: pointer;
   display: flex;
@@ -973,7 +973,7 @@
 
   @media (min-width: 480px) { height: 48px; font-size: 15px; width: calc(100% - 40px); margin: 18px 20px; }
 
-  &:hover { background: color-mix(in srgb, var(--cover, #e8521a) 8%, white); border-color: var(--cover, var(--primary)); color: var(--cover, var(--primary)); }
+  &:hover { background: color-mix(in srgb, var(--cover, #008060) 8%, white); border-color: var(--cover, var(--primary)); color: var(--cover, var(--primary)); }
 
   mat-icon {
     font-size: 18px; width: 18px; height: 18px;

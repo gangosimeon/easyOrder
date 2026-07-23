@@ -2,7 +2,7 @@
   "name": "JeCreeMaBoutique",
   "short_name": "MaBoutique",
   "description": "Créez votre boutique en ligne et vendez via WhatsApp",
-  "theme_color": "#e8521a",
+  "theme_color": "#008060",
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",

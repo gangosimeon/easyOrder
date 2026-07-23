@@ -115,7 +115,7 @@
   box-sizing: border-box;
   font-family: inherit;
 
-  &:focus { border-color: var(--primary, #E8521A); }
+  &:focus { border-color: var(--primary, #008060); }
 }
 
 /* ── Dropdown list ── */
@@ -145,7 +145,7 @@
   &:hover { background: rgba(232,82,26,.06); }
   &.pi-option--selected {
     background: rgba(232,82,26,.08);
-    .pi-option-name { color: var(--primary, #E8521A); font-weight: 700; }
+    .pi-option-name { color: var(--primary, #008060); font-weight: 700; }
   }
 
   .pi-option-flag-img { width: 24px; height: 18px; object-fit: cover; border-radius: 2px; flex-shrink: 0; }
@@ -175,7 +175,7 @@
   .pi-preview-value {
     font-size: 12px;
     font-weight: 700;
-    color: var(--primary, #E8521A);
+    color: var(--primary, #008060);
     letter-spacing: .3px;
   }
 }

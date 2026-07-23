@@ -30,13 +30,13 @@ export class VideoContactComponent {
       label: 'Email',
       value: 'jecreemaboutique@gmail.com',
       href: 'mailto:jecreemaboutique@gmail.com',
-      color: '#E8521A',
+      color: '#008060',
     },
     {
       icon: 'schedule',
       label: 'Heures d\'ouverture',
       value: 'Lun - Sam : 8h - 20h',
-      color: '#E8521A',
+      color: '#008060',
     },
   ];
 }
