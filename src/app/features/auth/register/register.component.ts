@@ -61,7 +61,7 @@ export class RegisterComponent {
 
   readonly countryCode   = signal('226');
   readonly selectedLogo  = signal('🏪');
-  readonly selectedColor = signal(COVER_COLORS[0]);
+  readonly selectedColor = signal(COVER_COLORS[8]);
   readonly showPassword  = signal(false);
   readonly showConfirm   = signal(false);
   readonly loading       = signal(false);
