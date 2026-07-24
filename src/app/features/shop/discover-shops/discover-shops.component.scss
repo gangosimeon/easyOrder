@@ -730,7 +730,7 @@ $skel: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
 
 .country-selector-wrap {
   position: relative;
-  // z-index: 200;
+  z-index: 150;
   display: inline-flex;
   margin-top: 14px;
 }
