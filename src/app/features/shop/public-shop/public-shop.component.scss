@@ -490,6 +490,11 @@ $skel-gradient: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
   border-top: 1px solid var(--border);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   animation: slideUp 0.3s ease forwards;
+
+  
+  @media (min-width: 768px) {
+    position: sticky;
+  }
 }
 
 @keyframes slideUp {
