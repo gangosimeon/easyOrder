@@ -128,7 +128,12 @@ export class ProductListComponent implements OnInit {
       width: '540px', maxWidth: '95vw',
       data: { mode: 'add', category } satisfies ProductFormData,
     }).afterClosed().subscribe(result => {
-      if (result) { this.productService.add(result as Omit<Product,'id'|'createdAt'>); this.snack('✅ Produit ajouté !'); }
+      if (result) {
+        this.productService.add(result as Omit<Product,'id'|'createdAt'>).subscribe({
+          next: () => this.snack('✅ Produit ajouté !'),
+          error: () => this.snack('❌ Échec de l\'ajout du produit'),
+        });
+      }
     });
   }
 
@@ -147,8 +152,10 @@ export class ProductListComponent implements OnInit {
         { data: { title: 'Modifier le produit', message: `Confirmer les modifications de "${product.name}" ?`, confirmLabel: 'Confirmer', icon: 'save', color: '#1976d2' }, width: '380px', autoFocus: false }
       ).afterClosed().subscribe(ok => {
         if (!ok) return;
-        this.productService.update(product.id, result);
-        this.snack('✅ Produit modifié !');
+        this.productService.update(product.id, result).subscribe({
+          next: () => this.snack('✅ Produit modifié !'),
+          error: () => this.snack('❌ Échec de la modification du produit'),
+        });
       });
     });
   }
@@ -158,8 +165,10 @@ export class ProductListComponent implements OnInit {
     if (!category) return;
 
     const { id, ...productWithoutId } = product;
-    this.productService.add({ ...productWithoutId, name: `${product.name} (copie)` });
-    this.snack('✅ Produit dupliqué !');
+    this.productService.add({ ...productWithoutId, name: `${product.name} (copie)` }).subscribe({
+      next: () => this.snack('✅ Produit dupliqué !'),
+      error: () => this.snack('❌ Échec de la duplication du produit'),
+    });
   }
   deleteProduct(product: Product, e: MouseEvent): void {
     e.stopPropagation();
@@ -169,8 +178,10 @@ export class ProductListComponent implements OnInit {
     );
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
-      this.productService.delete(product.id);
-      this.snack('🗑️ Produit supprimé');
+      this.productService.delete(product.id).subscribe({
+        next: () => this.snack('🗑️ Produit supprimé'),
+        error: () => this.snack('❌ Échec de la suppression du produit'),
+      });
     });
   }
 

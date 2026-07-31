@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Product } from '../../models/product.model';
 import { environment } from '../../../environments/environment';
@@ -60,24 +61,24 @@ export class ProductService {
     return this.countByCategory().get(categoryId) ?? 0;
   }
 
-  add(data: Omit<Product, 'id' | 'createdAt'>): void {
-    this.http.post<Product>(`${this.apiUrl}/products`, data).subscribe({
-      next: prod => this._products.update(list => [...list, parseProduct(prod)]),
-    });
+  add(data: Omit<Product, 'id' | 'createdAt'>) {
+    return this.http.post<Product>(`${this.apiUrl}/products`, data).pipe(
+      tap(prod => this._products.update(list => [...list, parseProduct(prod)]))
+    );
   }
 
-  update(id: string, changes: Partial<Product>): void {
-    this.http.put<Product>(`${this.apiUrl}/products/${id}`, changes).subscribe({
-      next: prod => this._products.update(list =>
+  update(id: string, changes: Partial<Product>) {
+    return this.http.put<Product>(`${this.apiUrl}/products/${id}`, changes).pipe(
+      tap(prod => this._products.update(list =>
         list.map(p => p.id === id ? parseProduct(prod) : p)
-      ),
-    });
+      ))
+    );
   }
 
-  delete(id: string): void {
-    this.http.delete(`${this.apiUrl}/products/${id}`).subscribe({
-      next: () => this._products.update(list => list.filter(p => p.id !== id)),
-    });
+  delete(id: string) {
+    return this.http.delete(`${this.apiUrl}/products/${id}`).pipe(
+      tap(() => this._products.update(list => list.filter(p => p.id !== id)))
+    );
   }
 
   deleteByCategory(categoryId: string): void {
