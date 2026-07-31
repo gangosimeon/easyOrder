@@ -57,9 +57,11 @@ export class CartService {
 
   setCompany(info: CompanyRef): void {
     const current = this._company();
-    // Boutique différente → les produits en panier n'appartiennent plus à cette boutique
+    // Boutique différente → le panier et les catégories affichées n'appartiennent plus à cette boutique
     if (current && current.slug !== info.slug) {
       this._items.next([]);
+      this._categories.set([]);
+      try { localStorage.removeItem(this.CATEGORIES_KEY); } catch { /* ignore */ }
     }
     this._company.set(info);
     try { localStorage.setItem(this.COMPANY_KEY, JSON.stringify(info)); } catch { /* ignore */ }
