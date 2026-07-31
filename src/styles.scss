@@ -14,7 +14,8 @@
   --secondary:      #F9A825;
   --accent:         #2E7D32;
 
-  --bg-main:        #FFF8F5;
+  // --bg-main:        #FFF8F5;
+  --bg-main:        #FFFFFF;
   --bg-card:        #FFFFFF;
   --bg-sidebar:      #1A1A2E;
 
@@ -94,8 +95,8 @@ body {
 
 /* ---- Scrollbar ---- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-main); }
-::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; opacity:.5; }
+::-webkit-scrollbar-track { background:var(--cover-color, var(--bg-main)); }
+::-webkit-scrollbar-thumb { background: var(--cover-color,var(--primary-light)); border-radius: 10px; opacity:.5; }
 
 /* ---- Animations ---- */
 @keyframes fadeInUp {
