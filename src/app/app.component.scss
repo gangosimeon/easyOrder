@@ -661,8 +661,8 @@ $skel-white-gradient: linear-gradient(
   color: #fff;
 }
 
-/* ===== SIDEBAR ADMIN (white theme) ===== */
-.sidebar.sidebar-admin {
+/* ===== SIDEBAR (white theme, shared by admin and public shop) ===== */
+.sidebar.sidebar-light {
   background: #ffffff;
   box-shadow: 2px 0 12px rgba(0,0,0,.08);
 
