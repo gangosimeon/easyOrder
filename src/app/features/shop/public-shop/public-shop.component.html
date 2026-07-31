@@ -199,7 +199,7 @@
                     }
                   </div>
                   @if (product.unit) {
-                    <span class="product-unit">/ {{ product.unit }}</span>
+                    <span class="product-unit">{{ !product.unit? " ": "/ "+product.unit }}</span>
                   }
                 </div>
 

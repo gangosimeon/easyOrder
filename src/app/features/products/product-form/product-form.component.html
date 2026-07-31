@@ -108,6 +108,7 @@
         <mat-label>Unité</mat-label>
         <mat-select formControlName="unit">
           @for (unit of productUnits; track unit) {
+            <mat-option [value]=""></mat-option>
             <mat-option [value]="unit">{{ unit }}</mat-option>
           }
         </mat-select>
