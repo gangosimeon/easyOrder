@@ -76,7 +76,7 @@ export class ProductFormComponent implements OnInit {
       name:        [this.data.product?.name        ?? ''],
       price:       [this.data.product?.price       ?? null, [Validators.required, Validators.min(1)]],
       promotion:   [this.data.product?.promotion   ?? null, [Validators.min(1), Validators.max(99)]],
-      unit:        [this.data.product?.unit        ?? 'pièce'],
+      unit:        [this.data.product?.unit        ?? ''],
       stock:       [this.data.product?.stock       ?? null, [Validators.min(0)]],
       inStock:     [this.data.product?.inStock      ?? true],
       description: [this.data.product?.description ?? ''],
