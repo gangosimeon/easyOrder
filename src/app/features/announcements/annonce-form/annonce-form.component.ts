@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule }   from '@angular/material/form-field';
@@ -9,6 +9,7 @@ import { MatSelectModule }      from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatRippleModule }      from '@angular/material/core';
 import { Annonce, AnnonceType, ANNONCE_TYPE_CONFIG, ANNONCE_EMOJIS } from '../../../models/annonce.model';
+import { UploadService } from '../../../core/services/upload.service';
 
 export interface AnnonceFormData {
   annonce?: Annonce;
@@ -39,9 +40,19 @@ export class AnnonceFormComponent implements OnInit {
   readonly types       = Object.keys(ANNONCE_TYPE_CONFIG) as AnnonceType[];
   readonly emojis      = ANNONCE_EMOJIS;
 
+  @ViewChild('fileInputRef') fileInputRef!: ElementRef<HTMLInputElement>;
+
+  private uploadService = inject(UploadService);
+
   // ✅ Signals locaux Angular 20
   selectedEmoji = signal<string>(this.data.annonce?.emoji ?? '📢');
   selectedType  = signal<AnnonceType>(this.data.annonce?.type ?? 'info');
+
+  imageMode     = signal<'url' | 'upload'>('url');
+  imageUrl      = signal<string>('');
+  uploadedImage = signal<string>('');
+  uploading     = signal<boolean>(false);
+  uploadError   = signal<string>('');
 
   get currentConfig() { return this.typeConfig[this.selectedType()]; }
 
@@ -53,6 +64,16 @@ export class AnnonceFormComponent implements OnInit {
 
   ngOnInit(): void {
     const a = this.data.annonce;
+
+    const existingImage = a?.image ?? '';
+    if (existingImage.startsWith('data:image/')) {
+      this.imageMode.set('upload');
+      this.uploadedImage.set(existingImage);
+    } else if (existingImage) {
+      this.imageMode.set('url');
+      this.imageUrl.set(existingImage);
+    }
+
     this.form = this.fb.group({
       titre:     [a?.titre   ?? '', [Validators.required, Validators.minLength(3)]],
       message:   [a?.message ?? '', [Validators.required, Validators.minLength(10)]],
@@ -72,13 +93,47 @@ export class AnnonceFormComponent implements OnInit {
   onTypeChange(type: AnnonceType): void { this.selectedType.set(type); }
   selectEmoji(e: string): void          { this.selectedEmoji.set(e); }
 
+  setImageMode(mode: 'url' | 'upload'): void { this.imageMode.set(mode); }
+
+  triggerUpload(): void { this.fileInputRef.nativeElement.click(); }
+
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    (event.target as HTMLInputElement).value = '';
+
+    this.uploading.set(true);
+    this.uploadError.set('');
+
+    this.uploadService.upload(file).subscribe({
+      next: url => {
+        this.uploadedImage.set(url);
+        this.uploading.set(false);
+      },
+      error: () => {
+        this.uploadError.set('Échec de l\'upload, réessayez.');
+        this.uploading.set(false);
+      },
+    });
+  }
+
+  setImageUrl(event: Event): void {
+    this.imageUrl.set((event.target as HTMLInputElement).value);
+  }
+
+  imgError(event: Event): void {
+    (event.target as HTMLImageElement).style.display = 'none';
+  }
+
   onSubmit(): void {
     if (this.form.valid) {
       const v = this.form.value;
+      const image = this.imageMode() === 'url' ? this.imageUrl().trim() : this.uploadedImage();
       this.dialogRef.close({
         ...v,
         type:      this.selectedType(),
         emoji:     this.selectedEmoji(),
+        image,
         dateDebut: new Date(v.dateDebut),
         dateFin:   v.dateFin ? new Date(v.dateFin) : undefined,
       });

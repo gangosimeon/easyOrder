@@ -99,7 +99,11 @@
           <!-- Gauche : emoji + contenu -->
           <div class="card-left">
             <div class="ann-emoji-wrap" [style.background]="typeConfig[ann.type].bgColor">
-              <span class="ann-emoji">{{ ann.emoji }}</span>
+              @if (ann.image) {
+                <img [src]="ann.image" class="ann-thumb-img" alt="" />
+              } @else {
+                <span class="ann-emoji">{{ ann.emoji }}</span>
+              }
               @if (ann.epinglee) {
                 <div class="pin-indicator">
                   <mat-icon>push_pin</mat-icon>

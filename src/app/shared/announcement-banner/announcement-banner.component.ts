@@ -36,7 +36,7 @@ const STORAGE_KEY = 'bs_seen_admin_ann';
       align-items: flex-start;
       gap: 12px;
       padding: 13px 16px;
-      margin: 8px 16px 0;
+      margin: 8px 16px 16px;
       border-radius: 12px;
       border-left: 4px solid transparent;
       animation: annSlide .22s ease;
@@ -81,7 +81,7 @@ const STORAGE_KEY = 'bs_seen_admin_ann';
 
     @media (max-width: 600px) {
       .ann-wrap {
-        margin: 6px 8px 0;
+        margin: 6px 8px 12px;
         padding: 10px 10px 10px 12px;
         border-radius: 10px;
         gap: 8px;

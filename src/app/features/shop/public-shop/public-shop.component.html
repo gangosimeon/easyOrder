@@ -62,28 +62,63 @@
   <!-- ANNOUNCEMENTS -->
   @if (announcements().length > 0) {
     <section class="announcements-section" id="announcements">
-      @for (ann of announcements(); track ann.id) {
-        <div
-          class="announcement-card"
-          [class.pinned]="ann.epinglee"
-          [style.background]="ANNONCE_TYPE_CONFIG[ann.type].bgColor"
-          [style.border-left-color]="ANNONCE_TYPE_CONFIG[ann.type].color"
-          (click)="openAnn(ann)"
-          role="button"
-        >
-          @if (ann.epinglee) {
-            <span class="pin-mark">📌</span>
+      <div class="ann-header">
+        <h2 class="ann-section-title"><mat-icon>campaign</mat-icon> Annonces</h2>
+      </div>
+
+      <div class="ann-carousel">
+        @if (announcements().length > 1) {
+          <button class="ann-nav prev" (click)="scrollAnnBy(-1)" aria-label="Précédent">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+        }
+
+        <div class="ann-track" #annTrack (scroll)="onAnnScroll()">
+          @for (ann of announcements(); track ann.id) {
+            <div class="ann-card" (click)="openAnn(ann)" role="button" matRipple>
+              @if (ann.epinglee) {
+                <span class="ann-pin">📌</span>
+              }
+              <div class="ann-card-content">
+                <span class="ann-badge" [style.background]="ANNONCE_TYPE_CONFIG[ann.type].color">
+                  {{ ANNONCE_TYPE_CONFIG[ann.type].label }}
+                </span>
+                <h3 class="ann-card-title">{{ ann.titre }}</h3>
+                <p class="ann-card-message">{{ ann.message }}</p>
+                <span class="ann-card-cta" [style.background]="ANNONCE_TYPE_CONFIG[ann.type].color">
+                  Lire plus →
+                </span>
+                <span class="ann-card-date">
+                  <mat-icon>event</mat-icon>
+                  {{ annDateLabel(ann) }}
+                </span>
+              </div>
+              <div class="ann-card-visual" [style.background]="ANNONCE_TYPE_CONFIG[ann.type].bgColor">
+                @if (isUrl(ann.image ?? '')) {
+                  <img [src]="ann.image" alt="" />
+                } @else {
+                  <mat-icon class="ann-visual-fallback" [style.color]="ANNONCE_TYPE_CONFIG[ann.type].color">
+                    shopping_bag
+                  </mat-icon>
+                }
+              </div>
+            </div>
           }
-          <div class="ann-meta">
-            <span class="ann-emoji">{{ ann.emoji }}</span>
-            <span class="ann-type-label" [style.color]="ANNONCE_TYPE_CONFIG[ann.type].color">
-              <mat-icon class="ann-icon">{{ ANNONCE_TYPE_CONFIG[ann.type].icon }}</mat-icon>
-              {{ ANNONCE_TYPE_CONFIG[ann.type].label }}
-            </span>
-          </div>
-          <p class="ann-titre">{{ ann.titre }}</p>
-          <p class="ann-message">{{ ann.message }}</p>
-          <span class="ann-read-more">Lire plus →</span>
+        </div>
+
+        @if (announcements().length > 1) {
+          <button class="ann-nav next" (click)="scrollAnnBy(1)" aria-label="Suivant">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        }
+      </div>
+
+      @if (announcements().length > 1) {
+        <div class="ann-dots">
+          @for (ann of announcements(); track ann.id; let i = $index) {
+            <button class="ann-dot" [class.active]="annCarouselIndex() === i"
+                    (click)="goToAnn(i)" aria-label="Aller à l'annonce"></button>
+          }
         </div>
       }
     </section>
@@ -245,6 +280,9 @@
         </button>
       </div>
       <div class="ann-modal-body">
+        @if (isUrl(selectedAnn()!.image ?? '')) {
+          <img class="ann-modal-image" [src]="selectedAnn()!.image" alt="" />
+        }
         <h2 class="ann-modal-titre">{{ selectedAnn()!.titre }}</h2>
         <p class="ann-modal-message">{{ selectedAnn()!.message }}</p>
         @if (selectedAnn()!.dateFin) {

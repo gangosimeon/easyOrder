@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
 import { Annonce } from '../../models/annonce.model';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment';
@@ -46,40 +47,40 @@ export class AnnonceService {
     });
   }
 
-  add(data: Omit<Annonce, 'id' | 'createdAt'>): void {
-    this.http.post<Annonce>(`${this.apiUrl}/annonces`, data).subscribe({
-      next: ann => this._annonces.update(list => [parseAnnonce(ann), ...list]),
-    });
+  add(data: Omit<Annonce, 'id' | 'createdAt'>) {
+    return this.http.post<Annonce>(`${this.apiUrl}/annonces`, data).pipe(
+      tap(ann => this._annonces.update(list => [parseAnnonce(ann), ...list]))
+    );
   }
 
-  update(id: string, changes: Partial<Annonce>): void {
-    this.http.put<Annonce>(`${this.apiUrl}/annonces/${id}`, changes).subscribe({
-      next: ann => this._annonces.update(list =>
+  update(id: string, changes: Partial<Annonce>) {
+    return this.http.put<Annonce>(`${this.apiUrl}/annonces/${id}`, changes).pipe(
+      tap(ann => this._annonces.update(list =>
         list.map(a => a.id === id ? parseAnnonce(ann) : a)
-      ),
-    });
+      ))
+    );
   }
 
-  toggleActive(id: string): void {
-    this.http.patch<Annonce>(`${this.apiUrl}/annonces/${id}/toggle-active`, {}).subscribe({
-      next: ann => this._annonces.update(list =>
+  toggleActive(id: string) {
+    return this.http.patch<Annonce>(`${this.apiUrl}/annonces/${id}/toggle-active`, {}).pipe(
+      tap(ann => this._annonces.update(list =>
         list.map(a => a.id === id ? parseAnnonce(ann) : a)
-      ),
-    });
+      ))
+    );
   }
 
-  toggleEpinglee(id: string): void {
-    this.http.patch<Annonce>(`${this.apiUrl}/annonces/${id}/toggle-epinglee`, {}).subscribe({
-      next: ann => this._annonces.update(list =>
+  toggleEpinglee(id: string) {
+    return this.http.patch<Annonce>(`${this.apiUrl}/annonces/${id}/toggle-epinglee`, {}).pipe(
+      tap(ann => this._annonces.update(list =>
         list.map(a => a.id === id ? parseAnnonce(ann) : a)
-      ),
-    });
+      ))
+    );
   }
 
-  delete(id: string): void {
-    this.http.delete(`${this.apiUrl}/annonces/${id}`).subscribe({
-      next: () => this._annonces.update(list => list.filter(a => a.id !== id)),
-    });
+  delete(id: string) {
+    return this.http.delete(`${this.apiUrl}/annonces/${id}`).pipe(
+      tap(() => this._annonces.update(list => list.filter(a => a.id !== id)))
+    );
   }
 
   formatDate(date: Date): string {

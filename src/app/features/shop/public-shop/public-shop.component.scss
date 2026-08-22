@@ -214,100 +214,229 @@ $skel-gradient: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
   }
 }
 
-/* ----- Announcements ----- */
+/* ----- Announcements (carousel) ----- */
 .announcements-section {
-  padding: 10px 16px 6px;
+  padding: 14px 0 6px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+.ann-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ann-section-title {
+  display: flex;
+  align-items: center;
   gap: 8px;
-  max-height: 260px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 4px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--primary);
   }
 }
 
-.announcement-card {
+.ann-carousel {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ann-nav {
   flex-shrink: 0;
-  border-left: 4px solid;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  padding: 10px 12px 10px 14px;
-  animation: fadeInUp 0.4s ease forwards;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  padding: 0;
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.ann-track {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 2px;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.ann-card {
+  position: relative;
+  flex: 0 0 280px;
+  scroll-snap-align: start;
+  display: flex;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
   cursor: pointer;
   transition: var(--transition);
+  animation: fadeInUp 0.4s ease forwards;
+
   &:hover {
-    filter: brightness(0.97);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
   }
 
-  &.pinned {
-    box-shadow: var(--shadow-sm);
+  @media (min-width: 769px) {
+    flex: 0 0 300px;
   }
 
-  .pin-mark {
+  .ann-pin {
     position: absolute;
-    top: 6px;
+    top: 8px;
     right: 8px;
     font-size: 13px;
+    z-index: 2;
   }
 }
 
-.ann-meta {
+.ann-card-content {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
 }
 
-.ann-emoji {
-  font-size: 20px;
-}
-
-.ann-type-label {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  .ann-icon {
-    font-size: 14px !important;
-    width: 14px !important;
-    height: 14px !important;
-  }
-}
-
-.ann-titre {
+.ann-badge {
+  align-self: flex-start;
   font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 20px;
 }
 
-.ann-message {
-  font-size: 13px;
+.ann-card-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 2px 0 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ann-card-message {
+  font-size: 12.5px;
   color: var(--text-secondary);
   line-height: 1.5;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.ann-card-cta {
+  align-self: flex-start;
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+.ann-card-date {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  mat-icon {
+    font-size: 13px !important;
+    width: 13px !important;
+    height: 13px !important;
+  }
+}
+
+.ann-card-visual {
+  flex: 0 0 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ann-visual-fallback {
+    font-size: 42px !important;
+    width: 42px !important;
+    height: 42px !important;
+    opacity: 0.55;
+  }
+}
+
+.ann-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.ann-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  background: var(--border);
+  padding: 0;
+  cursor: pointer;
+  transition: var(--transition);
+
+  &.active {
+    background: var(--primary);
+    width: 18px;
+    border-radius: 4px;
+  }
 }
 
 /* ----- Categories Bar ----- */
@@ -888,6 +1017,14 @@ $skel-gradient: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
 
 .ann-modal-body {
   padding: 16px 20px 32px;
+}
+
+.ann-modal-image {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
 }
 
 .ann-modal-titre {

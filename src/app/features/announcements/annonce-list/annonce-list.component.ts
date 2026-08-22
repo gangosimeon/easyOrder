@@ -75,7 +75,12 @@ export class AnnonceListComponent {
       width: '560px', maxWidth: '95vw',
       data: { mode: 'add' } satisfies AnnonceFormData,
     }).afterClosed().subscribe(result => {
-      if (result) { this.annonceService.add(result); this.snack('📢 Annonce publiée !'); }
+      if (result) {
+        this.annonceService.add(result).subscribe({
+          next: () => this.snack('📢 Annonce publiée !'),
+          error: () => this.snack('❌ Échec de la publication'),
+        });
+      }
     });
   }
 
@@ -85,27 +90,38 @@ export class AnnonceListComponent {
       width: '560px', maxWidth: '95vw',
       data: { mode: 'edit', annonce } satisfies AnnonceFormData,
     }).afterClosed().subscribe(result => {
-      if (result) { this.annonceService.update(annonce.id, result); this.snack('✅ Annonce modifiée !'); }
+      if (result) {
+        this.annonceService.update(annonce.id, result).subscribe({
+          next: () => this.snack('✅ Annonce modifiée !'),
+          error: () => this.snack('❌ Échec de la modification'),
+        });
+      }
     });
   }
 
   toggleActive(annonce: Annonce, e: MouseEvent): void {
     e.stopPropagation();
-    this.annonceService.toggleActive(annonce.id);
-    this.snack(annonce.active ? '🔕 Annonce désactivée' : '✅ Annonce activée');
+    this.annonceService.toggleActive(annonce.id).subscribe({
+      next: () => this.snack(annonce.active ? '🔕 Annonce désactivée' : '✅ Annonce activée'),
+      error: () => this.snack('❌ Échec de la mise à jour'),
+    });
   }
 
   toggleEpinglee(annonce: Annonce, e: MouseEvent): void {
     e.stopPropagation();
-    this.annonceService.toggleEpinglee(annonce.id);
-    this.snack(annonce.epinglee ? '📌 Désépinglée' : '📌 Épinglée !');
+    this.annonceService.toggleEpinglee(annonce.id).subscribe({
+      next: () => this.snack(annonce.epinglee ? '📌 Désépinglée' : '📌 Épinglée !'),
+      error: () => this.snack('❌ Échec de la mise à jour'),
+    });
   }
 
   deleteAnnonce(annonce: Annonce, e: MouseEvent): void {
     e.stopPropagation();
     if (confirm(`Supprimer l'annonce "${annonce.titre}" ?`)) {
-      this.annonceService.delete(annonce.id);
-      this.snack('🗑️ Annonce supprimée');
+      this.annonceService.delete(annonce.id).subscribe({
+        next: () => this.snack('🗑️ Annonce supprimée'),
+        error: () => this.snack('❌ Échec de la suppression'),
+      });
     }
   }
 

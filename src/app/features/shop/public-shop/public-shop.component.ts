@@ -49,6 +49,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   private titleService = inject(Title);
 
   @ViewChild('productSentinel') private sentinelRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('annTrack') private annTrackRef?: ElementRef<HTMLDivElement>;
 
   readonly ANNONCE_TYPE_CONFIG = ANNONCE_TYPE_CONFIG;
   readonly skeletonAnn      = Array(2).fill(0);
@@ -62,6 +63,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly productHasMore      = signal(false);
   readonly loadingMoreProducts = signal(false);
   readonly selectedAnn         = signal<Annonce | null>(null);
+  readonly annCarouselIndex    = signal(0);
   readonly selectedDetailProduct = signal<Product | null>(null);
   readonly searchQuery         = signal('');
 
@@ -81,6 +83,38 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openAnn(ann: Annonce): void  { this.selectedAnn.set(ann); }
   closeAnn(): void             { this.selectedAnn.set(null); }
+
+  annDateLabel(ann: Annonce): string {
+    if (!ann.dateFin) return 'Permanent';
+    const sameYear = ann.dateDebut.getFullYear() === ann.dateFin.getFullYear();
+    const startFmt = new Intl.DateTimeFormat('fr-FR', {
+      day: 'numeric', month: 'long', ...(sameYear ? {} : { year: 'numeric' as const }),
+    });
+    const endFmt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const startStr = startFmt.format(ann.dateDebut);
+    const endStr   = endFmt.format(ann.dateFin);
+    return startStr === endStr ? endStr : `${startStr} - ${endStr}`;
+  }
+
+  private annCardStep(): number {
+    const track = this.annTrackRef?.nativeElement;
+    const card  = track?.querySelector('.ann-card') as HTMLElement | null;
+    return card ? card.offsetWidth + 12 : 260;
+  }
+
+  scrollAnnBy(dir: 1 | -1): void {
+    this.annTrackRef?.nativeElement.scrollBy({ left: dir * this.annCardStep(), behavior: 'smooth' });
+  }
+
+  onAnnScroll(): void {
+    const track = this.annTrackRef?.nativeElement;
+    if (!track) return;
+    this.annCarouselIndex.set(Math.round(track.scrollLeft / this.annCardStep()));
+  }
+
+  goToAnn(i: number): void {
+    this.annTrackRef?.nativeElement.scrollTo({ left: i * this.annCardStep(), behavior: 'smooth' });
+  }
 
   openProductDetail(product: Product, e: MouseEvent): void {
     e.stopPropagation();

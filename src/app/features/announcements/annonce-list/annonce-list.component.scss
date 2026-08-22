@@ -50,11 +50,13 @@
 
 /* ===== PINNED BANNER ===== */
 .pinned-banner {
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--secondary);
   border-radius: var(--radius-md);
   padding: 16px 20px;
   margin-bottom: 24px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 
   .pinned-header {
     display: flex;
@@ -74,7 +76,7 @@
     }
     .pinned-count {
       background: var(--secondary);
-      color: #1a1a2e;
+      color: #fff;
       border-radius: 20px;
       padding: 1px 8px;
       font-size: 12px;
@@ -91,13 +93,13 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--bg-main);
     border-radius: var(--radius-sm);
     padding: 12px 14px;
     border-left: 3px solid;
     transition: var(--transition);
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: color-mix(in srgb, var(--bg-main) 80%, var(--border));
     }
 
     .pinned-emoji {
@@ -116,7 +118,7 @@
       }
       p {
         font-size: 12px;
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--text-secondary);
         margin: 0;
         display: -webkit-box;
         -webkit-line-clamp: 1;
@@ -129,7 +131,7 @@
       align-items: center;
       gap: 4px;
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.45);
+      color: var(--text-muted);
       white-space: nowrap;
       flex-shrink: 0;
       mat-icon {
@@ -258,6 +260,12 @@
   transition: var(--transition);
   .ann-emoji {
     font-size: 28px;
+  }
+  .ann-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
   }
   .pin-indicator {
     position: absolute;

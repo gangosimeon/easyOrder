@@ -2,16 +2,24 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 let isRefreshing = false;
 
-const OWN_API_HOSTS = ['easyorder-backend-wnku.onrender.com', 'api.jecreemaboutique.com'];
+const OWN_API_HOST = (() => {
+  try {
+    return new URL(environment.apiUrl).hostname;
+  } catch {
+    return null;
+  }
+})();
 
 function isOwnApi(url: string): boolean {
   if (url.startsWith('/api')) return true;
+  if (!OWN_API_HOST) return false;
   try {
-    const host = new URL(url).hostname;
-    return OWN_API_HOSTS.some(h => host === h || host.endsWith('.' + h));
+    const host = new URL(url, window.location.origin).hostname;
+    return host === OWN_API_HOST;
   } catch {
     return false;
   }

@@ -6,6 +6,7 @@ export interface Annonce {
   message: string;
   type: AnnonceType;
   emoji: string;
+  image?: string;
   dateDebut: Date;
   dateFin?: Date;
   active: boolean;
