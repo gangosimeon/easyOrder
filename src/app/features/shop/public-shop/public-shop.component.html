@@ -59,6 +59,14 @@
 <!-- ===== SHOP CONTENT ===== -->
 @if (!loading() && !error() && shopData()) {
 
+  <!-- BACK TO SHOPS LIST (only when arrived from the discover page) -->
+  @if (cameFromDiscover()) {
+    <button class="back-to-shops-btn" (click)="backToShops()">
+      <mat-icon>arrow_back</mat-icon>
+      Toutes les boutiques
+    </button>
+  }
+
   <!-- ANNOUNCEMENTS -->
   @if (announcements().length > 0) {
     <section class="announcements-section" id="announcements">

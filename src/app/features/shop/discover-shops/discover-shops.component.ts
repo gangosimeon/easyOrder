@@ -226,7 +226,7 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   visitShop(slug: string, event?: Event): void {
     event?.stopPropagation();
-    this.router.navigate(['/shop', slug]);
+    this.router.navigate(['/shop', slug], { queryParams: { source: 'discover' } });
   }
 
   carouselNext(shopSlug: string, event: Event): void {

@@ -66,6 +66,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly annCarouselIndex    = signal(0);
   readonly selectedDetailProduct = signal<Product | null>(null);
   readonly searchQuery         = signal('');
+  readonly cameFromDiscover    = signal(false);
 
   private currentProductPage = 1;
   private shopSlug           = '';
@@ -194,6 +195,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
     const slug   = this.route.snapshot.paramMap.get('slug') ?? '';
     const source = this.route.snapshot.queryParamMap.get('source') ?? undefined;
     this.shopSlug = slug;
+    this.cameFromDiscover.set(source === 'discover');
 
     this.shopService.getShop(slug).subscribe({
       next: data => {
@@ -348,6 +350,10 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.router.navigate(['/cart']);
     }
+  }
+
+  backToShops(): void {
+    this.router.navigate(['/shops']);
   }
 
   contactViaWhatsApp(): void {
