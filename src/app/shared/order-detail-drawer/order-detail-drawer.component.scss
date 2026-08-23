@@ -24,12 +24,18 @@
   background: #fff;
   border-radius: 24px 24px 0 0;
   max-height: 92dvh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow: hidden;
   box-shadow: 0 -8px 48px rgba(0, 0, 0, 0.22);
   display: flex;
   flex-direction: column;
   animation: od-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- Header (fixed — never scrolls) ---------- */
+.od-modal-header {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 2;
 
   /* drag handle */
   &::before {
@@ -40,11 +46,24 @@
     border-radius: 2px;
     background: #ddd;
     margin: 12px auto 0;
-    flex-shrink: 0;
   }
 }
 
-/* ---------- Hero ---------- */
+/* ---------- Scroll area ---------- */
+.od-scroll-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ---------- Content (visual + details) ---------- */
+.od-content {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Hero (visual zone) ---------- */
 .od-hero {
   position: relative;
   min-height: 190px;
@@ -57,31 +76,69 @@
   flex-shrink: 0;
 }
 
-.od-hero-imgs {
+/* ---------- Hero: large preview + thumbnail strip ---------- */
+.od-hero-main {
+  width: 100%;
   display: flex;
-  gap: 6px;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding: 16px;
+  gap: 12px;
+  padding: 20px;
 }
 
-.od-hero-img {
-  width: 80px;
-  height: 80px;
+.od-hero-main-img {
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
   border-radius: 14px;
-  object-fit: cover;
-  border: 3px solid rgba(255,255,255,0.8);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.12));
+}
+
+.od-hero-thumbs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.od-hero-thumb {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 10px;
+  border: 2px solid #e5e7eb;
+  background: #f3f4f6;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
   flex-shrink: 0;
 
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  &:hover { transform: scale(1.05); }
+
+  &--active {
+    border-color: var(--primary, #e8521a);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* ---------- Hero: placeholder (no image at all) ---------- */
+.od-hero-img {
   &--ph {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.5);
+    background: #f3f4f6;
     font-size: 36px;
     line-height: 1;
+  }
+
+  &--single {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    font-size: 56px;
   }
 }
 
@@ -201,11 +258,12 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* ---------- Close button ---------- */
+/* ---------- Close button (fixed in the header) ---------- */
 .od-close {
   position: absolute;
-  top: 12px;
+  top: 8px;
   right: 12px;
+  z-index: 2;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -221,6 +279,14 @@
   mat-icon { font-size: 20px; color: #374151; }
   &:hover  { transform: scale(1.1); }
   &:active { transform: scale(0.95); }
+}
+
+/* ---------- Details (right column) ---------- */
+.od-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 /* ---------- ID pill ---------- */
@@ -412,18 +478,20 @@
 
 /* ---------- Note ---------- */
 .od-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 14px;
-  color: #4b5563;
-  line-height: 1.6;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  line-height: 1.4;
   margin: 0 0 16px;
-  background: #fef3c7;
-  border-radius: 12px;
-  padding: 12px 14px;
+  background: #f3f4f6;
+  border-radius: 20px;
+  padding: 6px 14px 6px 12px;
 
-  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #d97706; flex-shrink: 0; margin-top: 1px; }
+  mat-icon { font-size: 16px; width: 16px; height: 16px; color: #6b7280; flex-shrink: 0; }
 }
 
 /* ---------- Total ---------- */
@@ -548,7 +616,57 @@
     border-radius: 24px;
     max-height: 88dvh;
     animation: od-pop-in 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
 
-    &::before { display: none; }
+  .od-modal-header::before { display: none; }
+}
+
+/* ============================================================
+   Desktop — row layout (visual left, details right)
+   ============================================================ */
+@media (min-width: 769px) {
+  .od-sheet {
+    width: min(1100px, 92vw);
+    max-width: none;
+  }
+
+  .od-content {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .od-hero {
+    flex: 0 0 40%;
+    margin-top: 0;
+    padding: 32px;
+    border-radius: 24px 0 0 24px;
+  }
+
+  .od-hero-main {
+    padding: 0;
+  }
+
+  .od-hero-main-img {
+    max-height: 320px;
+  }
+
+  .od-details {
+    flex: 1 1 60%;
+  }
+
+  .od-body {
+    padding: 16px 40px 8px 24px;
+  }
+
+  .od-id-pill {
+    margin: 16px 24px 0;
+  }
+
+  .od-footer {
+    padding: 16px 40px 32px 24px;
+  }
+
+  .od-status-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }

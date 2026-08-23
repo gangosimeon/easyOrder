@@ -12,7 +12,13 @@ import { Order } from '../../core/services/orders-api.service';
   styleUrls: ['./order-detail-drawer.component.scss'],
 })
 export class OrderDetailDrawerComponent {
-  @Input() order: Order | null = null;
+  private _order: Order | null = null;
+  @Input() set order(val: Order | null) {
+    this._order = val;
+    this.selectedItemIndex = 0;
+  }
+  get order(): Order | null { return this._order; }
+
   @Input() statusColor = '';
   @Input() statusLabel = '';
   @Input() formatDate: (dateStr: string) => string = () => '';
@@ -33,6 +39,17 @@ export class OrderDetailDrawerComponent {
 
   get itemImages(): string[] {
     return this.order?.items.filter(i => !!i.image).map(i => i.image!) ?? [];
+  }
+
+  selectedItemIndex = 0;
+
+  get heroImage(): string | null {
+    const images = this.itemImages;
+    return images[this.selectedItemIndex] ?? images[0] ?? null;
+  }
+
+  selectHeroImage(i: number): void {
+    this.selectedItemIndex = i;
   }
 
   openZoom(src: string): void {

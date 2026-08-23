@@ -54,6 +54,10 @@ export class OrderCardComponent {
     STATUS_META[this.order().status as OrderStatus] ?? STATUS_META.pending
   );
 
+  readonly itemsPreview = computed(() =>
+    this.order().items.slice(0, 3).map(i => i.productName).join(', ')
+  );
+
   readonly nextStatus = computed(() => this.currentMeta().next);
 
   readonly nextMeta = computed(() => {
