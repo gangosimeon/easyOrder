@@ -67,6 +67,19 @@ export class CartService {
     try { localStorage.setItem(this.COMPANY_KEY, JSON.stringify(info)); } catch { /* ignore */ }
   }
 
+  /**
+   * À appeler avant de charger une boutique différente : efface immédiatement
+   * les traces de la précédente (nom, logo, catégories, aperçu produits) pour
+   * éviter d'afficher son contenu pendant le chargement de la nouvelle.
+   */
+  clearShopContext(): void {
+    this._company.set(null);
+    try { localStorage.removeItem(this.COMPANY_KEY); } catch { /* ignore */ }
+    this._categories.set([]);
+    try { localStorage.removeItem(this.CATEGORIES_KEY); } catch { /* ignore */ }
+    this._previewProducts.set([]);
+  }
+
   private readonly CATEGORIES_KEY = 'shop_categories';
 
   private _categories = signal<Category[]>(this._restoreCategories());

@@ -197,6 +197,10 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
     this.shopSlug = slug;
     this.cameFromDiscover.set(source === 'discover');
 
+    if (this.cartService.company()?.slug !== slug) {
+      this.cartService.clearShopContext();
+    }
+
     this.shopService.getShop(slug).subscribe({
       next: data => {
         this.shopData.set(data);
