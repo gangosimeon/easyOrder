@@ -403,10 +403,21 @@
 
   .oc-side {
     flex: 1 1 100%;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
     gap: 8px;
     order: 3;
   }
+
+  .oc-status-badge {
+    align-self: flex-start;
+  }
+
+  .oc-actions,
+  .oc-confirm {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
 }
+
