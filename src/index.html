@@ -45,6 +45,10 @@
 
   <!-- PWA manifest -->
   <link rel="manifest" href="manifest.webmanifest">
+  <!-- Couleur par défaut de la barre système (Android/TWA) — mise à jour dynamiquement
+       par ThemeService selon la boutique visitée. Doit rester synchronisée avec
+       theme_color dans manifest.webmanifest. -->
+  <meta name="theme-color" content="#008060">
 
   <!-- JSON-LD : Organization → Google affiche le logo dans les résultats -->
   <script type="application/ld+json">

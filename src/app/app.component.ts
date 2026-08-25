@@ -15,6 +15,7 @@ import { CartDrawerService } from './core/services/cart-drawer.service';
 import { ProductService } from './core/services/product.service';
 import { CategoryService } from './core/services/category.service';
 import { PushNotificationService } from './core/services/push-notification.service';
+import { ThemeService } from './core/services/theme.service';
 
 interface NavItem {
   label: string;
@@ -42,6 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly productService = inject(ProductService);
   readonly categoryService = inject(CategoryService);
   private readonly pushService = inject(PushNotificationService);
+  private readonly themeService = inject(ThemeService);
   readonly cartCount = toSignal(this.cartService.items$.pipe(map(items => items.length)), { initialValue: 0 });
   readonly pendingOrdersCount = computed(() =>
     this.ordersService.orders().filter(o => o.status === 'pending').length
@@ -126,6 +128,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     effect(() => {
       this.cartService.company()?.slug;
       this.descExpanded.set(false);
+    });
+
+    // Barre système Android (PWA/TWA) : suit la couleur de la boutique active,
+    // retombe sur la couleur par défaut du manifest sinon.
+    effect(() => {
+      this.themeService.setThemeColor(this.coverColor());
     });
   }
 
