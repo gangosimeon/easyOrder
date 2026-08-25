@@ -94,9 +94,20 @@ body {
 }
 
 /* ---- Scrollbar ---- */
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cover-color, var(--primary-light)) transparent;
+}
+/* Chrome / Edge / Safari */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background:var(--cover-color, var(--bg-main)); }
-::-webkit-scrollbar-thumb { background: var(--cover-color,var(--primary-light)); border-radius: 10px; opacity:.5; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--cover-color, var(--primary-light));
+  border-radius: 10px;
+  opacity: .5;
+}
+::-webkit-scrollbar-thumb:hover { opacity: .8; }
 
 /* ---- Animations ---- */
 @keyframes fadeInUp {
