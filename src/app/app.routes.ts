@@ -14,21 +14,25 @@ export const routes: Routes = [
     path: 'categories',
     loadComponent: () => import('./features/categories/category-list/category-list.component')
       .then(m => m.CategoryListComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: 'products',
     loadComponent: () => import('./features/products/product-list/product-list.component')
       .then(m => m.ProductListComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: 'products/:categoryId',
     loadComponent: () => import('./features/products/product-list/product-list.component')
       .then(m => m.ProductListComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: 'annonces',
     loadComponent: () => import('./features/announcements/annonce-list/annonce-list.component')
       .then(m => m.AnnonceListComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: 'login',
@@ -64,6 +68,7 @@ export const routes: Routes = [
     path: 'change-password',
     loadComponent: () => import('./features/auth/change-password/change-password.component')
       .then(m => m.ChangePasswordComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: 'shops',
@@ -84,6 +89,7 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('./features/profile/profile.component')
       .then(m => m.ProfileComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: 'orders',
