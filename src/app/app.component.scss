@@ -462,7 +462,7 @@ $skel-white-gradient: linear-gradient(
   .banner-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 55%);
+    background: linear-gradient(to top, rgba(0,0,0,.4), rgba(0,0,0,0) 40%);
     pointer-events: none;
   }
 
@@ -1020,11 +1020,20 @@ $skel-white-gradient: linear-gradient(
     width: 100%;
     box-sizing: border-box;
     background: #ffffff;
-    border-top: 1px solid #f3f4f6;
+    border-top: 2px solid var(--cover-color, #f3f4f6);
     box-shadow: 0 -4px 20px rgba(0,0,0,.10);
     z-index: 100;
     padding-bottom: max(6px, env(safe-area-inset-bottom));
     overflow: hidden;
+
+    /* Le liseré de sécurité au geste (bord tout en bas) suit aussi la couleur */
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: env(safe-area-inset-bottom);
+      background: var(--cover-color, #ffffff);
+    }
   }
 }
 
