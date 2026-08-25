@@ -11,6 +11,7 @@ import { MatRippleModule }          from '@angular/material/core';
 import { AuthService }              from '../../../core/services/auth.service';
 import { LandingNavComponent }      from '../../landing/components/landing-nav/landing-nav.component';
 import { PhoneInputComponent }      from '../../../shared/phone-input/phone-input.component';
+import { InstallPromptComponent }   from '../../../shared/install-prompt/install-prompt.component';
 
 export const COVER_COLORS = [
   '#a04343', '#E53935', '#D81B60', '#8E24AA', '#5E35B1',
@@ -47,6 +48,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
     MatRippleModule,
     LandingNavComponent,
     PhoneInputComponent,
+    InstallPromptComponent,
   ],
   templateUrl: './register.component.html',
   styleUrls:  ['./register.component.scss'],

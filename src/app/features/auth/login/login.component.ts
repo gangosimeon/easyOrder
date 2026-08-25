@@ -11,6 +11,7 @@ import { AuthService }              from '../../../core/services/auth.service';
 import { PushNotificationService }  from '../../../core/services/push-notification.service';
 import { LandingNavComponent }      from '../../landing/components/landing-nav/landing-nav.component';
 import { PhoneInputComponent }      from '../../../shared/phone-input/phone-input.component';
+import { InstallPromptComponent }   from '../../../shared/install-prompt/install-prompt.component';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ import { PhoneInputComponent }      from '../../../shared/phone-input/phone-inpu
     MatProgressSpinnerModule,
     LandingNavComponent,
     PhoneInputComponent,
+    InstallPromptComponent,
   ],
   templateUrl: './login.component.html',
   styleUrls:  ['./login.component.scss'],
