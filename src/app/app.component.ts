@@ -51,7 +51,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private visibilityHandler?: () => void;
 
   readonly isPublicRoute = signal(
-    window.location.pathname.startsWith('/shop') || window.location.pathname.startsWith('/cart')
+    window.location.pathname.startsWith('/shop/') || window.location.pathname.startsWith('/cart')
   );
 
   readonly isAuthRoute = signal(
@@ -104,7 +104,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((e: NavigationEnd) => {
       const url = e.urlAfterRedirects;
       const pathname = window.location.pathname;
-      this.isPublicRoute.set(url.startsWith('/shop') || url.startsWith('/cart'));
+      this.isPublicRoute.set(url.startsWith('/shop/') || url.startsWith('/cart'));
       this.isAuthRoute.set(
         pathname.startsWith('/login') ||
         pathname.startsWith('/register') ||
@@ -131,9 +131,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // Barre système Android (PWA/TWA) : suit la couleur de la boutique active,
-    // retombe sur la couleur par défaut du manifest sinon.
+    // retombe sur la couleur par défaut du manifest sur les pages neutres
+    // (accueil, liste des boutiques, connexion/inscription) ou en son absence.
     effect(() => {
-      this.themeService.setThemeColor(this.coverColor());
+      this.themeService.setThemeColor(this.isAuthRoute() ? undefined : this.coverColor());
     });
   }
 
