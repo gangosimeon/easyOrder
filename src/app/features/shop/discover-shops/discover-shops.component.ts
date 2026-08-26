@@ -14,6 +14,7 @@ import { AdminService, AdminShop } from '../../../core/services/admin.service';
 import { AuthService }             from '../../../core/services/auth.service';
 import { CountryService }          from '../../../core/services/country.service';
 import { LandingNavComponent }     from '../../landing/components/landing-nav/landing-nav.component';
+import { cloudinaryThumb }         from '../../../core/utils/cloudinary.util';
 
 interface ShopCard {
   info: PublicShopInfo;
@@ -101,14 +102,23 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.publicShopService.invalidateCategoriesCache();
     this.loadCategories();
 
-    // Résoudre le pays AVANT de charger les boutiques pour que le backend
-    // puisse trier les boutiques du pays du visiteur en premier.
-    // - localStorage disponible → synchrone (of()), pas de délai perceptible.
-    // - Détection IP → ~300-600ms, le skeleton est affiché pendant ce temps.
     this.loading.set(true);
-    this.countryService.init().subscribe(() => {
-      this.loadShops(true);
+
+    // Déclenche la résolution du pays (synchrone si déjà en localStorage,
+    // sinon détection IP asynchrone ~300-600ms voire plus si le service tiers
+    // est lent) SANS bloquer l'affichage de la liste dessus. Si la résolution
+    // arrive après le premier chargement, on rafraîchit silencieusement pour
+    // appliquer le tri "pays du visiteur en tête".
+    this.countryService.init().subscribe(dialCode => {
+      if (dialCode && !this.loading()) {
+        this.loadShops(false);
+      }
     });
+
+    // Charge la liste immédiatement : si le pays était déjà connu en
+    // localStorage, la ligne ci-dessus l'a déjà résolu de façon synchrone
+    // avant cet appel, donc le tri par pays s'applique dès ce 1er chargement.
+    this.loadShops(true);
   }
 
   ngAfterViewInit(): void {
@@ -263,7 +273,12 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getBannerImage(card: ShopCard): string {
-    return card.info.previewProducts?.find(p => this.isUrl(p.image))?.image ?? '';
+    const url = card.info.previewProducts?.find(p => this.isUrl(p.image))?.image ?? '';
+    return cloudinaryThumb(url, 400, 240);
+  }
+
+  thumbUrl(url: string): string {
+    return cloudinaryThumb(url, 120, 120);
   }
 
   getBannerBackground(card: ShopCard): string {

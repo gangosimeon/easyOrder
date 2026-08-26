@@ -190,7 +190,7 @@
       </div>
     }
 
-    @for (group of productsByCategory(); track group.category.id) {
+    @for (group of productsByCategory(); track group.category.id; let groupIndex = $index) {
       <div class="category-group">
         <div class="cat-group-header">
           <mat-icon [style.color]="group.category.color">{{ group.category.icon }}</mat-icon>
@@ -201,7 +201,7 @@
         <!-- PRODUITS -->
         <div class="products-list">
           <div class="products-grid">
-            @for (product of group.products; track product.id) {
+            @for (product of group.products; track product.id; let i = $index) {
               <div class="product-card"
                   [class.selected]="cartItemIds().has(product.id)"
                   [class.out-of-stock]="product.inStock === false"
@@ -221,7 +221,8 @@
                 <!-- Image -->
                 <div class="product-img" style="cursor:pointer" (click)="openProductDetail(product, $event)">
                   @if (isUrl(product.image)) {
-                    <img [src]="product.image" [alt]="product.name" />
+                    <img [src]="thumbUrl(product.image)" [alt]="product.name"
+                         [loading]="groupIndex === 0 && i < 4 ? 'eager' : 'lazy'" />
                   } @else {
                     <span class="product-emoji">{{ product.image || '🛍️' }}</span>
                   }

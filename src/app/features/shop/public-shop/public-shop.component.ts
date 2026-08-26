@@ -21,6 +21,7 @@ import { ProductDetailModalComponent } from '../../../shared/product-detail-moda
 import { HttpClient } from '@angular/common/http';
 import { VisitorService } from '../../../core/services/visitor.service';
 import { environment } from '../../../../environments/environment';
+import { cloudinaryThumb } from '../../../core/utils/cloudinary.util';
 registerLocaleData(localeFr);
 
 @Component({
@@ -390,5 +391,9 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isUrl(value: string): boolean {
     return !!value && (value.startsWith('http') || value.startsWith('data:'));
+  }
+
+  thumbUrl(url: string): string {
+    return cloudinaryThumb(url, 300, 300);
   }
 }

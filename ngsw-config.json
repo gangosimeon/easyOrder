@@ -26,5 +26,19 @@
         ]
       }
     }
+  ],
+  "dataGroups": [
+    {
+      "name": "public-api",
+      "urls": [
+        "https://easyorder-backend-wnku.onrender.com/api/public/**"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 100,
+        "maxAge": "1h",
+        "timeout": "3s"
+      }
+    }
   ]
 }
