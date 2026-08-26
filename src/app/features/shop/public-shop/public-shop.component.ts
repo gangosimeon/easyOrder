@@ -374,7 +374,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getShareUrl(slug: string): string {
-    return `${environment.shareBaseUrl}/shop/${slug}`;
+    return `https://www.jecreemaboutique.com/shop/${slug}`;
   }
 
   shareShop(): void {
