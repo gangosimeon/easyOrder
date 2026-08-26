@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Annonce } from '../../models/annonce.model';
 import { Category } from '../../models/category.model';
 import { Product } from '../../models/product.model';
@@ -95,7 +95,18 @@ export class PublicShopService {
     let p = new HttpParams();
     if (productPage  > 1)    p = p.set('productPage',  String(productPage));
     if (productLimit !== 20) p = p.set('productLimit', String(productLimit));
-    return this.http.get<ShopData>(`${this.apiUrl}/public/shop/${slug}`, { params: p });
+    return this.http.get<ShopData>(`${this.apiUrl}/public/shop/${slug}`, { params: p }).pipe(
+      map(data => ({
+        ...data,
+        products: data.products.map(pr => ({ ...pr, createdAt: new Date(pr.createdAt) })),
+        announcements: data.announcements.map(a => ({
+          ...a,
+          createdAt: new Date(a.createdAt),
+          dateDebut: new Date(a.dateDebut),
+          dateFin:   a.dateFin ? new Date(a.dateFin) : undefined,
+        })),
+      }))
+    );
   }
 
   getShopsList(params: ShopsListParams = {}): Observable<ShopsListResponse> {
