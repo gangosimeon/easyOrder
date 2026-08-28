@@ -191,17 +191,46 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   onSearch(value: string): void { this.searchQuery.set(value); }
   clearSearch(): void           { this.searchQuery.set(''); }
 
+  private paramMapSub: { unsubscribe(): void } | null = null;
+
   ngOnInit(): void {
     this.cartService.selectCategory(null);
-    const slug   = this.route.snapshot.paramMap.get('slug') ?? '';
-    const source = this.route.snapshot.queryParamMap.get('source') ?? undefined;
-    this.shopSlug = slug;
-    this.cameFromDiscover.set(source === 'discover');
 
-    if (this.cartService.company()?.slug !== slug) {
-      this.cartService.clearShopContext();
-    }
+    // Souscription à paramMap (pas snapshot) : si Angular réutilise cette
+    // instance de composant entre deux boutiques (même route "shop/:slug"),
+    // ngOnInit ne serait pas ré-exécuté et le changement de boutique ne
+    // serait jamais détecté. paramMap émet à chaque navigation, y compris
+    // la première (synchrone), donc ça ne retarde pas le chargement initial.
+    this.paramMapSub = this.route.paramMap.subscribe(params => {
+      const slug   = params.get('slug') ?? '';
+      const source = this.route.snapshot.queryParamMap.get('source') ?? undefined;
+      const shopChanged = !!this.shopSlug && slug !== this.shopSlug;
 
+      this.shopSlug = slug;
+      this.cameFromDiscover.set(source === 'discover');
+
+      if (this.cartService.company()?.slug !== slug) {
+        this.cartService.clearShopContext(slug);
+      }
+
+      if (shopChanged) {
+        this.shopData.set(null);
+        this.allProducts.set([]);
+        this.productHasMore.set(false);
+        this.currentProductPage = 1;
+        this.selectedAnn.set(null);
+        this.annCarouselIndex.set(0);
+        this.selectedDetailProduct.set(null);
+        this.searchQuery.set('');
+        this.error.set(null);
+      }
+
+      this.loading.set(true);
+      this.loadShop(slug, source);
+    });
+  }
+
+  private loadShop(slug: string, source: string | undefined): void {
     this.shopService.getShop(slug).subscribe({
       next: data => {
         this.shopData.set(data);
@@ -256,6 +285,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.paramMapSub?.unsubscribe();
     this.resetOgTags();
   }
 

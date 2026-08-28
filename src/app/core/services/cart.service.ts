@@ -71,8 +71,15 @@ export class CartService {
    * À appeler avant de charger une boutique différente : efface immédiatement
    * les traces de la précédente (nom, logo, catégories, aperçu produits) pour
    * éviter d'afficher son contenu pendant le chargement de la nouvelle.
+   * `newSlug` permet de décider ici si le panier doit être vidé — une fois
+   * `_company` mis à null plus bas, `setCompany()` ne peut plus faire cette
+   * comparaison lui-même.
    */
-  clearShopContext(): void {
+  clearShopContext(newSlug?: string): void {
+    const current = this._company();
+    if (current && current.slug !== newSlug) {
+      this._items.next([]);
+    }
     this._company.set(null);
     try { localStorage.removeItem(this.COMPANY_KEY); } catch { /* ignore */ }
     this._categories.set([]);
