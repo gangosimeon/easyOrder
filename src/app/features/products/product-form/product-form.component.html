@@ -102,6 +102,9 @@
         @if (form.get('price')?.hasError('required')) {
           <mat-error>Prix requis</mat-error>
         }
+        @if (form.get('price')?.hasError('min')) {
+          <mat-error>Le prix ne peut pas être négatif</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
