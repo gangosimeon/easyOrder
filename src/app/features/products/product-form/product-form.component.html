@@ -131,8 +131,11 @@
       <div class="promo-block">
         <mat-form-field appearance="outline">
           <mat-label>Réduction (%)</mat-label>
-          <input matInput type="number" formControlName="promotion" placeholder="20" min="1" max="99" />
+          <input matInput type="number" formControlName="promotion" placeholder="20" min="0" max="99" />
           <span matSuffix>%</span>
+          @if (form.get('promotion')?.hasError('min') || form.get('promotion')?.hasError('max')) {
+            <mat-error>La réduction doit être entre 0 et 99%</mat-error>
+          }
         </mat-form-field>
 
         @if (form.get('price')?.value && form.get('promotion')?.value) {

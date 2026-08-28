@@ -72,10 +72,15 @@ export class ProductFormComponent implements OnInit {
       this.selectedEmoji.set(existingImage);
     }
 
+    // Si le toggle promo est éteint, le champ promotion doit démarrer vide :
+    // sinon une valeur résiduelle (ex: 0) invaliderait silencieusement tout
+    // le formulaire alors que ce bloc n'est même pas affiché à l'écran.
+    const promotionValue = this.hasPromo() ? (this.data.product?.promotion ?? null) : null;
+
     this.form = this.fb.group({
       name:        [this.data.product?.name        ?? ''],
       price:       [this.data.product?.price       ?? null, [Validators.required, Validators.min(0)]],
-      promotion:   [this.data.product?.promotion   ?? null, [Validators.min(1), Validators.max(99)]],
+      promotion:   [promotionValue, [Validators.min(0), Validators.max(99)]],
       unit:        [this.data.product?.unit        ?? ''],
       stock:       [this.data.product?.stock       ?? null, [Validators.min(0)]],
       inStock:     [this.data.product?.inStock      ?? true],
