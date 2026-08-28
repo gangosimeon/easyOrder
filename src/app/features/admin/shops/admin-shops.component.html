@@ -188,6 +188,13 @@
                   (click)="toggleVisibility(shop)">
                   <mat-icon>{{ shop.isActive ? 'visibility' : 'visibility_off' }}</mat-icon>
                 </button>
+                <button mat-icon-button
+                  [matTooltip]="shop.banned ? 'Réactiver le compte' : 'Suspendre le compte'"
+                  [disabled]="togglingBanId() === shop.id"
+                  [style.color]="shop.banned ? '#ef4444' : '#9ca3af'"
+                  (click)="toggleBan(shop)">
+                  <mat-icon>{{ shop.banned ? 'lock' : 'lock_open' }}</mat-icon>
+                </button>
                 <button mat-icon-button [style.color]="'#25D366'"
                   matTooltip="WhatsApp" (click)="openWhatsApp(shop)">
                   <mat-icon>chat</mat-icon>
@@ -287,6 +294,13 @@
                     [style.color]="shop.isActive ? '#22c55e' : '#9ca3af'"
                     (click)="toggleVisibility(shop)">
                     <mat-icon>{{ shop.isActive ? 'visibility' : 'visibility_off' }}</mat-icon>
+                  </button>
+                  <button mat-icon-button
+                    [matTooltip]="shop.banned ? 'Réactiver le compte' : 'Suspendre le compte'"
+                    [disabled]="togglingBanId() === shop.id"
+                    [style.color]="shop.banned ? '#ef4444' : '#9ca3af'"
+                    (click)="toggleBan(shop)">
+                    <mat-icon>{{ shop.banned ? 'lock' : 'lock_open' }}</mat-icon>
                   </button>
                   <button mat-icon-button [style.color]="'#25D366'"
                     matTooltip="Ouvrir WhatsApp" (click)="openWhatsApp(shop)">

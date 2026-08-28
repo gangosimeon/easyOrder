@@ -331,10 +331,11 @@ export class AdminShopDetailDialogComponent implements OnInit {
   }
 
   openWhatsApp(): void {
+    const phone = (this.data.fullPhone ?? this.data.phone).replace(/\D/g, '');
     const msg = encodeURIComponent(
       `Bonjour ${this.data.name}, nous vous contactons depuis la plateforme.`
     );
-    window.open(`https://wa.me/${this.data.phone}?text=${msg}`, '_blank');
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   }
 
   copyUrl(): void {

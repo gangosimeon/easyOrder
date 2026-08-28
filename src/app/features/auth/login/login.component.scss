@@ -28,18 +28,18 @@
   align-items: center;
   gap: 14px;
   padding: 24px 28px 22px;
-  background: linear-gradient(135deg, var(--bg-sidebar) 0%, #16213e 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
 
   .brand-icon {
     font-size: 36px;
     width: 56px;
     height: 56px;
-    background: var(--primary);
+    background: rgba(255, 255, 255, .16);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 14px rgba(232, 82, 26, .4);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .15);
     flex-shrink: 0;
   }
 
@@ -54,7 +54,7 @@
 
     p {
       font-size: 12px;
-      color: rgba(255, 255, 255, .5);
+      color: rgba(255, 255, 255, .92);
       margin: 0;
     }
   }
@@ -77,6 +77,99 @@
   font-size: 14px;
   color: var(--text-secondary);
   margin-bottom: 20px;
+}
+
+/* ── Compte suspendu ── */
+.banned-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.banned-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(229, 57, 53, .1);
+  margin-bottom: 16px;
+
+  mat-icon {
+    font-size: 34px;
+    width: 34px;
+    height: 34px;
+    color: #C62828;
+  }
+}
+
+.banned-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 20px;
+  color: var(--text-primary);
+  margin: 0 0 14px;
+}
+
+.banned-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+
+  &:last-of-type {
+    margin-bottom: 22px;
+  }
+}
+
+.btn-whatsapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 50px;
+  background: #25D366;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 14px rgba(37, 211, 102, .35);
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba(37, 211, 102, .5);
+    transform: translateY(-1px);
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.btn-back {
+  margin-top: 14px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--primary);
+    text-decoration: underline;
+  }
 }
 
 /* ── Error banner ── */

@@ -15,6 +15,31 @@
 
     <!-- ── Body ── -->
     <div class="auth-body">
+
+      @if (accountBanned()) {
+        <div class="banned-state">
+          <div class="banned-icon">
+            <mat-icon>gpp_maybe</mat-icon>
+          </div>
+          <h2 class="banned-title">Compte temporairement suspendu</h2>
+          <p class="banned-text">
+            Pas d'inquiétude ! Cette suspension peut être liée à une vérification de sécurité,
+            au non-respect de certaines règles ou à une situation nécessitant notre attention.
+          </p>
+          <p class="banned-text">
+            Vous pensez qu'il s'agit d'une erreur ou souhaitez obtenir des explications ?
+            Notre équipe est disponible pour vous accompagner.
+          </p>
+          <a [href]="whatsappUrl" target="_blank" rel="noopener" class="btn-whatsapp">
+            <mat-icon>chat</mat-icon>
+            <span>Contacter le support sur WhatsApp</span>
+          </a>
+          <button type="button" class="btn-back" (click)="accountBanned.set(false)">
+            Retour à la connexion
+          </button>
+        </div>
+      } @else {
+
       <h2 class="auth-title">Connexion</h2>
       <p class="auth-sub">Accédez à votre espace boutique</p>
 
@@ -73,6 +98,7 @@
           <p><a routerLink="/auth/forgot-password" class="forgot-link">Mot de passe oublié ?</a></p>
         }
       </div>
+      }
     </div>
 
   </div>

@@ -2,6 +2,13 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
+  <!-- CSP : limite l'exécution de script au bundle applicatif ('self') pour
+       réduire l'impact d'une éventuelle XSS (le token d'auth vit en
+       localStorage). connect-src inclut l'API backend, la détection de pays
+       (ipapi.co/country.is) et le backend local de dev (localhost:4000).
+       Note : frame-ancestors est ignoré par les navigateurs dans une balise
+       meta — à définir via un header HTTP réel côté hébergeur si besoin. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://easyorder-backend-wnku.onrender.com https://api.jecreemaboutique.com http://localhost:4000 https://ipapi.co https://api.country.is; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>JeCreeMaBoutique — Créez votre boutique en ligne gratuitement</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">

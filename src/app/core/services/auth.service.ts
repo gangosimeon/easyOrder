@@ -32,12 +32,15 @@ export interface RegisterPayload {
 
 export interface AuthResult {
   success: boolean;
-  error?: string;
+  error?:  string;
+  /** Compte suspendu par un administrateur (403) — à distinguer d'une erreur de saisie. */
+  banned?: boolean;
 }
 
 interface ApiAuthResponse {
   user: Company;
   token: string;
+  refreshToken: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -65,8 +68,9 @@ export class AuthService {
 
   login(phone: string, password: string, countryCode = '226'): Observable<AuthResult> {
     return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/login`, { phone, password, countryCode }).pipe(
-      tap(({ user, token }) => {
+      tap(({ user, token, refreshToken }) => {
         localStorage.setItem('bs_token', token);
+        localStorage.setItem('bs_refresh', refreshToken);
         localStorage.setItem('bs_auth', JSON.stringify(user));
         this._company.set(user);
         this._isLoggedIn.set(true);
@@ -74,6 +78,7 @@ export class AuthService {
       map(() => ({ success: true } as AuthResult)),
       catchError(err => of({
         success: false,
+        banned:  err.status === 403,
         error: (err.error as { message?: string })?.message ?? 'Numéro ou mot de passe incorrect.',
       } as AuthResult))
     );
@@ -81,8 +86,9 @@ export class AuthService {
 
   register(data: RegisterPayload): Observable<AuthResult> {
     return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/register`, data).pipe(
-      tap(({ user, token }) => {
+      tap(({ user, token, refreshToken }) => {
         localStorage.setItem('bs_token', token);
+        localStorage.setItem('bs_refresh', refreshToken);
         localStorage.setItem('bs_auth', JSON.stringify(user));
         this._company.set(user);
         this._isLoggedIn.set(true);
@@ -110,23 +116,35 @@ export class AuthService {
   }
 
   logout(): void {
+    // Révocation côté serveur en best-effort (invalide tokenVersion + refresh
+    // tokens) : on ne bloque jamais la déconnexion locale sur son résultat.
+    this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({ error: () => {} });
+
     this._isLoggedIn.set(false);
     this._company.set(null);
     localStorage.removeItem('bs_token');
+    localStorage.removeItem('bs_refresh');
     localStorage.removeItem('bs_auth');
     this.router.navigate(['/login']);
   }
 
   refreshToken(): Observable<AuthResult> {
-    return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/refresh`, {}).pipe(
-      tap(({ user, token }) => {
+    const refreshToken = localStorage.getItem('bs_refresh');
+    if (!refreshToken) {
+      this.logout();
+      return of({ success: false, error: 'Session expirée. Veuillez vous reconnecter.' } as AuthResult);
+    }
+
+    return this.http.post<ApiAuthResponse>(`${this.apiUrl}/auth/refresh`, { refreshToken }).pipe(
+      tap(({ user, token, refreshToken: newRefreshToken }) => {
         localStorage.setItem('bs_token', token);
+        localStorage.setItem('bs_refresh', newRefreshToken);
         localStorage.setItem('bs_auth', JSON.stringify(user));
         this._company.set(user);
         this._isLoggedIn.set(true);
       }),
       map(() => ({ success: true } as AuthResult)),
-      catchError(err => {
+      catchError(() => {
         // Si le refresh échoue, déconnecter l'utilisateur
         this.logout();
         return of({

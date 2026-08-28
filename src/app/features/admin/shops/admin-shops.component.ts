@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AdminService, AdminShop, PlatformStats, AggregateShopStats } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { AdminShopDetailDialogComponent } from './admin-shop-detail.dialog';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-admin-shops',
@@ -56,6 +57,7 @@ export class AdminShopsComponent implements OnInit {
   readonly viewMode        = signal<'table' | 'cards'>(window.innerWidth < 768 ? 'cards' : 'table');
   readonly copiedId              = signal<string | null>(null);
   readonly togglingVisibilityId  = signal<string | null>(null);
+  readonly togglingBanId         = signal<string | null>(null);
 
   readonly searchControl = new FormControl('');
   readonly sortControl   = new FormControl('createdAt_desc');
@@ -164,7 +166,7 @@ export class AdminShopsComponent implements OnInit {
   }
 
   copyLink(shop: AdminShop): void {
-    const url = shop.publicUrl ?? `${window.location.origin}/shop/${shop.slug}`;
+    const url = `https://www.jecreemaboutique.com/shop/${shop.slug}`;
     navigator.clipboard.writeText(url).then(() => {
       this.copiedId.set(shop.id);
       setTimeout(() => this.copiedId.set(null), 2000);
@@ -186,10 +188,11 @@ export class AdminShopsComponent implements OnInit {
   }
 
   openWhatsApp(shop: AdminShop): void {
+    const phone = (shop.fullPhone ?? shop.phone).replace(/\D/g, '');
     const msg = encodeURIComponent(
       `Bonjour ${shop.name}, nous vous contactons depuis la plateforme.`
     );
-    window.open(`https://wa.me/${shop.phone}?text=${msg}`, '_blank');
+    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
   }
 
   openPublicShop(shop: AdminShop): void {
@@ -206,6 +209,44 @@ export class AdminShopsComponent implements OnInit {
         this.togglingVisibilityId.set(null);
       },
       error: () => this.togglingVisibilityId.set(null),
+    });
+  }
+
+  toggleBan(shop: AdminShop): void {
+    const nextBanned = !shop.banned;
+
+    if (!nextBanned) {
+      this.applyBanToggle(shop, false);
+      return;
+    }
+
+    this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(
+      ConfirmDialogComponent,
+      {
+        width: '380px', autoFocus: false,
+        data: {
+          title:        'Suspendre le compte',
+          message:      `Suspendre le compte "${shop.name}" ? Toutes ses sessions seront immédiatement coupées.`,
+          confirmLabel: 'Suspendre',
+          icon:         'lock',
+          color:        '#ef4444',
+        },
+      },
+    ).afterClosed().subscribe(ok => {
+      if (ok) this.applyBanToggle(shop, true);
+    });
+  }
+
+  private applyBanToggle(shop: AdminShop, banned: boolean): void {
+    this.togglingBanId.set(shop.id);
+    this.adminService.toggleShopBan(shop.id, banned).subscribe({
+      next: () => {
+        this.shops.update(list =>
+          list.map(s => s.id === shop.id ? { ...s, banned } : s)
+        );
+        this.togglingBanId.set(null);
+      },
+      error: () => this.togglingBanId.set(null),
     });
   }
 

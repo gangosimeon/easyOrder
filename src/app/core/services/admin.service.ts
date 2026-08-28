@@ -8,6 +8,7 @@ export interface AdminShop {
   name:         string;
   slug:         string;
   phone:        string;
+  fullPhone?:   string;
   description:  string;
   logo:         string;
   address:      string;
@@ -16,6 +17,7 @@ export interface AdminShop {
   productCount: number;
   status:       'active' | 'inactive';
   isActive:     boolean;
+  banned:       boolean;
   publicUrl:    string;
 }
 
@@ -129,6 +131,13 @@ export class AdminService {
     return this.http.patch<{ id: string; isActive: boolean }>(
       `${this.apiUrl}/admin/shops/${shopId}/toggle-visibility`,
       { isActive },
+    );
+  }
+
+  toggleShopBan(shopId: string, banned: boolean): Observable<{ id: string; banned: boolean }> {
+    return this.http.patch<{ id: string; banned: boolean }>(
+      `${this.apiUrl}/admin/shops/${shopId}/toggle-ban`,
+      { banned },
     );
   }
 }
