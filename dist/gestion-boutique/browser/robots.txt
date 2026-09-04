@@ -1,4 +1,19 @@
 User-agent: *
 Allow: /
 
+# Pages privées (nécessitent une connexion) — aucune valeur pour un visiteur anonyme
+Disallow: /products
+Disallow: /categories
+Disallow: /annonces
+Disallow: /orders
+Disallow: /profile
+Disallow: /admin
+Disallow: /change-password
+
+# Pages utilitaires sans valeur SEO propre
+Disallow: /cart
+Disallow: /login
+Disallow: /register
+Disallow: /auth/
+
 Sitemap: https://www.jecreemaboutique.com/sitemap.xml

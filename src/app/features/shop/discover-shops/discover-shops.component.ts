@@ -15,6 +15,7 @@ import { AuthService }             from '../../../core/services/auth.service';
 import { CountryService }          from '../../../core/services/country.service';
 import { LandingNavComponent }     from '../../landing/components/landing-nav/landing-nav.component';
 import { cloudinaryThumb }         from '../../../core/utils/cloudinary.util';
+import { SeoService }              from '../../../core/services/seo.service';
 
 interface ShopCard {
   info: PublicShopInfo;
@@ -50,6 +51,7 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
   private authService       = inject(AuthService);
   readonly countryService   = inject(CountryService);
   private router            = inject(Router);
+  private seo               = inject(SeoService);
 
   @ViewChild('infiniteSentinel') private sentinelRef!: ElementRef<HTMLDivElement>;
 
@@ -99,6 +101,10 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
   private observer: IntersectionObserver | null = null;
 
   ngOnInit(): void {
+    this.seo.setTitle('Découvrir les boutiques | JeCréeMaBoutique');
+    this.seo.setDescription('Parcourez toutes les boutiques en ligne disponibles sur JeCréeMaBoutique et découvrez leurs produits.');
+    this.seo.setCanonical('https://www.jecreemaboutique.com/shops');
+
     this.publicShopService.invalidateCategoriesCache();
     this.loadCategories();
 
@@ -136,6 +142,7 @@ export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy 
   ngOnDestroy(): void {
     if (this.searchTimer) clearTimeout(this.searchTimer);
     this.observer?.disconnect();
+    this.seo.reset();
   }
 
   // ── Catégories ────────────────────────────────────────────────────────────
