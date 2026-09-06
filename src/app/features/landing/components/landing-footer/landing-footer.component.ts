@@ -31,7 +31,7 @@ export class LandingFooterComponent {
       title: 'Ressources', expanded: false,
       links: [
         { label: 'Blog',          href: '#' },
-        { label: 'FAQ',           href: '#' },
+        { label: 'FAQ',           href: '#faq' },
         { label: "Centre d'aide", href: '#' },
         { label: 'Démos',         href: '#' },
       ]

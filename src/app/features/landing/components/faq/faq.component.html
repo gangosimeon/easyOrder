@@ -1,0 +1,79 @@
+<section class="lp-faq" id="faq">
+  <div class="lp-faq__container">
+
+    <div class="lp-faq__header">
+      <span class="lp-section-label">FAQ</span>
+      <h2 class="lp-section-title">Questions fréquentes</h2>
+      <p class="lp-faq__subtitle">Tout ce qu'il faut savoir pour créer et gérer votre boutique.</p>
+    </div>
+
+    <div class="lp-faq__search">
+      <mat-icon class="lp-faq__search-icon">search</mat-icon>
+      <input
+        type="text"
+        class="lp-faq__search-input"
+        placeholder="Rechercher une question..."
+        [value]="searchQuery()"
+        (input)="onSearch($any($event.target).value)"
+        aria-label="Rechercher une question"
+      />
+      @if (searchQuery()) {
+        <button type="button" class="lp-faq__search-clear" (click)="clearSearch()" aria-label="Effacer la recherche">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    @if (hasResults()) {
+      <div class="lp-faq__categories">
+        @for (cat of filteredCategories(); track cat.id) {
+          <div class="lp-faq__category">
+            <h3 class="lp-faq__category-title">
+              <mat-icon class="lp-faq__category-icon" aria-hidden="true">{{ cat.icon }}</mat-icon>
+              {{ cat.label }}
+            </h3>
+
+            <div class="lp-faq__list">
+              @for (item of cat.items; track item.id) {
+                <div class="lp-faq__item" [class.is-open]="isOpen(item.id)">
+                  <h4 class="lp-faq__q">
+                    <button
+                      type="button"
+                      class="lp-faq__q-btn"
+                      [id]="'faq-q-' + item.id"
+                      [attr.aria-expanded]="isOpen(item.id)"
+                      [attr.aria-controls]="'faq-a-' + item.id"
+                      (click)="toggle(item.id)"
+                    >
+                      <span class="lp-faq__q-text">{{ item.question }}</span>
+                      <mat-icon class="lp-faq__q-chevron">expand_more</mat-icon>
+                    </button>
+                  </h4>
+                  <div
+                    class="lp-faq__a-wrap"
+                    [id]="'faq-a-' + item.id"
+                    role="region"
+                    [attr.aria-labelledby]="'faq-q-' + item.id"
+                    [attr.aria-hidden]="!isOpen(item.id)"
+                  >
+                    <div class="lp-faq__a-inner">
+                      <p class="lp-faq__a">{{ item.answer }}</p>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="lp-faq__empty">
+        <p class="lp-faq__empty-title">Aucune question ne correspond à votre recherche.</p>
+        <p class="lp-faq__empty-sub">
+          Besoin d'aide ? <a href="https://wa.me/22665704696" target="_blank" rel="noopener">Contactez-nous</a>.
+        </p>
+      </div>
+    }
+
+  </div>
+</section>

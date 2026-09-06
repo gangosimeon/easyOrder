@@ -8,6 +8,7 @@ import { ForWhoComponent }          from './components/for-who/for-who.component
 import { VideoContactComponent }    from './components/video-contact/video-contact.component';
 import { TestimonialsComponent }    from './components/testimonials/testimonials.component';
 import { PricingComponent }         from './components/pricing/pricing.component';
+import { FaqComponent }             from './components/faq/faq.component';
 import { CtaBannerComponent }       from './components/cta-banner/cta-banner.component';
 import { LandingFooterComponent }   from './components/landing-footer/landing-footer.component';
 
@@ -23,6 +24,7 @@ import { LandingFooterComponent }   from './components/landing-footer/landing-fo
     VideoContactComponent,
     // TestimonialsComponent,
     // PricingComponent,
+    FaqComponent,
     CtaBannerComponent,
     LandingFooterComponent,
   ],
