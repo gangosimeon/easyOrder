@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
 import { Category } from '../../models/category.model';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment';
@@ -49,23 +50,36 @@ export class CategoryService {
     return this._categories().find(c => c.id === id);
   }
 
-  add(data: Omit<Category, 'id' | 'createdAt'>): void {
-    this.http.post<Category>(`${this.apiUrl}/categories`, data).subscribe({
-      next: cat => this._categories.update(list => [...list, parseCategory(cat)]),
-    });
+  add(data: Omit<Category, 'id' | 'createdAt'>) {
+    return this.http.post<Category>(`${this.apiUrl}/categories`, data).pipe(
+      tap(cat => this._categories.update(list => [...list, parseCategory(cat)]))
+    );
   }
 
-  update(id: string, changes: Partial<Category>): void {
-    this.http.put<Category>(`${this.apiUrl}/categories/${id}`, changes).subscribe({
-      next: cat => this._categories.update(list =>
+  update(id: string, changes: Partial<Category>) {
+    return this.http.put<Category>(`${this.apiUrl}/categories/${id}`, changes).pipe(
+      tap(cat => this._categories.update(list =>
         list.map(c => c.id === id ? parseCategory(cat) : c)
-      ),
-    });
+      ))
+    );
   }
 
-  delete(id: string): void {
-    this.http.delete(`${this.apiUrl}/categories/${id}`).subscribe({
-      next: () => this._categories.update(list => list.filter(c => c.id !== id)),
-    });
+  delete(id: string) {
+    return this.http.delete(`${this.apiUrl}/categories/${id}`).pipe(
+      tap(() => this._categories.update(list => list.filter(c => c.id !== id)))
+    );
+  }
+
+  /**
+   * Vérification côté client (UX rapide) : le backend reste la seule
+   * source de vérité — voir POST/PUT /api/categories, contrainte d'unicité
+   * {shopId, normalizedName}.
+   */
+  isNameTaken(name: string, excludeId?: string): boolean {
+    const normalized = name.trim().toLowerCase();
+    if (!normalized) return false;
+    return this._categories().some(c =>
+      c.id !== excludeId && c.name.trim().toLowerCase() === normalized
+    );
   }
 }

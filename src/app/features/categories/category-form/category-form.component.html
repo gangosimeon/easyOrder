@@ -47,6 +47,9 @@
       @if (form.get('name')?.hasError('required')) {
         <mat-error>Le nom est requis</mat-error>
       }
+      @if (form.get('name')?.hasError('duplicateName')) {
+        <mat-error>Cette catégorie existe déjà dans votre boutique.</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">

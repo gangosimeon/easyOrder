@@ -60,10 +60,11 @@ export class CategoryListComponent {
       width: '520px', maxWidth: '95vw',
       data: { mode: 'add' } satisfies CategoryFormData,
     }).afterClosed().subscribe(result => {
-      if (result) {
-        this.categoryService.add(result);
-        this.snack('✅ Catégorie créée !');
-      }
+      if (!result) return;
+      this.categoryService.add(result).subscribe({
+        next: () => this.snack('✅ Catégorie créée !'),
+        error: err => this.snack(this.errorMessage(err, 'Échec de la création de la catégorie')),
+      });
     });
   }
 
@@ -79,8 +80,10 @@ export class CategoryListComponent {
         { data: { title: 'Modifier la catégorie', message: `Confirmer les modifications de "${cat.name}" ?`, confirmLabel: 'Confirmer', icon: 'save', color: result.color ?? cat.color }, width: '380px', autoFocus: false }
       ).afterClosed().subscribe(ok => {
         if (!ok) return;
-        this.categoryService.update(cat.id, result);
-        this.snack('✅ Catégorie modifiée !');
+        this.categoryService.update(cat.id, result).subscribe({
+          next: () => this.snack('✅ Catégorie modifiée !'),
+          error: err => this.snack(this.errorMessage(err, 'Échec de la modification de la catégorie')),
+        });
       });
     });
   }
@@ -97,10 +100,19 @@ export class CategoryListComponent {
     );
     ref.afterClosed().subscribe(ok => {
       if (!ok) return;
-      this.productService.deleteByCategory(cat.id);
-      this.categoryService.delete(cat.id);
-      this.snack('🗑️ Catégorie supprimée');
+      this.categoryService.delete(cat.id).subscribe({
+        next: () => {
+          this.productService.deleteByCategory(cat.id);
+          this.snack('🗑️ Catégorie supprimée');
+        },
+        error: err => this.snack(this.errorMessage(err, 'Échec de la suppression de la catégorie')),
+      });
     });
+  }
+
+  private errorMessage(err: unknown, fallback: string): string {
+    const message = (err as { error?: { message?: string } })?.error?.message;
+    return message ? `❌ ${message}` : `❌ ${fallback}`;
   }
 
   goToProducts(categoryId: string): void {
