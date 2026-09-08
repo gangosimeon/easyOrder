@@ -182,91 +182,91 @@
 
   <!-- PRODUCTS -->
   <section class="products-section" [class.has-footer]="cartItemIds().size > 0">
-    @if (productsByCategory().length === 0) {
+    @if (filteredProducts().length === 0) {
       <div class="empty-state">
         <mat-icon class="empty-icon">inventory_2</mat-icon>
         <h3>Aucun produit disponible</h3>
         <p>Cette boutique n'a pas encore de produits.</p>
       </div>
-    }
+    } @else {
+      <div class="products-header">
+        <h2>Produits</h2>
+        <span class="products-count">{{ filteredProducts().length }}</span>
+      </div>
 
-    @for (group of productsByCategory(); track group.category.id; let groupIndex = $index) {
-      <div class="category-group">
-        <div class="cat-group-header">
-          <mat-icon [style.color]="group.category.color">{{ group.category.icon }}</mat-icon>
-          <h2>{{ group.category.name }}</h2>
-          <span class="cat-count">{{ group.products.length }}</span>
-        </div>
+      <div class="products-list">
+        <div class="products-grid">
+          @for (product of filteredProducts(); track product.id; let i = $index) {
+            <div class="product-card"
+                [class.selected]="cartItemIds().has(product.id)"
+                [class.out-of-stock]="product.inStock === false">
 
-        <!-- PRODUITS -->
-        <div class="products-list">
-          <div class="products-grid">
-            @for (product of group.products; track product.id; let i = $index) {
-              <div class="product-card"
-                  [class.selected]="cartItemIds().has(product.id)"
-                  [class.out-of-stock]="product.inStock === false"
-                  (click)="product.inStock !== false && toggleProduct(product)"
-                  matRipple [matRippleDisabled]="product.inStock === false">
+              <!-- Badge promo / nouveau -->
+              @if (product.promotion) {
+                <div class="promo-badge">Promo</div>
+              } @else if (isNewProduct(product)) {
+                <div class="new-badge">Nouveau</div>
+              }
 
-                <!-- Badge promo -->
-                @if (product.promotion) {
-                  <div class="promo-badge">-{{ product.promotion }}%</div>
+              <!-- Check indicator (déjà dans le panier) -->
+              <div class="check-indicator" [class.visible]="cartItemIds().has(product.id)">
+                <mat-icon>check_circle</mat-icon>
+              </div>
+
+              <!-- Image -->
+              <div class="product-img" style="cursor:pointer" (click)="openProductDetail(product, $event)">
+                @if (isUrl(product.image)) {
+                  <img [src]="thumbUrl(product.image)" [alt]="product.name"
+                       [loading]="i < 4 ? 'eager' : 'lazy'" />
+                } @else {
+                  <span class="product-emoji">{{ product.image || '🛍️' }}</span>
                 }
+                @if (product.inStock === false) {
+                  <div class="out-badge">Épuisé</div>
+                }
+              </div>
 
-                <!-- Check indicator -->
-                <div class="check-indicator" [class.visible]="cartItemIds().has(product.id)">
-                  <mat-icon>check_circle</mat-icon>
-                </div>
-
-                <!-- Image -->
-                <div class="product-img" style="cursor:pointer" (click)="openProductDetail(product, $event)">
-                  @if (isUrl(product.image)) {
-                    <img [src]="thumbUrl(product.image)" [alt]="product.name"
-                         [loading]="groupIndex === 0 && i < 4 ? 'eager' : 'lazy'" />
-                  } @else {
-                    <span class="product-emoji">{{ product.image || '🛍️' }}</span>
+              <!-- Info -->
+              <div class="product-info" style="cursor:pointer" (click)="openProductDetail(product, $event)">
+                <p class="product-name">{{ product.name }}</p>
+                @if (product.unit) {
+                  <span class="product-unit">{{ product.unit }}</span>
+                }
+                <div class="price-row">
+                  <span class="price-main" [style.color]="company()!.coverColor || 'var(--primary)'">
+                    {{ formatPrice(product.price) }}
+                  </span>
+                  @if (product.originalPrice) {
+                    <span class="price-old">{{ formatPrice(product.originalPrice) }}</span>
                   }
-                  @if (product.inStock === false) {
-                    <div class="out-badge">Épuisé</div>
-                  }
-                </div>
-
-                <!-- Info -->
-                <div class="product-info">
-                  <p class="product-name">{{ product.name }}</p>
-                  <div class="price-row">
-                    <span class="price-main" [style.color]="company()!.coverColor || 'var(--primary)'">
-                      {{ formatPrice(product.price) }}
+                  @if (product.promotion) {
+                    <span class="price-badge" [style.background]="company()!.coverColor || 'var(--primary)'">
+                      -{{ product.promotion }}%
                     </span>
-                    @if (product.originalPrice) {
-                      <span class="price-old">{{ formatPrice(product.originalPrice) }}</span>
-                    }
-                  </div>
-                  @if (product.unit) {
-                    <span class="product-unit">{{ !product.unit? " ": "/ "+product.unit }}</span>
                   }
                 </div>
+              </div>
 
-                <!-- Add/Remove pill -->
-                <div class="add-pill" [class.in-cart]="cartItemIds().has(product.id)">
-                  @if (cartItemIds().has(product.id)) {
-                    <mat-icon>remove_shopping_cart</mat-icon>
-                    <span>Retirer</span>
-                  } @else {
-                    <mat-icon>add_shopping_cart</mat-icon>
-                    <span>Ajouter</span>
-                  }
-                </div>
-              </div>
-            } @empty {
-              <div class="empty-products">
-                <span>🛒</span>
-                <p>Aucun produit dans cette catégorie.</p>
-              </div>
-            }
-          </div>
+              <!-- Ajouter au panier -->
+              <button
+                type="button"
+                class="btn-add-cart"
+                [class.in-cart]="cartItemIds().has(product.id)"
+                [style.background]="cartItemIds().has(product.id) ? null : (company()!.coverColor || 'var(--primary)')"
+                [disabled]="product.inStock === false"
+                (click)="toggleProduct(product)"
+                matRipple>
+                @if (cartItemIds().has(product.id)) {
+                  <mat-icon>remove_shopping_cart</mat-icon>
+                  <span>Retirer du panier</span>
+                } @else {
+                  <mat-icon>add_shopping_cart</mat-icon>
+                  <span>Ajouter au panier</span>
+                }
+              </button>
+            </div>
+          }
         </div>
-
       </div>
     }
   </section>

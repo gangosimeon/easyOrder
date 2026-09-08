@@ -14,7 +14,6 @@ import { PublicShopService, ShopData } from '../../../core/services/public-shop.
 import { CartService } from '../../../core/services/cart.service';
 import { CartDrawerService } from '../../../core/services/cart-drawer.service';
 import { Annonce, ANNONCE_TYPE_CONFIG } from '../../../models/annonce.model';
-import { Category } from '../../../models/category.model';
 import { Product } from '../../../models/product.model';
 import { MatRippleModule } from '@angular/material/core';
 import { ProductDetailModalComponent } from '../../../shared/product-detail-modal/product-detail-modal.component';
@@ -159,8 +158,8 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
     return list.sort((a, b) => (b.epinglee ? 1 : 0) - (a.epinglee ? 1 : 0));
   });
 
-  readonly productsByCategory = computed(() => {
-    const cats  = this.categories();
+  /** Grille unique et uniforme de produits (filtrée par catégorie/recherche, non groupée par catégorie). */
+  readonly filteredProducts = computed(() => {
     const catId = this.cartService.selectedCategoryId();
     const q     = this.searchQuery().trim().toLowerCase();
 
@@ -168,23 +167,10 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
       ? this.allProducts().filter(p => p.categoryId === catId)
       : this.allProducts();
     if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q));
-    filtered = [...filtered].sort(
+
+    return [...filtered].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-
-    const groups: { category: Category; products: Product[] }[] = [];
-    for (const cat of cats) {
-      const prods = filtered.filter(p => p.categoryId === cat.id);
-      if (prods.length > 0) groups.push({ category: cat, products: prods });
-    }
-    const uncategorized = filtered.filter(p => !cats.find(c => c.id === p.categoryId));
-    if (uncategorized.length > 0) {
-      groups.push({
-        category: { id: '__none__', name: 'Autres', icon: 'inventory_2', color: '#9CA3AF', createdAt: new Date() },
-        products: uncategorized,
-      });
-    }
-    return groups;
   });
 
   onSearch(value: string): void { this.searchQuery.set(value); }
@@ -350,6 +336,12 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.cartService.addProduct(product);
     }
+  }
+
+  /** Badge "Nouveau" : produit ajouté il y a moins de 7 jours. */
+  isNewProduct(product: Product): boolean {
+    const days = (Date.now() - product.createdAt.getTime()) / 86_400_000;
+    return days <= 7;
   }
 
   goToCart(): void {
