@@ -129,23 +129,46 @@
 
     @if (hasPromo()) {
       <div class="promo-block">
-        <mat-form-field appearance="outline">
-          <mat-label>Réduction (%)</mat-label>
-          <input matInput type="number" formControlName="promotion" placeholder="20" min="0" max="99" />
-          <span matSuffix>%</span>
-          @if (form.get('promotion')?.hasError('min') || form.get('promotion')?.hasError('max')) {
-            <mat-error>La réduction doit être entre 0 et 99%</mat-error>
+        <span class="promo-presets-label">Réduction</span>
+        <div class="promo-presets-grid">
+          @for (p of promoPresets; track p) {
+            <button type="button" class="preset-btn" [class.active]="promoPreset() === p"
+                    (click)="selectPromoPreset(p)">{{ p }}%</button>
           }
-        </mat-form-field>
+          <button type="button" class="preset-btn" [class.active]="promoPreset() === 'other'"
+                  (click)="selectPromoOther()">Autre</button>
+        </div>
 
-        @if (form.get('price')?.value && form.get('promotion')?.value) {
+        @if (promoPreset() === 'other') {
+          <mat-form-field appearance="outline">
+            <mat-label>Pourcentage personnalisé</mat-label>
+            <input matInput type="number" formControlName="promotion" placeholder="25" min="0" max="99"
+                   (input)="onPromotionInput()" />
+            <span matSuffix>%</span>
+            @if (form.get('promotion')?.hasError('min') || form.get('promotion')?.hasError('max')) {
+              <mat-error>La réduction doit être entre 0 et 99%</mat-error>
+            }
+          </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline">
+          <mat-label>Prix final</mat-label>
+          <input matInput type="number" formControlName="finalPrice" placeholder="8000" min="0"
+                 (input)="onFinalPriceInput()" />
+          <span matSuffix class="currency-suffix">FCFA</span>
+        </mat-form-field>
+        @if (isFinalPriceInvalid()) {
+          <p class="promo-error">Le prix final doit être positif et inférieur au prix normal.</p>
+        }
+
+        @if (form.get('price')?.value && form.get('promotion')?.value && !isFinalPriceInvalid()) {
           <div class="price-preview">
             <div class="price-before">
-              <span class="label">Prix original :</span>
+              <span class="label">Prix normal :</span>
               <span class="value striked">{{ fmt(form.get('price')?.value) }}</span>
             </div>
             <div class="price-after">
-              <span class="label">Prix promo :</span>
+              <span class="label">Prix final :</span>
               <span class="value promo" [style.color]="data.category.color">{{ fmt(discountedPrice()) }}</span>
               <span class="badge-mini" [style.background]="data.category.color">-{{ form.get('promotion')?.value }}%</span>
             </div>
@@ -179,7 +202,7 @@
     <div class="form-actions">
       <button type="button" mat-stroked-button (click)="onCancel()" class="btn-cancel">Annuler</button>
       <button type="submit" mat-raised-button class="btn-save"
-              [disabled]="form.invalid || uploading()" [style.background]="data.category.color">
+              [disabled]="form.invalid || uploading() || isFinalPriceInvalid()" [style.background]="data.category.color">
         <mat-icon>{{ data.mode === 'add' ? 'add_shopping_cart' : 'save' }}</mat-icon>
         {{ data.mode === 'add' ? 'Ajouter' : 'Mettre à jour' }}
       </button>

@@ -54,6 +54,10 @@ export class ProductFormComponent implements OnInit {
   uploadError    = signal<string>('');
   hasPromo       = signal<boolean>(!!this.data.product?.promotion);
 
+  readonly promoPresets: number[] = [5, 10, 20, 30, 50];
+  /** Bouton de réduction actuellement mis en avant ('other' = pourcentage saisi manuellement). */
+  promoPreset = signal<number | 'other' | null>(null);
+
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ProductFormComponent>,
@@ -77,14 +81,34 @@ export class ProductFormComponent implements OnInit {
     // le formulaire alors que ce bloc n'est même pas affiché à l'écran.
     const promotionValue = this.hasPromo() ? (this.data.product?.promotion ?? null) : null;
 
+    // En base, quand une promo est active, `price` est déjà le prix remisé et
+    // `originalPrice` le prix normal — c'est bien ce dernier qu'il faut
+    // proposer dans le champ "Prix (FCFA)", sans quoi rouvrir un produit en
+    // promo réappliquerait la réduction sur un prix déjà réduit à chaque édition.
+    const normalPrice = this.hasPromo()
+      ? (this.data.product?.originalPrice ?? this.data.product?.price ?? null)
+      : (this.data.product?.price ?? null);
+    const finalPriceValue = this.hasPromo() && this.data.product ? this.data.product.price : null;
+
     this.form = this.fb.group({
       name:        [this.data.product?.name        ?? ''],
-      price:       [this.data.product?.price       ?? null, [Validators.required, Validators.min(0)]],
+      price:       [normalPrice, [Validators.required, Validators.min(0)]],
       promotion:   [promotionValue, [Validators.min(0), Validators.max(99)]],
+      finalPrice:  [finalPriceValue, [Validators.min(0)]],
       unit:        [this.data.product?.unit        ?? ''],
       stock:       [this.data.product?.stock       ?? null, [Validators.min(0)]],
       inStock:     [this.data.product?.inStock      ?? true],
       description: [this.data.product?.description ?? ''],
+    });
+
+    if (this.hasPromo() && promotionValue != null) {
+      this.promoPreset.set(this.promoPresets.includes(promotionValue) ? promotionValue : 'other');
+    }
+
+    // Le prix normal change → le prix final est recalculé à partir de la
+    // réduction actuellement sélectionnée (elle reste la référence).
+    this.form.get('price')?.valueChanges.subscribe(() => {
+      if (this.hasPromo()) this.syncFinalPriceFromPercent();
     });
   }
 
@@ -121,7 +145,11 @@ export class ProductFormComponent implements OnInit {
 
   togglePromo(checked: boolean): void {
     this.hasPromo.set(checked);
-    if (!checked) this.form.get('promotion')?.setValue(null);
+    if (!checked) {
+      this.form.get('promotion')?.setValue(null);
+      this.form.get('finalPrice')?.setValue(null);
+      this.promoPreset.set(null);
+    }
   }
 
   discountedPrice(): number {
@@ -130,12 +158,67 @@ export class ProductFormComponent implements OnInit {
     return Math.round(price * (1 - promo / 100));
   }
 
+  /** Prix normal actuellement saisi, 0 si vide/invalide (aucun calcul possible). */
+  private normalPrice(): number {
+    const n = Number(this.form.get('price')?.value);
+    return !isNaN(n) && n > 0 ? n : 0;
+  }
+
+  /** Sélection d'un pourcentage prédéfini (5/10/20/30/50 %). */
+  selectPromoPreset(percent: number): void {
+    this.promoPreset.set(percent);
+    this.form.get('promotion')?.setValue(percent, { emitEvent: false });
+    this.syncFinalPriceFromPercent();
+  }
+
+  /** Passage en mode « Autre » : pourcentage saisi manuellement. */
+  selectPromoOther(): void {
+    this.promoPreset.set('other');
+  }
+
+  /** Saisie manuelle du pourcentage (mode « Autre ») → recalcule le prix final. */
+  onPromotionInput(): void {
+    this.promoPreset.set('other');
+    this.syncFinalPriceFromPercent();
+  }
+
+  /** Saisie manuelle du prix final → recalcule le pourcentage correspondant. */
+  onFinalPriceInput(): void {
+    const normal = this.normalPrice();
+    const finalRaw = this.form.get('finalPrice')?.value;
+    const final = Number(finalRaw);
+    if (!normal || finalRaw === null || finalRaw === '' || isNaN(final)) return;
+
+    const percent = Math.round(((normal - final) / normal) * 100);
+    this.form.get('promotion')?.setValue(percent, { emitEvent: false });
+    this.promoPreset.set(this.promoPresets.includes(percent) ? percent : 'other');
+    // Réaligne l'affichage sur le montant réellement enregistré (le backend
+    // ne stocke qu'un pourcentage entier, un léger arrondi est possible).
+    this.syncFinalPriceFromPercent();
+  }
+
+  /** Recalcule le prix final à partir du prix normal + pourcentage sélectionné. */
+  private syncFinalPriceFromPercent(): void {
+    if (!this.normalPrice()) return;
+    this.form.get('finalPrice')?.setValue(this.discountedPrice(), { emitEvent: false });
+  }
+
+  /** Le prix final doit être positif et strictement inférieur au prix normal. */
+  isFinalPriceInvalid(): boolean {
+    if (!this.hasPromo()) return false;
+    const price = this.normalPrice();
+    const finalRaw = this.form.get('finalPrice')?.value;
+    if (!price || finalRaw === null || finalRaw === '') return false;
+    const final = Number(finalRaw);
+    return isNaN(final) || final <= 0 || final >= price;
+  }
+
   fmt(price: number): string {
     return new Intl.NumberFormat('fr-FR').format(price) + ' FCFA';
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
+    if (this.form.valid && !this.isFinalPriceInvalid()) {
       const v = this.form.value;
       const image = this.imageMode() === 'url'
         ? this.imageUrl().trim()

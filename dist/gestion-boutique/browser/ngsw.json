@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1788866099294,
+  "timestamp": 1788908702542,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -11,7 +11,6 @@
         "ignoreVary": true
       },
       "urls": [
-        "/chunk-2Y57UJ4B.js",
         "/chunk-3CKWH4QQ.js",
         "/chunk-3GJAX2DZ.js",
         "/chunk-3JCYBJVN.js",
@@ -67,6 +66,7 @@
         "/chunk-TYPT355T.js",
         "/chunk-VJNAXF2B.js",
         "/chunk-W4ZJM3AA.js",
+        "/chunk-W6DT55RY.js",
         "/chunk-WRYI6RMG.js",
         "/chunk-XDXQF5TL.js",
         "/chunk-XLANBLN5.js",
@@ -76,7 +76,7 @@
         "/chunk-YTM66THJ.js",
         "/favicon.ico",
         "/index.html",
-        "/main-VYLUPMGX.js",
+        "/main-O5KEPEAI.js",
         "/manifest.webmanifest",
         "/polyfills-5CFQRCPP.js",
         "/push-sw.js",
@@ -135,7 +135,6 @@
     "/assets/images/appli.png": "dd7e08a3091a21d060688c4dc4bf68f7d04f3e71",
     "/assets/images/background_image.png": "664d80bf94f10a02747a505952d2848f71a5e84d",
     "/assets/videos/demo.png": "09caca2ce30590b6ebccc757558c3dac8dceacbd",
-    "/chunk-2Y57UJ4B.js": "db9c935d6e35e59dda458e0dfedc118a7f6992a8",
     "/chunk-3CKWH4QQ.js": "f3d61f6f380a472084e5dd003a8eccb8269398b9",
     "/chunk-3GJAX2DZ.js": "351238bbe9adc3961c6849a07b6e1f1cf1d5daf6",
     "/chunk-3JCYBJVN.js": "ca7cb6625fcd3bc2cb8ce19ee9dcced5a29cd644",
@@ -191,6 +190,7 @@
     "/chunk-TYPT355T.js": "628d644c16c10a3c224e62b9280f3c67706415c8",
     "/chunk-VJNAXF2B.js": "17a67f148fab471ffb76c9dee4c792d359d2bf25",
     "/chunk-W4ZJM3AA.js": "61b68db0f0edae567167753926cc7d536ed03c76",
+    "/chunk-W6DT55RY.js": "7d1fbb665839057e2b3a11fa431bc5fbd099d479",
     "/chunk-WRYI6RMG.js": "5d02515018a55ee675a73d1ff604b4a03aacdcd3",
     "/chunk-XDXQF5TL.js": "3c4705bf14fcecc3c2da5ac6ba0d24fa58ae3ed6",
     "/chunk-XLANBLN5.js": "8a93fbbb4455dbcaa514c7fdfeb204ba4f180ea3",
@@ -199,8 +199,8 @@
     "/chunk-Y2YVPITR.js": "27760420e42bf1f5f55317d75887f16db3a15f0e",
     "/chunk-YTM66THJ.js": "3ab9faf8e38509142eefda4235069caffeffc4ad",
     "/favicon.ico": "d44891721d24ab6a9d73a5e5a9bd3c63576d6ba0",
-    "/index.html": "478b82b7c740cda36cc245ad4c3f45e5b38459ed",
-    "/main-VYLUPMGX.js": "31a2c91041293408f0c5269b7fc7e0d1eeb76c60",
+    "/index.html": "31077bae6c6610a29b0317cece7b6d2570c92a38",
+    "/main-O5KEPEAI.js": "7d9a2c5155a32e2a0251ef1335e8d199ebfa3a81",
     "/manifest.webmanifest": "6dc7467deb15788df0f268715d50016277f653b7",
     "/polyfills-5CFQRCPP.js": "f2241e9a25858f895ce299d15f6f22e849e2fd72",
     "/push-sw.js": "a988a9cd121c2f2cf1b4e945e1b013c01d5aa8b3",
