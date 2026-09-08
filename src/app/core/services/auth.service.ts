@@ -118,7 +118,10 @@ export class AuthService {
   logout(): void {
     // Révocation côté serveur en best-effort (invalide tokenVersion + refresh
     // tokens) : on ne bloque jamais la déconnexion locale sur son résultat.
-    this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({ error: () => {} });
+    // Inutile (et source d'un 401 systématique) s'il n'y a déjà plus de token.
+    if (localStorage.getItem('bs_token')) {
+      this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({ error: () => {} });
+    }
 
     this._isLoggedIn.set(false);
     this._company.set(null);

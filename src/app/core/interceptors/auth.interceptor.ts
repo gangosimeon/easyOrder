@@ -25,6 +25,19 @@ function isOwnApi(url: string): boolean {
   }
 }
 
+// Un 401 sur ces routes ne doit jamais déclencher de tentative de refresh :
+// - /auth/logout : c'est justement l'appel qui accompagne une déconnexion —
+//   le retenter en boucle via refreshToken()→logout()→/auth/logout est ce
+//   qui causait la boucle infinie.
+// - /auth/refresh, /auth/login, /auth/register : un 401 ici signifie
+//   respectivement un refresh token invalide, ou des identifiants
+//   incorrects — jamais une session à rafraîchir.
+const AUTH_ENDPOINTS_NO_RETRY = ['/auth/logout', '/auth/refresh', '/auth/login', '/auth/register'];
+
+function isAuthEndpointNoRetry(url: string): boolean {
+  return AUTH_ENDPOINTS_NO_RETRY.some(path => url.includes(path));
+}
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = localStorage.getItem('bs_token');
@@ -37,7 +50,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !isRefreshing) {
+      if (error.status === 401 && !isRefreshing && !isAuthEndpointNoRetry(req.url)) {
         isRefreshing = true;
         return authService.refreshToken().pipe(
           switchMap(() => {
