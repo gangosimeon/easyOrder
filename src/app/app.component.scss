@@ -508,6 +508,10 @@ $skel-white-gradient: linear-gradient(
   gap: 12px;
   padding: 0 16px 14px;
   background: #fff;
+
+  @media (max-width:768px ) {
+    padding: 0 5px 14px;
+  }
 }
 
 .mobile-shop-avatar {
@@ -790,6 +794,9 @@ $skel-white-gradient: linear-gradient(
 
 .main-content.with-topbar {
   .page-container { padding: 24px; }
+  @media (max-width:768px) {
+    .page-container { padding: 5px; }
+  }
 }
 
 .mobile-header { display: none; }
@@ -886,6 +893,10 @@ $skel-white-gradient: linear-gradient(
 
       .mobile-logo {
         padding-bottom: 0;
+      }
+
+      @media (max-width:768px) {
+        padding: 10px 5px;
       }
     }
 

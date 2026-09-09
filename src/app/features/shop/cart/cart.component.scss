@@ -241,6 +241,9 @@
   display: flex; flex-direction: column; gap: 0;
   padding: 12px 16px;
   background: white; border-bottom: 1px solid var(--border);
+  @media (max-width:768px) {
+    padding: 12px 0px;
+  }
 }
 
 .cart-item {
@@ -564,7 +567,7 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
-  .cart-item { gap: 8px; padding: 12px; }
+  .cart-item, .order-summary,.cart-actions, .wa-info, .cart-header { gap: 8px; padding: 12px 0; }
   .item-emoji { width: 44px; height: 44px; font-size: 28px; }
   .item-info .item-name { font-size: 13px; }
   .qty-value { font-size: 15px; }
