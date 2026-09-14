@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatFormFieldModule }       from '@angular/material/form-field';
@@ -12,6 +12,7 @@ import { AuthService }              from '../../core/services/auth.service';
 import { UploadService }            from '../../core/services/upload.service';
 import { ShopStatsService, ShopStats } from '../../core/services/shop-stats.service';
 import { RecoveryEmailService }     from '../../core/services/recovery-email.service';
+import { SeoService }               from '../../core/services/seo.service';
 import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
 
 @Component({
@@ -30,7 +31,7 @@ import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
   templateUrl: './profile.component.html',
   styleUrls:  ['./profile.component.scss'],
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   @ViewChild('logoFileRef') logoFileRef!: ElementRef<HTMLInputElement>;
 
   private auth          = inject(AuthService);
@@ -38,6 +39,7 @@ export class ProfileComponent implements OnInit {
   private fb            = inject(FormBuilder);
   private snackBar      = inject(MatSnackBar);
   private uploadService = inject(UploadService);
+  private seo           = inject(SeoService);
   private statsService  = inject(ShopStatsService);
   private recoveryEmailService = inject(RecoveryEmailService);
 
@@ -182,6 +184,9 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Page privée (tableau de bord commerçant) — jamais indexée, jamais suivie.
+    this.seo.setRobots('noindex,nofollow');
+
     const c = this.company();
     const existingLogo = c?.logo ?? '🏪';
     if (existingLogo.startsWith('data:image/') || existingLogo.startsWith('http')) {
@@ -388,5 +393,9 @@ export class ProfileComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     // Allow only digits
     input.value = input.value.replace(/\D/g, '');
+  }
+
+  ngOnDestroy(): void {
+    this.seo.setRobots('index,follow');
   }
 }

@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog }          from '@angular/material/dialog';
 import { MatIconModule }      from '@angular/material/icon';
 import { MatButtonModule }    from '@angular/material/button';
@@ -12,6 +12,7 @@ import { Annonce, AnnonceType, ANNONCE_TYPE_CONFIG } from '../../../models/annon
 import { AnnonceService }     from '../../../core/services/annonce.service';
 import { AuthService }        from '../../../core/services/auth.service';
 import { AnnonceFormComponent, AnnonceFormData } from '../annonce-form/annonce-form.component';
+import { SeoService } from '../../../core/services/seo.service';
 
 type FilterTab = 'toutes' | 'actives' | 'epinglees' | AnnonceType;
 
@@ -25,11 +26,21 @@ type FilterTab = 'toutes' | 'actives' | 'epinglees' | AnnonceType;
   templateUrl: './annonce-list.component.html',
   styleUrls:  ['./annonce-list.component.scss'],
 })
-export class AnnonceListComponent {
+export class AnnonceListComponent implements OnInit, OnDestroy {
   private annonceService = inject(AnnonceService);
   private authService    = inject(AuthService);
   private dialog         = inject(MatDialog);
   private snackBar       = inject(MatSnackBar);
+  private seo            = inject(SeoService);
+
+  ngOnInit(): void {
+    // Page privée (tableau de bord commerçant) — jamais indexée, jamais suivie.
+    this.seo.setRobots('noindex,nofollow');
+  }
+
+  ngOnDestroy(): void {
+    this.seo.setRobots('index,follow');
+  }
 
   readonly coverColor = computed(() => this.authService.company()?.coverColor ?? '');
 
