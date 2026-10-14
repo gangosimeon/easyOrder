@@ -1,0 +1,1 @@
+var r={production:!0,apiUrl:"/api",shareBaseUrl:"https://easyorder-backend-wnku.onrender.com",vapidPublicKey:"BOIprxwmxzEEhlqjl6xOrL5nT2spopdAh1uzsP9UqKPvwKjPIUsaQP3fNaZAR5_lCqJcagpx6qhRQIHJ2y-9B-o"};export{r as a};
