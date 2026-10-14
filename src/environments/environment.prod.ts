@@ -1,7 +1,6 @@
 export const environment = {
   production: true,
-  // apiUrl: 'http://localhost:4000/api',
-  apiUrl: 'https://easyorder-backend-wnku.onrender.com/api',
+  apiUrl: '/api',
   shareBaseUrl: 'https://easyorder-backend-wnku.onrender.com',
   // apiUrl:'https://api.jecreemaboutique.com/api',
   // shareBaseUrl: 'http://localhost:4000',
