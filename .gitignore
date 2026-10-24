@@ -30,3 +30,8 @@ coverage/
 # Fichiers temporaires
 tmp/
 temp/
+
+# Vidéos /brag générées
+/brag-output/
+/brag-output-desktop/
+/brag-output-v3/
