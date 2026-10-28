@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 
 export interface RecoveryEmailRequest {
   email: string;
+  currentPassword: string;
 }
 
 export interface VerifyRecoveryEmailRequest {
@@ -25,12 +26,11 @@ export class RecoveryEmailService {
 
   constructor(private http: HttpClient) {}
 
-  // Ajouter un email de récupération et envoyer OTP
-  addRecoveryEmail(email: string): Observable<RecoveryEmailResponse> {
-    return this.http.post<RecoveryEmailResponse>(
-      `${this.apiUrl}/user/recovery-email`,
-      { email }
-    );
+  // Demander un email de récupération (mot de passe actuel exigé) et envoyer l'OTP.
+  // L'email ne remplace l'actuel qu'après vérification du code.
+  addRecoveryEmail(email: string, currentPassword: string): Observable<RecoveryEmailResponse> {
+    const body: RecoveryEmailRequest = { email, currentPassword };
+    return this.http.post<RecoveryEmailResponse>(`${this.apiUrl}/user/recovery-email`, body);
   }
 
   // Vérifier l'OTP pour l'email de récupération

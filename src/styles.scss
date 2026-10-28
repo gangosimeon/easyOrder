@@ -163,3 +163,7 @@ body {
 }
 
 @media (max-width: 768px) { html { font-size: 15px; } }
+
+/* Champ piège anti-robot des formulaires publics : hors écran plutôt que display:none,
+   que certains robots savent ignorer. */
+.hp-field { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; }

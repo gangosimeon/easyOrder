@@ -190,11 +190,15 @@
           />
         </div>
 
+        <!-- Champ piège anti-robot : invisible et ignoré par les humains -->
+        <input class="hp-field" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"
+               [value]="honeypot()" (input)="honeypot.set($any($event.target).value)" />
+
         <!-- Erreur API -->
         @if (orderService.submitError()) {
           <div class="form-error">
-            <mat-icon>wifi_off</mat-icon>
-            {{ orderService.submitError() }} — WhatsApp s'ouvrira quand même.
+            <mat-icon>error_outline</mat-icon>
+            {{ orderService.submitError() }}
           </div>
         }
 

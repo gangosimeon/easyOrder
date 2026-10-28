@@ -33,6 +33,7 @@ export class CartDrawerComponent {
   readonly countryCode   = signal('226');
   readonly customerNote  = signal('');
   readonly submitted     = signal(false);
+  readonly honeypot      = signal('');   // champ caché anti-robot
 
   onPhoneChange(val: string): void {
     this.customerPhone.set(val);
@@ -72,30 +73,25 @@ export class CartDrawerComponent {
     const items   = this.cartItems();
     if (!company || items.length === 0 || !this.formValid) return;
 
-    const fullPhone = this.countryCode() + this.customerPhone();
-
     this.orderService
-      .createOrderFromCart(this.customerName(), fullPhone, items, company.slug,
-        { note: this.customerNote(), whatsappSent: true })
-      .subscribe({
-        next:  () => this.afterOrder(items, company),
-        error: () => {
-          this.snack('⚠️ Hors-ligne : commande sauvegardée localement');
-          this.afterOrder(items, company);
-        },
+      .checkout(items, company, {
+        customerName:  this.customerName().trim(),
+        customerPhone: this.countryCode() + this.customerPhone(),
+        note:          this.customerNote(),
+        website:       this.honeypot(),
+      })
+      .subscribe(outcome => {
+        if (outcome.status === 'rejected') return;   // message affiché par submitError
+        this.snack(outcome.status === 'saved'
+          ? `✅ Commande ${outcome.reference} enregistrée`
+          : '📶 Connexion faible : commande gardée sur cet appareil, elle sera envoyée automatiquement');
+        this.cartService.clearCart();
+        this.showOrderForm.set(false);
+        this.drawerService.close();
       });
   }
 
-  private afterOrder(items: CartItem[], company: { phone: string; fullPhone?: string; name: string }): void {
-    this.snack('✅ Commande enregistrée !');
-    const phone = (company.fullPhone ?? company.phone).replace(/\D/g, '');
-    window.open(this.orderService.buildWhatsAppUrl(phone, items, company.name), '_blank');
-    this.cartService.clearCart();
-    this.showOrderForm.set(false);
-    this.drawerService.close();
-  }
-
   private snack(msg: string): void {
-    this.snackBar.open(msg, '', { duration: 2500, horizontalPosition: 'center', verticalPosition: 'top' });
+    this.snackBar.open(msg, '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top' });
   }
 }

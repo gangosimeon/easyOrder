@@ -94,6 +94,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   otpForm!: FormGroup;
   recoveryEmail = signal<string | null>(null);
   recoveryEmailVerified = signal<boolean>(false);
+  // Gardé en mémoire le temps de la vérification, pour « Renvoyer le code »
+  // sans redemander le mot de passe. Jamais persisté.
+  private recoveryPassword: string | null = null;
   recoveryLoading = signal<boolean>(false);
   otpLoading = signal<boolean>(false);
   showOtpModal = signal<boolean>(false);
@@ -206,6 +209,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     // Initialize recovery email forms
     this.recoveryEmailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      currentPassword: ['', Validators.required],
     });
 
     this.otpForm = this.fb.group({
@@ -219,9 +223,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     // Note: This data should come from the API when user profile is loaded
     // For now, we'll initialize with empty values
     // TODO: Update Company type to include recoveryEmail and recoveryEmailVerified
+    // Un email en attente de vérification est affiché à la place de l'email
+    // vérifié (qui reste actif côté serveur jusqu'à validation du nouveau).
     const companyData = c as any;
-    this.recoveryEmail.set(companyData?.recoveryEmail ?? null);
-    this.recoveryEmailVerified.set(companyData?.recoveryEmailVerified ?? false);
+    const pending = companyData?.pendingRecoveryEmail ?? null;
+    this.recoveryEmail.set(pending ?? companyData?.recoveryEmail ?? null);
+    this.recoveryEmailVerified.set(!pending && (companyData?.recoveryEmailVerified ?? false));
   }
 
   setLogoMode(mode: 'emoji' | 'upload'): void { this.logoMode.set(mode); }
@@ -309,11 +316,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     const email = this.recoveryEmailForm.get('email')?.value;
+    const currentPassword = this.recoveryEmailForm.get('currentPassword')?.value;
     this.recoveryLoading.set(true);
 
-    this.recoveryEmailService.addRecoveryEmail(email).subscribe({
+    this.recoveryEmailService.addRecoveryEmail(email, currentPassword).subscribe({
       next: (response) => {
         this.recoveryLoading.set(false);
+        this.recoveryPassword = currentPassword;
         this.recoveryEmail.set(email);
         this.recoveryEmailVerified.set(false);
         this.recoveryEmailForm.reset();
@@ -337,9 +346,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   onResendOtp(): void {
     if (!this.recoveryEmail()) return;
+    if (!this.recoveryPassword) {
+      // Page rechargée depuis la demande : le mot de passe doit être ressaisi.
+      this.recoveryEmailForm.patchValue({ email: this.recoveryEmail() });
+      this.recoveryEmail.set(null);
+      this.snackBar.open('Saisissez à nouveau votre mot de passe pour recevoir un nouveau code', 'OK', { duration: 5000 });
+      return;
+    }
 
     this.recoveryLoading.set(true);
-    this.recoveryEmailService.addRecoveryEmail(this.recoveryEmail()!).subscribe({
+    this.recoveryEmailService.addRecoveryEmail(this.recoveryEmail()!, this.recoveryPassword).subscribe({
       next: (response) => {
         this.recoveryLoading.set(false);
         this.snackBar.open('Code OTP renvoyé', 'OK', { duration: 5000 });
@@ -371,6 +387,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.otpLoading.set(false);
         this.recoveryEmailVerified.set(true);
+        this.recoveryPassword = null;
         this.showOtpModal.set(false);
         this.otpForm.reset();
         this.snackBar.open(response.message, 'OK', { duration: 5000 });

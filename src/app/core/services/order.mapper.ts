@@ -18,6 +18,7 @@ export interface CreateOrderInput {
   total: number;
   note?: string;
   whatsappSent: boolean;
+  website?: string;   // champ piège anti-robot (doit rester vide)
 }
 
 export interface OrderValidationError {
@@ -81,6 +82,7 @@ export interface MapCartToOrderOptions {
   customerName?: string;
   customerPhone?: string;
   note?: string;
+  website?: string;
   whatsappSent: boolean;
 }
 
@@ -122,6 +124,7 @@ export function mapCartToCreateOrderInput(
     total,
     note: options.note?.trim() || undefined,
     whatsappSent: options.whatsappSent,
+    website: options.website ?? '',
   };
 
   // 5. Validation finale

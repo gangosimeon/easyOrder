@@ -304,6 +304,16 @@
           }
         </mat-form-field>
 
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe actuel</mat-label>
+          <input matInput formControlName="currentPassword" type="password" autocomplete="current-password" />
+          <mat-icon matPrefix>lock</mat-icon>
+          <mat-hint>Requis pour protéger votre compte</mat-hint>
+          @if (recoveryEmailForm.get('currentPassword')?.hasError('required') && recoveryEmailForm.get('currentPassword')?.touched) {
+            <mat-error>Le mot de passe est requis</mat-error>
+          }
+        </mat-form-field>
+
         <button type="submit" mat-raised-button class="btn-add-recovery"
                 [disabled]="recoveryEmailForm.invalid || recoveryLoading()"
                 [style.background]="selectedColor()" style="color:white">

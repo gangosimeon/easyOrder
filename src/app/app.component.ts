@@ -16,6 +16,7 @@ import { ProductService } from './core/services/product.service';
 import { CategoryService } from './core/services/category.service';
 import { PushNotificationService } from './core/services/push-notification.service';
 import { ThemeService } from './core/services/theme.service';
+import { OrderService } from './core/services/order.service';
 
 interface NavItem {
   label: string;
@@ -44,11 +45,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly categoryService = inject(CategoryService);
   private readonly pushService = inject(PushNotificationService);
   private readonly themeService = inject(ThemeService);
+  private readonly orderService = inject(OrderService);
   readonly cartCount = toSignal(this.cartService.items$.pipe(map(items => items.length)), { initialValue: 0 });
   readonly pendingOrdersCount = computed(() =>
     this.ordersService.orders().filter(o => o.status === 'pending').length
   );
   private visibilityHandler?: () => void;
+  private readonly onlineHandler = () => this.orderService.retryPending();
 
   readonly isPublicRoute = signal(
     window.location.pathname.startsWith('/shop/') || window.location.pathname.startsWith('/cart')
@@ -147,6 +150,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Commandes d'acheteurs gardées sur l'appareil faute de réseau : renvoi au
+    // démarrage puis à chaque retour de connexion.
+    this.orderService.retryPending();
+    window.addEventListener('online', this.onlineHandler);
+
     // Initialiser les push notifications si l'utilisateur est déjà connecté
     if (this.authService.isLoggedIn()) {
       this.pushService.init();
@@ -178,6 +186,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.visibilityHandler) {
       document.removeEventListener('visibilitychange', this.visibilityHandler);
     }
+    window.removeEventListener('online', this.onlineHandler);
     clearInterval(this.bannerTimer);
     this.headerResizeObserver?.disconnect();
   }
