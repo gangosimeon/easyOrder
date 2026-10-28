@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, catchError, of, tap, interval, switchMap, startWith, Subject } from 'rxjs';
+import { Observable, Subject, catchError, debounceTime, distinctUntilChanged, interval, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 // ── Types ───────────────────────────────────────────────────────────────────
@@ -54,6 +54,11 @@ export interface JWTPayload {
   slug: string;
 }
 
+/** Identifiant d'une commande : `_id` est renommé en `id` par apiResponseInterceptor. */
+export function orderKey(order: Order): string {
+  return (order as unknown as { id?: string }).id ?? order._id;
+}
+
 // ── Service ──────────────────────────────────────────────────────────────────
 
 @Injectable({ providedIn: 'root' })
@@ -68,43 +73,57 @@ export class ShopOrdersService {
   readonly totalCount = signal(0);
   readonly currentPage = signal(1);
   readonly pageSize = 20;
-  readonly hasMore = signal(true);
+  readonly hasMore = computed(() => this.orders().length < this.totalCount());
 
-  private refreshTrigger = new Subject<void>();
   private pollingInterval = 30000; // 30 seconds
-
-  // ── Computed ─────────────────────────────────────────────────────────────
-
-  readonly filteredOrders = computed(() => {
-    const orders = this.orders();
-    const search = this.searchQuery().toLowerCase();
-    const status = this.statusFilter();
-
-    return orders.filter(order => {
-      // Search filter
-      if (search) {
-        const matchName = order.customerName?.toLowerCase().includes(search) ?? false;
-        const matchPhone = order.customerPhone?.includes(search) ?? false;
-        if (!matchName && !matchPhone) return false;
-      }
-
-      // Status filter
-      if (status && order.status !== status) return false;
-
-      return true;
-    });
-  });
-
-  readonly displayCount = computed(() => this.filteredOrders().length);
+  /** Chaque nouvelle demande de page annule la précédente (recherche tapée vite, rechargement). */
+  private pageRequests = new Subject<{ page: number; reset: boolean }>();
+  private searchInput = new Subject<string>();
 
   // ── Filters ─────────────────────────────────────────────────────────────
 
   readonly searchQuery = signal('');
   readonly statusFilter = signal<'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' | ''>('');
 
+  // ── Computed ─────────────────────────────────────────────────────────────
+
+  // La recherche est faite par le serveur (sur toutes les commandes) ; seul le
+  // filtre de statut reste appliqué localement.
+  readonly filteredOrders = computed(() => {
+    const status = this.statusFilter();
+    return status ? this.orders().filter(order => order.status === status) : this.orders();
+  });
+
+  readonly displayCount = computed(() => this.filteredOrders().length);
+
   // ── Initialization ───────────────────────────────────────────────────────
 
   constructor() {
+    this.pageRequests.pipe(
+      switchMap(({ page, reset }) => this.fetchPage(page).pipe(
+        tap(res => {
+          const incoming = res.data || [];
+          this.orders.update(existing => (reset ? incoming : this.appendUnique(existing, incoming)));
+          this.currentPage.set(res.pagination.page);
+          this.totalCount.set(res.pagination.total);
+          this.loading.set(false);
+        }),
+        catchError(() => {
+          this.error.set('Erreur lors du chargement des commandes');
+          this.loading.set(false);
+          return of(null);
+        }),
+      )),
+    ).subscribe();
+
+    this.searchInput.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+    ).subscribe(query => {
+      this.searchQuery.set(query);
+      this.loadOrders(true);
+    });
+
     // Wait for token to be available before loading orders
     const token = localStorage.getItem('bs_token');
     if (token) {
@@ -122,55 +141,45 @@ export class ShopOrdersService {
 
   // ── Load Orders ─────────────────────────────────────────────────────────
 
-  loadOrders(reset = false): void {
+  /** Recharge depuis la page 1 (le paramètre est conservé pour les appels existants). */
+  loadOrders(_reset = true): void {
     this.error.set(null);
-    if (reset) {
-      this.currentPage.set(1);
-      this.orders.set([]);
-      this.hasMore.set(true);
-    }
-
     this.loading.set(true);
-    this.error.set(null);
-
-    const params = new HttpParams()
-      .set('page', this.currentPage().toString())
-      .set('limit', this.pageSize.toString());
-
-    this.http
-      .get<PaginatedResponse>(`${environment.apiUrl}/orders`, { params })
-      .pipe(
-        tap(res => {
-          const newOrders = res.data || [];
-          this.orders.update(existing => (reset ? newOrders : [...existing, ...newOrders]));
-          this.currentPage.set(res.pagination.page);
-          this.hasMore.set(newOrders.length === this.pageSize);
-          this.totalCount.set(res.pagination.total);
-          this.loading.set(false);
-        }),
-        catchError(err => {
-          this.error.set('Erreur lors du chargement des commandes');
-          this.loading.set(false);
-          return of(null);
-        }),
-      )
-      .subscribe();
+    this.pageRequests.next({ page: 1, reset: true });
   }
 
+  /** Bouton « Charger plus » : page suivante, ajoutée à la suite de la liste. */
   loadNext(): void {
     if (!this.hasMore() || this.loading()) return;
-    this.currentPage.set(this.currentPage() + 1);
-    this.loadOrders(false);
+    this.error.set(null);
+    this.loading.set(true);
+    this.pageRequests.next({ page: this.currentPage() + 1, reset: false });
   }
 
   reload(): void {
     this.loadOrders(true);
   }
 
+  private fetchPage(page: number): Observable<PaginatedResponse> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', this.pageSize.toString());
+    const search = this.searchQuery().trim();
+    if (search) params = params.set('search', search);
+    return this.http.get<PaginatedResponse>(`${environment.apiUrl}/orders`, { params });
+  }
+
+  /** Ajoute une page en ignorant les commandes déjà présentes (une nouvelle commande décale les pages). */
+  private appendUnique(existing: Order[], incoming: Order[]): Order[] {
+    const known = new Set(existing.map(orderKey));
+    return [...existing, ...incoming.filter(o => !known.has(orderKey(o)))];
+  }
+
   // ── Filter Actions ─────────────────────────────────────────────────────
 
+  /** Recherche côté serveur, déclenchée 400 ms après la dernière frappe. */
   onSearchChange(query: string): void {
-    this.searchQuery.set(query);
+    this.searchInput.next(query.trim());
   }
 
   onStatusChange(status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' | ''): void {
@@ -178,38 +187,38 @@ export class ShopOrdersService {
   }
 
   clearFilters(): void {
-    this.searchQuery.set('');
     this.statusFilter.set('');
+    this.searchInput.next('');
   }
 
   // ── Auto Refresh (Polling) ───────────────────────────────────────────────
 
+  /**
+   * Toutes les 30 s : récupère la première page et fusionne — nouvelles
+   * commandes ajoutées en haut, commandes connues mises à jour — sans toucher
+   * aux pages déjà chargées ni ramener le commerçant en haut de la liste.
+   */
   private setupAutoRefresh(): void {
-    // Auto-refresh every 30 seconds when page is visible
     interval(this.pollingInterval).pipe(
       switchMap(() => {
-        if (document.hidden) return of(null);
-        const token = localStorage.getItem('bs_token');
-        if (!token) return of(null);
-        this.refreshTrigger.next();
-        return this.http.get<PaginatedResponse>(`${environment.apiUrl}/orders`, {
-          params: new HttpParams().set('page', '1').set('limit', this.pageSize.toString()),
-        });
+        if (document.hidden || !localStorage.getItem('bs_token')) return of(null);
+        // Une erreur ponctuelle (réseau) ne doit pas arrêter l'actualisation.
+        return this.fetchPage(1).pipe(catchError(() => of(null)));
       }),
-      tap(res => {
-        if (res) {
-          this.orders.set(res.data || []);
-          this.totalCount.set(res.pagination.total);
-        }
-      }),
-      catchError(err => {
-        return of(null);
-      }),
-    ).subscribe();
+    ).subscribe(res => {
+      if (!res) return;
+      const fresh = res.data || [];
+      const freshById = new Map(fresh.map(o => [orderKey(o), o]));
+      this.orders.update(existing => {
+        const known = new Set(existing.map(orderKey));
+        const added = fresh.filter(o => !known.has(orderKey(o)));
+        return [...added, ...existing.map(o => freshById.get(orderKey(o)) ?? o)];
+      });
+      this.totalCount.set(res.pagination.total);
+    });
   }
 
   manualRefresh(): void {
-    this.refreshTrigger.next();
     this.reload();
   }
 
@@ -219,7 +228,7 @@ export class ShopOrdersService {
     return this.http.patch<Order>(`${environment.apiUrl}/orders/${orderId}`, { status }).pipe(
       tap(updatedOrder => {
         this.orders.update(orders =>
-          orders.map(o => (o._id === orderId ? { ...o, ...updatedOrder } : o)),
+          orders.map(o => (orderKey(o) === orderId ? { ...o, ...updatedOrder } : o)),
         );
       }),
       catchError(err => {

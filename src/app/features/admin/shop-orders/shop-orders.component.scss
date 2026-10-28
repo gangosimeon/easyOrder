@@ -185,6 +185,24 @@
   padding: 20px;
 }
 
+.load-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 10px 20px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 12px;
+  background: #fff;
+  color: #374151;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:active { transform: scale(0.98); }
+}
+
 .end-list {
   text-align: center;
   padding: 24px;

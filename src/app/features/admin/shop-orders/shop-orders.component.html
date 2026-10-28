@@ -1,4 +1,4 @@
-<div class="shop-orders-container" (scroll)="onScroll($event)">
+<div class="shop-orders-container">
   <!-- Header -->
   <div class="orders-header">
     <h1 class="page-title">Mes Commandes</h1>
@@ -68,8 +68,17 @@
     </div>
   }
 
+  <!-- Recherche sans résultat (la recherche porte sur toutes les commandes) -->
+  @if (!loading() && orders().length === 0 && searchValue) {
+    <div class="no-results">
+      <mat-icon class="no-results-icon">search_off</mat-icon>
+      <p>Aucune commande ne correspond à « {{ searchValue }} »</p>
+      <button class="reset-btn" (click)="clearFilters()">Effacer la recherche</button>
+    </div>
+  }
+
   <!-- Empty State -->
-  @if (!loading() && orders().length === 0) {
+  @if (!loading() && orders().length === 0 && !searchValue) {
     <div class="empty-state">
       <mat-icon class="empty-icon">receipt_long</mat-icon>
       <h2>Aucune commande</h2>
@@ -99,15 +108,22 @@
       }
     </div>
 
-    <!-- Load More Indicator -->
+    <!-- Charger plus -->
     @if (loading()) {
       <div class="loading-more">
         <mat-spinner diameter="24" strokeWidth="3" />
       </div>
+    } @else if (hasMore()) {
+      <div class="loading-more">
+        <button class="load-more-btn" (click)="loadNext()">
+          <mat-icon>expand_more</mat-icon>
+          Charger plus ({{ orders().length }} / {{ totalCount() }})
+        </button>
+      </div>
     }
 
     <!-- End of List -->
-    @if (!hasMore() && filteredOrders().length > 0) {
+    @if (!loading() && !hasMore() && filteredOrders().length > 0) {
       <div class="end-list">
         <span>Fin des commandes</span>
       </div>

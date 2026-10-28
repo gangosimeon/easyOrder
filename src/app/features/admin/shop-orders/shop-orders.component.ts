@@ -57,22 +57,10 @@ export class ShopOrdersComponent implements OnInit {
     // Orders loaded automatically by service constructor
   }
 
-  // ── Load More (Infinite Scroll) ────────────────────────────────────────
+  // ── Load More ─────────────────────────────────────────────────────────
 
   loadNext(): void {
     this.ordersService.loadNext();
-  }
-
-  onScroll(event: Event): void {
-    const element = event.target as HTMLElement;
-    const scrollTop = element.scrollTop;
-    const scrollHeight = element.scrollHeight;
-    const clientHeight = element.clientHeight;
-
-    // Load more when 100px from bottom
-    if (scrollHeight - scrollTop - clientHeight < 100) {
-      this.loadNext();
-    }
   }
 
   // ── Filter Actions ─────────────────────────────────────────────────────
@@ -116,12 +104,16 @@ export class ShopOrdersComponent implements OnInit {
     this.selectedOrder.set(null);
   }
 
+  // Le service met la commande à jour dans la liste : pas de rechargement
+  // complet, qui renverrait le commerçant en haut de la liste.
   onStatusChangedFromDrawer(data: { orderId: string; status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' }): void {
-    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe(() => this.manualRefresh());
+    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe(updated => {
+      this.selectedOrder.update(o => (o ? { ...o, ...updated } : o));
+    });
   }
 
   onChangeStatus(data: { orderId: string; status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled' }): void {
-    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe(() => this.manualRefresh());
+    this.ordersService.updateOrderStatus(data.orderId, data.status).subscribe();
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────
