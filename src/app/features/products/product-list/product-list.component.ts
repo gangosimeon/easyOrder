@@ -19,6 +19,7 @@ import { AuthService }           from '../../../core/services/auth.service';
 import { ProductFormComponent, ProductFormData } from '../product-form/product-form.component';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { ProductDetailModalComponent } from '../../../shared/product-detail-modal/product-detail-modal.component';
+import { productShareUrl, shareLink } from '../../../core/utils/share-url.util';
 
 @Component({
   selector: 'app-product-list',
@@ -159,6 +160,14 @@ export class ProductListComponent implements OnInit {
       });
     });
   }
+  /** Lien direct vers ce produit, avec aperçu (photo, nom, prix) sur WhatsApp et Facebook. */
+  shareProduct(product: Product, e: MouseEvent): void {
+    e.stopPropagation();
+    const slug = this.authService.company()?.slug;
+    if (!slug) return;
+    shareLink(product.name, `${product.name} — ${this.fmt(product.price)}`, productShareUrl(slug, product.id));
+  }
+
   duplicateProduct(product: Product, e: MouseEvent): void {
     e.stopPropagation();
     const category = this.getCategoryFor(product);

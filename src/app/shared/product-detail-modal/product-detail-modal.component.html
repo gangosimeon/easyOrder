@@ -7,6 +7,11 @@
 
     <!-- Fixed header: stays put while the body below scrolls -->
     <div class="pd-modal-header">
+      @if (buyerActions) {
+        <button class="pd-share" (click)="onShare()" aria-label="Partager ce produit">
+          <mat-icon>share</mat-icon>
+        </button>
+      }
       <button class="pd-close" (click)="close()" aria-label="Fermer">
         <mat-icon>close</mat-icon>
       </button>
@@ -118,10 +123,20 @@
                 class="pd-btn-cart"
                 (click)="addToCart()"
                 [disabled]="!product.inStock"
-                [style.background]="product.inStock ? accentColor : '#9ca3af'"
+                [class.pd-btn-cart--secondary]="buyerActions && product.inStock"
+                [style.background]="buyerActions && product.inStock ? '#fff' : (product.inStock ? accentColor : '#9ca3af')"
+                [style.color]="buyerActions && product.inStock ? accentColor : null"
+                [style.border-color]="buyerActions && product.inStock ? accentColor : null"
               >
                 <mat-icon>{{ addedFeedback() ? 'check_circle' : 'shopping_cart' }}</mat-icon>
-                {{ addedFeedback() ? 'Ajouté !' : 'Ajouter au panier' }}
+                {{ addedFeedback() ? 'Ajouté !' : (buyerActions ? 'Ajouter' : 'Ajouter au panier') }}
+              </button>
+            }
+
+            @if (buyerActions && product.inStock) {
+              <button class="pd-btn-order" (click)="onOrderNow()" [style.background]="accentColor">
+                <mat-icon>bolt</mat-icon>
+                Commander
               </button>
             }
           </div>

@@ -109,6 +109,13 @@ export class PublicShopService {
     );
   }
 
+  /** Un produit précis (lien partagé `?p=`), même s'il n'est pas dans la page déjà chargée. */
+  getProduct(slug: string, productId: string): Observable<Product> {
+    return this.http
+      .get<Product>(`${this.apiUrl}/public/shop/${slug}/products/${encodeURIComponent(productId)}`)
+      .pipe(map(pr => ({ ...pr, createdAt: new Date(pr.createdAt) })));
+  }
+
   getShopsList(params: ShopsListParams = {}): Observable<ShopsListResponse> {
     let p = new HttpParams();
     if (params.search)                  p = p.set('search',      params.search);

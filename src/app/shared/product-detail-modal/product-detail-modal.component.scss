@@ -461,3 +461,46 @@
     padding: 12px 40px 32px 20px;
   }
 }
+
+// ── Boutique publique : partager / commander ────────────────────────────────
+.pd-share {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
+.pd-btn-cart--secondary {
+  border: 2px solid;
+}
+
+.pd-btn-order {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+  &:active { transform: scale(0.97); }
+}

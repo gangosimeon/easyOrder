@@ -26,7 +26,12 @@ export class ProductDetailModalComponent {
   @Input() set coverColor(val: string | undefined) { this._coverColor.set(val); }
   get coverColor(): string | undefined { return this._coverColor(); }
 
+  /** Boutique publique : affiche « Partager » et « Commander ». Désactivé côté commerçant. */
+  @Input() buyerActions = false;
+
   @Output() closed = new EventEmitter<void>();
+  @Output() share = new EventEmitter<Product>();
+  @Output() orderNow = new EventEmitter<Product>();
 
   private cartService = inject(CartService);
   private cartItems = toSignal(this.cartService.items$, { initialValue: [] });
@@ -59,6 +64,16 @@ export class ProductDetailModalComponent {
     const p = this._product();
     if (!p) return;
     this.cartService.updateQuantity(p.id, this.cartQuantity() - 1);
+  }
+
+  onShare(): void {
+    const p = this._product();
+    if (p) this.share.emit(p);
+  }
+
+  onOrderNow(): void {
+    const p = this._product();
+    if (p?.inStock) this.orderNow.emit(p);
   }
 
   close(): void {

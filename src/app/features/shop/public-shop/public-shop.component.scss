@@ -862,6 +862,28 @@ $skel-gradient: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
     box-shadow: 0 2px 6px rgba(37, 211, 102, 0.4);
   }
 
+  // Partage d'un produit depuis la grille (lien `?p=` avec aperçu)
+  .card-share-btn {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    z-index: 3;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.92);
+    color: #374151;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    &:active { transform: scale(0.92); }
+  }
+
   .check-indicator {
     position: absolute;
     top: 8px;

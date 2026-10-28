@@ -224,6 +224,10 @@
                 @if (product.inStock === false) {
                   <div class="out-badge">Épuisé</div>
                 }
+                <button type="button" class="card-share-btn" aria-label="Partager ce produit"
+                        (click)="$event.stopPropagation(); shareProduct(product)">
+                  <mat-icon>share</mat-icon>
+                </button>
               </div>
 
               <!-- Info -->
@@ -317,6 +321,9 @@
     [product]="selectedDetailProduct()"
     [category]="getCategoryFor(selectedDetailProduct())"
     [coverColor]="company()?.coverColor"
+    [buyerActions]="true"
+    (share)="shareProduct($event)"
+    (orderNow)="orderProductNow($event)"
     (closed)="closeProductDetail()">
   </app-product-detail-modal>
 

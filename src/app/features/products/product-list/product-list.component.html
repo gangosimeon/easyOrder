@@ -87,6 +87,9 @@
         }
 
         <div class="card-actions">
+          <button class="action-btn share" (click)="shareProduct(product, $event)" matTooltip="Partager" aria-label="Partager ce produit">
+            <mat-icon>share</mat-icon>
+          </button>
           <button class="action-btn edit"   (click)="openEditDialog(product, $event)" matTooltip="Modifier">
             <mat-icon>edit</mat-icon>
           </button>

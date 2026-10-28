@@ -21,6 +21,7 @@ import { HttpClient } from '@angular/common/http';
 import { VisitorService } from '../../../core/services/visitor.service';
 import { environment } from '../../../../environments/environment';
 import { cloudinaryThumb } from '../../../core/utils/cloudinary.util';
+import { productShareUrl, shareLink, shopShareUrl } from '../../../core/utils/share-url.util';
 registerLocaleData(localeFr);
 
 @Component({
@@ -119,10 +120,54 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   openProductDetail(product: Product, e: MouseEvent): void {
     e.stopPropagation();
     this.selectedDetailProduct.set(product);
+    this.setProductInUrl(product.id);
   }
 
   closeProductDetail(): void {
     this.selectedDetailProduct.set(null);
+    this.setProductInUrl(null);
+  }
+
+  /**
+   * Reflète le produit ouvert dans l'URL (`?p=`) : l'adresse copiée depuis le
+   * navigateur pointe alors sur ce produit, comme le lien de partage.
+   */
+  private setProductInUrl(productId: string | null): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { p: productId },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  /** Lien partagé `/shop/:slug?p=:id` : ouvre la fiche, en la chargeant si elle n'est pas dans la 1re page. */
+  private openSharedProduct(slug: string): void {
+    const productId = this.route.snapshot.queryParamMap.get('p');
+    if (!productId) return;
+    const loaded = this.allProducts().find(p => p.id === productId);
+    if (loaded) {
+      this.selectedDetailProduct.set(loaded);
+      return;
+    }
+    this.shopService.getProduct(slug, productId).subscribe({
+      next: product => this.selectedDetailProduct.set(product),
+      error: () => this.setProductInUrl(null),   // produit supprimé : on reste sur la boutique
+    });
+  }
+
+  shareProduct(product: Product): void {
+    const slug = this.company()?.slug;
+    if (!slug) return;
+    shareLink(product.name, `${product.name} — ${this.formatPrice(product.price)}`, productShareUrl(slug, product.id));
+  }
+
+  /** « Commander » depuis la fiche : ajoute le produit s'il n'est pas déjà au panier, puis ouvre la commande. */
+  orderProductNow(product: Product): void {
+    if (!product.inStock) return;
+    if (this.cartService.getItemQuantity(product.id) === 0) this.cartService.addProduct(product);
+    this.closeProductDetail();
+    this.goToCart();
   }
 
   getCategoryFor(product: Product | null) {
@@ -244,6 +289,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loading.set(false);
         this.trackVisit(data.company.id, source);
         this.updateOgTags(data);
+        this.openSharedProduct(slug);
       },
       error: () => {
         this.error.set('Boutique introuvable ou erreur de chargement.');
@@ -370,7 +416,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getShareUrl(slug: string): string {
-    return `https://www.jecreemaboutique.com/shop/${slug}`;
+    return shopShareUrl(slug);
   }
 
   shareShop(): void {

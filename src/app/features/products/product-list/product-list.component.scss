@@ -286,6 +286,15 @@
         color: white;
       }
     }
+
+    &.share {
+      background: rgba(255, 255, 255, 0.9);
+      color: #25d366;
+      &:hover {
+        background: #25d366;
+        color: white;
+      }
+    }
   }
 }
 
