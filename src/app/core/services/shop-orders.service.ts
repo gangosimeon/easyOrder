@@ -24,6 +24,8 @@ export interface Order {
   status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
   whatsappSent: boolean;
   note?: string;
+  deliveryMode?: 'delivery' | 'pickup';   // absent sur les anciennes commandes
+  deliveryAddress?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -239,6 +241,8 @@ export class ShopOrdersService {
       `🛒 *Commande #${orderId.slice(-6)}*\n` +
       `Client : ${order.customerName}\n` +
       `Tél : ${order.customerPhone}\n` +
+      (order.deliveryMode === 'delivery' ? `Livraison : ${order.deliveryAddress}\n` : '') +
+      (order.deliveryMode === 'pickup' ? `Retrait en boutique\n` : '') +
       `━━━━━━━━━━━━━━━━━━\n` +
       `${lines}\n` +
       `━━━━━━━━━━━━━━━━━━\n` +

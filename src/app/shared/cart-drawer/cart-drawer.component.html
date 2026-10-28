@@ -112,16 +112,44 @@
 
             <label class="cd-label">Numéro WhatsApp</label>
             <app-phone-input [ngModel]="customerPhone()"
+                             [defaultDialCode]="company()?.countryCode"
                              (ngModelChange)="onPhoneChange($event)"
                              (countryCodeChange)="countryCode.set($event)" />
             @if (submitted() && !isPhoneValid) {
               <span class="cd-phone-error">Numéro invalide pour le pays sélectionné</span>
             }
 
+            <!-- Livraison ou retrait -->
+            <span class="cd-label">Réception</span>
+            <div class="delivery-toggle" role="radiogroup" aria-label="Mode de réception">
+              <button type="button" role="radio" class="delivery-option" [class.active]="deliveryMode() === 'delivery'"
+                      [attr.aria-checked]="deliveryMode() === 'delivery'" (click)="deliveryMode.set('delivery')">
+                <mat-icon>two_wheeler</mat-icon> Livraison
+              </button>
+              <button type="button" role="radio" class="delivery-option" [class.active]="deliveryMode() === 'pickup'"
+                      [attr.aria-checked]="deliveryMode() === 'pickup'" (click)="deliveryMode.set('pickup')">
+                <mat-icon>storefront</mat-icon> Retrait en boutique
+              </button>
+            </div>
+
+            @if (deliveryMode() === 'delivery') {
+              <label class="cd-label" for="cd-input-address">Quartier et point de repère</label>
+              <div class="cd-input-wrap" [class.filled]="deliveryAddress().length > 0">
+                <mat-icon class="cd-input-icon">location_on</mat-icon>
+                <input id="cd-input-address" class="cd-input" type="text" maxlength="200"
+                       placeholder="Ex : Patte d'Oie, près de la pharmacie"
+                       autocomplete="street-address" [value]="deliveryAddress()"
+                       (input)="deliveryAddress.set($any($event.target).value)" />
+              </div>
+              @if (submitted() && !isAddressValid) {
+                <span class="cd-phone-error">Indiquez votre quartier ou un point de repère</span>
+              }
+            }
+
             <label class="cd-label">Note (optionnel)</label>
             <div class="cd-input-wrap" [class.filled]="customerNote().length > 0">
               <mat-icon class="cd-input-icon">edit_note</mat-icon>
-              <input class="cd-input" type="text" placeholder="Livraison, adresse, heure…"
+              <input class="cd-input" type="text" placeholder="Heure souhaitée, précisions…"
                      [value]="customerNote()"
                      (input)="customerNote.set($any($event.target).value)" />
             </div>

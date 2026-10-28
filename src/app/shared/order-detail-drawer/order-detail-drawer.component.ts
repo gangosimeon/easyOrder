@@ -104,6 +104,8 @@ export class OrderDetailDrawerComponent {
       `🛒 *Commande #${orderId.slice(-6)}*\n` +
       `Client : ${order.customerName}\n` +
       `Tél : ${order.customerPhone}\n` +
+      (order.deliveryMode === 'delivery' ? `Livraison : ${order.deliveryAddress}\n` : '') +
+      (order.deliveryMode === 'pickup' ? `Retrait en boutique\n` : '') +
       `━━━━━━━━━━━━━━━━━━\n` +
       `${lines}\n` +
       `━━━━━━━━━━━━━━━━━━\n` +

@@ -8,6 +8,7 @@ import {
   mapCartToCreateOrderInput,
   CreateOrderInput,
   OrderItemInput,
+  DeliveryMode,
 } from './order.mapper';
 
 // ── Alias pour compatibilité avec code existant ─────────────────────────────
@@ -39,6 +40,8 @@ export interface CheckoutForm {
   customerName:  string;
   customerPhone: string;   // indicatif + numéro, chiffres uniquement
   note?:         string;
+  deliveryMode:  DeliveryMode;
+  deliveryAddress?: string;   // quartier + point de repère (livraison uniquement)
   website?:      string;   // champ piège anti-robot, toujours vide pour un humain
 }
 
@@ -81,6 +84,8 @@ export class OrderService {
       customerName:  form.customerName,
       customerPhone: form.customerPhone,
       note:          form.note,
+      deliveryMode:  form.deliveryMode,
+      deliveryAddress: form.deliveryAddress,
       website:       form.website,
       whatsappSent:  true,
     });
@@ -147,6 +152,8 @@ export class OrderService {
       `💰 *Total : ${this.fmt(payload.total)}*\n\n` +
       `👤 ${payload.customerName}\n` +
       `📞 +${payload.customerPhone}\n` +
+      (payload.deliveryMode === 'delivery' ? `🛵 Livraison : ${payload.deliveryAddress}\n` : '') +
+      (payload.deliveryMode === 'pickup' ? `🏪 Retrait en boutique\n` : '') +
       (payload.note ? `📝 ${payload.note}\n` : '') +
       `\nMerci de confirmer ma commande 🙏`;
 

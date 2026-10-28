@@ -13,6 +13,7 @@ export interface CompanyRef {
   name: string;
   phone: string;
   fullPhone?: string;
+  countryCode?: string;   // indicatif du pays de la boutique (ex. '226')
   slug: string;
   coverColor: string;
   description?: string;

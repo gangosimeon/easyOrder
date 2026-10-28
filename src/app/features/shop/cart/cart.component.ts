@@ -8,6 +8,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CartService, CartItem } from '../../../core/services/cart.service';
+import { DeliveryMode } from '../../../core/services/order.mapper';
 import { OrderService } from '../../../core/services/order.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confirm-dialog/confirm-dialog.component';
 import { PhoneInputComponent } from '../../../shared/phone-input/phone-input.component';
@@ -34,10 +35,12 @@ export class CartComponent {
   readonly showOrderForm  = signal(false);
   readonly customerName   = signal('');
   readonly customerPhone  = signal('');
-  readonly countryCode    = signal('226');
+  readonly countryCode    = signal(this.cartService.company()?.countryCode || '226');
   readonly customerNote   = signal('');
   readonly submitted      = signal(false);
   readonly honeypot       = signal('');   // champ caché anti-robot
+  readonly deliveryMode    = signal<DeliveryMode>('delivery');
+  readonly deliveryAddress = signal('');
 
   onPhoneChange(val: string): void {
     this.customerPhone.set(val);
@@ -48,8 +51,13 @@ export class CartComponent {
     return isValidPhone(this.countryCode(), this.customerPhone());
   }
 
+  /** En livraison, un quartier ou repère est indispensable : les adresses postales sont rares. */
+  get isAddressValid(): boolean {
+    return this.deliveryMode() === 'pickup' || this.deliveryAddress().trim().length >= 3;
+  }
+
   get formValid(): boolean {
-    return this.customerName().trim().length >= 2 && this.isPhoneValid;
+    return this.customerName().trim().length >= 2 && this.isPhoneValid && this.isAddressValid;
   }
 
   getTotal(): number {
@@ -83,6 +91,8 @@ export class CartComponent {
         customerName:  this.customerName().trim(),
         customerPhone: this.countryCode() + this.customerPhone(),
         note:          this.customerNote(),
+        deliveryMode:  this.deliveryMode(),
+        deliveryAddress: this.deliveryAddress(),
         website:       this.honeypot(),
       })
       .subscribe(outcome => {

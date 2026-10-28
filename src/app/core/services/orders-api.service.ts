@@ -25,6 +25,8 @@ export interface Order {
   status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
   whatsappSent: boolean;
   note?: string;
+  deliveryMode?: 'delivery' | 'pickup';   // absent sur les anciennes commandes
+  deliveryAddress?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -167,3 +167,14 @@ body {
 /* Champ piège anti-robot des formulaires publics : hors écran plutôt que display:none,
    que certains robots savent ignorer. */
 .hp-field { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; }
+
+/* Choix livraison / retrait des formulaires de commande (panier et tiroir) */
+.delivery-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 4px 0 12px; }
+.delivery-option {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; padding: 8px; border-radius: 10px;
+  border: 1.5px solid #d9d9d9; background: #fff; color: #444;
+  font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+  &.active { border-color: var(--primary); background: rgba(0, 128, 96, .08); color: var(--primary); }
+}

@@ -35,6 +35,12 @@
       </a>
     </div>
 
+    @if (order().deliveryMode === 'delivery' && order().deliveryAddress) {
+      <p class="oc-delivery"><mat-icon>location_on</mat-icon>{{ order().deliveryAddress }}</p>
+    } @else if (order().deliveryMode === 'pickup') {
+      <p class="oc-delivery"><mat-icon>storefront</mat-icon>Retrait en boutique</p>
+    }
+
     <span class="oc-items-chip">
       <mat-icon>shopping_bag</mat-icon>
       {{ order().items.length }} article{{ order().items.length > 1 ? 's' : '' }}

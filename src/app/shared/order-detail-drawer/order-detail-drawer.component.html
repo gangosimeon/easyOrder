@@ -71,6 +71,19 @@
               </span>
             </div>
 
+            <!-- Réception -->
+            @if (order.deliveryMode === 'delivery') {
+              <p class="od-note">
+                <mat-icon>two_wheeler</mat-icon>
+                Livraison : {{ order.deliveryAddress }}
+              </p>
+            } @else if (order.deliveryMode === 'pickup') {
+              <p class="od-note">
+                <mat-icon>storefront</mat-icon>
+                Retrait en boutique
+              </p>
+            }
+
             <!-- Status selector -->
             <p class="od-section-title">Statut de la commande</p>
             <div class="od-status-grid">
@@ -112,7 +125,7 @@
             <!-- Note -->
             @if (order.note) {
               <p class="od-note">
-                <mat-icon>location_on</mat-icon>
+                <mat-icon>edit_note</mat-icon>
                 {{ order.note }}
               </p>
             }

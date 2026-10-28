@@ -18,8 +18,12 @@ export interface CreateOrderInput {
   total: number;
   note?: string;
   whatsappSent: boolean;
+  deliveryMode?: DeliveryMode;
+  deliveryAddress?: string;   // quartier + point de repère
   website?: string;   // champ piège anti-robot (doit rester vide)
 }
+
+export type DeliveryMode = 'delivery' | 'pickup';
 
 export interface OrderValidationError {
   field: string;
@@ -42,6 +46,10 @@ export function validateCreateOrderInput(input: CreateOrderInput): OrderValidati
     if (input.customerPhone.trim().replace(/\D/g, '').length < 8) {
       errors.push({ field: 'customerPhone', message: 'Numéro invalide (min 8 chiffres)' });
     }
+  }
+
+  if (input.deliveryMode === 'delivery' && (input.deliveryAddress?.trim().length ?? 0) < 3) {
+    errors.push({ field: 'deliveryAddress', message: 'Indiquez votre quartier ou un point de repère' });
   }
 
   if (!Array.isArray(input.items) || input.items.length === 0) {
@@ -82,6 +90,8 @@ export interface MapCartToOrderOptions {
   customerName?: string;
   customerPhone?: string;
   note?: string;
+  deliveryMode?: DeliveryMode;
+  deliveryAddress?: string;
   website?: string;
   whatsappSent: boolean;
 }
@@ -124,6 +134,8 @@ export function mapCartToCreateOrderInput(
     total,
     note: options.note?.trim() || undefined,
     whatsappSent: options.whatsappSent,
+    deliveryMode: options.deliveryMode,
+    deliveryAddress: options.deliveryMode === 'delivery' ? options.deliveryAddress?.trim() : undefined,
     website: options.website ?? '',
   };
 

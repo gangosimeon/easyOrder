@@ -1,5 +1,5 @@
 import {
-  Component, signal, computed, output,
+  Component, signal, computed, output, input, effect,
   inject, ElementRef, HostListener, forwardRef,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -30,6 +30,22 @@ export class PhoneInputComponent implements ControlValueAccessor {
   readonly isDisabled      = signal(false);
 
   readonly countryCodeChange = output<string>();
+
+  /** Indicatif présélectionné (ex. pays de la boutique), tant que l'utilisateur n'a pas choisi lui-même. */
+  readonly defaultDialCode = input<string | undefined>();
+  private userPickedCountry = false;
+
+  constructor() {
+    effect(() => {
+      const dialCode = this.defaultDialCode();
+      if (!dialCode || this.userPickedCountry) return;
+      const country = this.countries.find(c => c.dialCode === dialCode);
+      if (country && country !== this.selectedCountry()) {
+        this.selectedCountry.set(country);
+        this.countryCodeChange.emit(country.dialCode);
+      }
+    });
+  }
 
   readonly filteredCountries = computed(() => {
     const q = this.searchQuery().toLowerCase();
@@ -74,6 +90,7 @@ export class PhoneInputComponent implements ControlValueAccessor {
   }
 
   selectCountry(c: Country): void {
+    this.userPickedCountry = true;
     this.selectedCountry.set(c);
     this.searchQuery.set('');
     this.showDropdown.set(false);

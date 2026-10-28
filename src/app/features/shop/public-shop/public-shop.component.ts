@@ -226,6 +226,7 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
           name:        data.company.name,
           phone:       data.company.phone,
           fullPhone:   data.company.fullPhone,
+          countryCode: data.company.countryCode,
           slug:        data.company.slug,
           coverColor:  data.company.coverColor,
           description: data.company.description,
