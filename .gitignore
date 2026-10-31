@@ -26,6 +26,8 @@ Thumbs.db
 .angular/
 # Tests
 coverage/
+# Compilation des tests (ng test, @angular/build:unit-test) : vidée par « npm run pretest ».
+dist/test-out/
 
 # Fichiers temporaires
 tmp/

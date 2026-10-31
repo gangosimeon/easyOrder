@@ -5,7 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "pretest": "node -e \"require('fs').rmSync('dist/test-out', { recursive: true, force: true })\"",
+    "test": "ng test --watch=false"
   },
   "private": true,
   "dependencies": {
@@ -27,8 +29,11 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.0.0",
+    "@angular/build": "20.3.24",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.3.34",
-    "typescript": "~5.8.0"
+    "jsdom": "^26.1.0",
+    "typescript": "~5.8.0",
+    "vitest": "^3.2.7"
   }
 }
