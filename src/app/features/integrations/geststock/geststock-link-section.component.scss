@@ -1,0 +1,111 @@
+// Carte « GestStock » du profil : même allure que les autres cartes de la page (fond blanc, coins arrondis).
+.geststock-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow-wrap: anywhere;
+}
+
+.geststock-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.geststock-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #e8f0fe;
+  color: #1a73e8;
+  flex: none;
+}
+
+.geststock-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.geststock-sub,
+.geststock-muted {
+  margin: 4px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.geststock-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px 16px;
+  margin: 8px 0;
+
+  dt {
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.geststock-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #e6f4ea;
+  color: #1e7e34;
+  font-size: 0.85rem;
+}
+
+.geststock-status--suspended {
+  background: #fff4e5;
+  color: #b26a00;
+}
+
+.geststock-reason {
+  margin: 4px 0;
+  color: #b26a00;
+}
+
+.geststock-notice {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.geststock-error {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #b71c1c;
+}
+
+.geststock-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .geststock-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}

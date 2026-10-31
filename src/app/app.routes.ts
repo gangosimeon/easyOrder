@@ -97,6 +97,13 @@ export const routes: Routes = [
       .then(m => m.ShopOrdersComponent),
     canActivate: [AuthGuard],
   },
+  // Retour de l'écran d'autorisation GestStock (lot 2, JA1) : sans AuthGuard, la page traite elle-même une session
+  // absente (aucun code ni state dans une URL de retour de connexion).
+  {
+    path: 'integrations/geststock/callback',
+    loadComponent: () => import('./features/integrations/geststock/geststock-callback.component')
+      .then(m => m.GeststockCallbackComponent),
+  },
   {
     path: 'admin',
     loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES),

@@ -14,6 +14,7 @@ import { ShopStatsService, ShopStats } from '../../core/services/shop-stats.serv
 import { RecoveryEmailService }     from '../../core/services/recovery-email.service';
 import { SeoService }               from '../../core/services/seo.service';
 import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
+import { GeststockLinkSectionComponent } from '../integrations/geststock/geststock-link-section.component';
 
 @Component({
   selector: 'app-profile',
@@ -27,6 +28,7 @@ import { COVER_COLORS, SHOP_LOGOS } from '../auth/register/register.component';
     MatSnackBarModule,
     MatRippleModule,
     MatChipsModule,
+    GeststockLinkSectionComponent,
   ],
   templateUrl: './profile.component.html',
   styleUrls:  ['./profile.component.scss'],

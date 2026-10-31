@@ -1,0 +1,71 @@
+@if (view() !== 'hidden') {
+  <section class="geststock-card" id="geststock">
+    <header class="geststock-header">
+      <div class="geststock-icon"><mat-icon>sync_alt</mat-icon></div>
+      <div>
+        <h3 class="geststock-title">GestStock</h3>
+        <p class="geststock-sub">Synchronisez votre boutique avec la gestion de stock de votre entreprise</p>
+      </div>
+    </header>
+
+    @if (notice(); as notice) {
+      <p class="geststock-notice">{{ notice }}</p>
+    }
+    @if (error(); as error) {
+      <p class="geststock-error" role="alert">{{ error }}</p>
+    }
+
+    @switch (view()) {
+      @case ('loading') {
+        <p class="geststock-muted">Chargement…</p>
+      }
+
+      @case ('ready') {
+        @if (link(); as link) {
+          <dl class="geststock-facts">
+            <div>
+              <dt>Entreprise</dt>
+              <dd>{{ company() }}</dd>
+            </div>
+            <div>
+              <dt>Statut</dt>
+              <dd>
+                <span class="geststock-status" [class.geststock-status--suspended]="link.status === 'SUSPENDED'">
+                  {{ link.status === 'SUSPENDED' ? 'Suspendue' : 'Active' }}
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>Liée le</dt>
+              <dd>{{ link.linkedAt | date: 'dd/MM/yyyy' }}</dd>
+            </div>
+          </dl>
+          @if (suspension(); as suspension) {
+            <p class="geststock-reason">{{ suspension }}</p>
+          }
+          @if (state()?.stale) {
+            <p class="geststock-muted" data-test="stale">État non actualisé : GestStock est momentanément injoignable.</p>
+          }
+          <div class="geststock-actions">
+            <button mat-stroked-button type="button" class="geststock-revoke" data-test="revoke" [disabled]="busy()" (click)="revoke()">
+              <mat-icon>link_off</mat-icon> Déconnecter
+            </button>
+          </div>
+        } @else {
+          @if (revokedRemotely()) {
+            <p class="geststock-muted">La liaison a été révoquée par GestStock.</p>
+          }
+          <p class="geststock-muted">
+            Liez votre boutique à l’entreprise GestStock qui gère votre stock : catalogue, prix et disponibilités
+            restent à jour.
+          </p>
+          <div class="geststock-actions">
+            <button mat-flat-button type="button" class="geststock-connect" data-test="connect" [disabled]="busy()" (click)="connect()">
+              <mat-icon>link</mat-icon> Connecter à GestStock
+            </button>
+          </div>
+        }
+      }
+    }
+  </section>
+}
