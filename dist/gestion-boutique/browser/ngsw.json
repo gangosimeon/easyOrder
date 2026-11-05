@@ -1,10 +1,6 @@
 {
   "configVersion": 1,
-<<<<<<< HEAD
-  "timestamp": 1793916295536,
-=======
   "timestamp": 1793919532139,
->>>>>>> feat/integration-lot2
   "index": "/index.html",
   "assetGroups": [
     {
