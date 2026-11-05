@@ -7,7 +7,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { CartService } from './core/services/cart.service';
 import { AuthService } from './core/services/auth.service';
 import { ShopOrdersService } from './core/services/shop-orders.service';
-import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
 import { TopTickerComponent } from './shared/top-ticker/top-ticker.component';
 import { TopbarComponent } from './shared/topbar/topbar.component';
 import { PublicTopbarComponent } from './shared/public-topbar/public-topbar.component';
@@ -28,7 +27,7 @@ interface NavItem {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent, TopTickerComponent, TopbarComponent, PublicTopbarComponent, CartDrawerComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, TopTickerComponent, TopbarComponent, PublicTopbarComponent, CartDrawerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
