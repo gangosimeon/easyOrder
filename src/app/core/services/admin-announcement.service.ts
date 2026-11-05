@@ -70,4 +70,9 @@ export class AdminAnnouncementService {
   getActiveForShop(): Observable<AdminAnnouncement[]> {
     return this.http.get<AdminAnnouncement[]>(`${this.apiUrl}/shop/announcements`);
   }
+
+  /** Annonces globales (targetShops vide) — pas d'authentification requise */
+  getActiveGlobal(): Observable<AdminAnnouncement[]> {
+    return this.http.get<AdminAnnouncement[]>(`${this.apiUrl}/announcements/active`);
+  }
 }

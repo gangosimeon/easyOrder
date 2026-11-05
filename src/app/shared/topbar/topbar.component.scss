@@ -5,7 +5,7 @@
 ====================================================== */
 .topbar {
   position: sticky;
-  top: 0;
+  top: var(--ticker-h, 0);
   z-index: 200;
   height: 64px;
   background: #ffffff;

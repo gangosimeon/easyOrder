@@ -1,0 +1,5 @@
+<<<<<<<< HEAD:dist/gestion-boutique/browser/chunk-PUCXPY5D.js
+import{a as m}from"./chunk-ABDPKRGT.js";import{u as n}from"./chunk-FYQMFAFW.js";import{_ as a,da as e,p}from"./chunk-RRKB3VAK.js";var j=(()=>{let t=class t{constructor(){this.http=e(n),this.apiUrl=m.apiUrl}upload(i){let r=new FormData;return r.append("file",i),this.http.post(`${this.apiUrl}/upload`,r).pipe(p(s=>s.url))}};t.\u0275fac=function(r){return new(r||t)},t.\u0275prov=a({token:t,factory:t.\u0275fac,providedIn:"root"});let o=t;return o})();export{j as a};
+========
+import{a as m}from"./chunk-ABDPKRGT.js";import{u as n}from"./chunk-KG37HHXI.js";import{_ as a,da as e,p}from"./chunk-3TCPUJRN.js";var j=(()=>{let t=class t{constructor(){this.http=e(n),this.apiUrl=m.apiUrl}upload(i){let r=new FormData;return r.append("file",i),this.http.post(`${this.apiUrl}/upload`,r).pipe(p(s=>s.url))}};t.\u0275fac=function(r){return new(r||t)},t.\u0275prov=a({token:t,factory:t.\u0275fac,providedIn:"root"});let o=t;return o})();export{j as a};
+>>>>>>>> feat/integration-lot2:dist/gestion-boutique/browser/chunk-5IC3S7KI.js
