@@ -1,9 +1,10 @@
 import {
   AfterViewInit, Component, ElementRef, inject,
-  OnDestroy, OnInit, signal, computed, effect, ViewChild,
+  OnDestroy, OnInit, signal, computed, effect, ViewChild, Renderer2,
 } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SeoService } from '../../../core/services/seo.service';
@@ -40,6 +41,9 @@ registerLocaleData(localeFr);
 export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   private route        = inject(ActivatedRoute);
   private router       = inject(Router);
+  private sanitizer    = inject(DomSanitizer);
+  private el           = inject(ElementRef);
+  private renderer     = inject(Renderer2);
   private shopService  = inject(PublicShopService);
   readonly cartService  = inject(CartService);
   private readonly cartDrawer = inject(CartDrawerService);
@@ -73,6 +77,14 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
   private observer: IntersectionObserver | null = null;
 
   constructor() {
+    // Propage la couleur de la boutique comme variable CSS sur l'hôte
+    effect(() => {
+      const color = this.company()?.coverColor;
+      if (color) {
+        this.renderer.setStyle(this.el.nativeElement, '--cover-color', color);
+      }
+    });
+
     effect(() => {
       const productId = this.cartService.openProductRequest();
       if (!productId) return;
@@ -117,10 +129,31 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
     this.annTrackRef?.nativeElement.scrollTo({ left: i * this.annCardStep(), behavior: 'smooth' });
   }
 
+  /** Produits similaires (même catégorie, hors produit affiché, max 4). */
+  readonly selectedDetailRelatedProducts = computed(() => {
+    const p = this.selectedDetailProduct();
+    if (!p) return [];
+    return this.allProducts()
+      .filter(r => r.categoryId === p.categoryId && r.id !== p.id)
+      .slice(0, 4);
+  });
+
   openProductDetail(product: Product, e: MouseEvent): void {
     e.stopPropagation();
     this.selectedDetailProduct.set(product);
     this.setProductInUrl(product.id);
+  }
+
+  /** Ouvre un produit recommandé dans le même popup. */
+  openRelatedProduct(product: Product): void {
+    this.selectedDetailProduct.set(product);
+    this.setProductInUrl(product.id);
+  }
+
+  /** « Voir plus » depuis le popup : filtre la boutique sur la catégorie et ferme la fiche. */
+  viewCategoryFromModal(categoryId: string): void {
+    this.closeProductDetail();
+    this.selectCategory(categoryId);
   }
 
   closeProductDetail(): void {
@@ -429,6 +462,19 @@ export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {
       navigator.clipboard.writeText(url);
       this.snackBar.open('🔗 Lien copié !', '', { duration: 2000 });
     }
+  }
+
+  /** Transforme les URLs en liens cliquables et préserve les sauts de ligne. */
+  renderAnnMessage(text: string): SafeHtml {
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const linked = escaped.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer" class="ann-link">$1</a>'
+    );
+    return this.sanitizer.bypassSecurityTrustHtml(linked.replace(/\n/g, '<br>'));
   }
 
   isUrl(value: string): boolean {

@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter, inject, signal, computed } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal, computed, effect, ViewChild, ElementRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
 import { CartService } from '../../core/services/cart.service';
+import { cloudinaryThumb } from '../../core/utils/cloudinary.util';
 
 @Component({
   selector: 'app-product-detail-modal',
@@ -26,14 +27,32 @@ export class ProductDetailModalComponent {
   @Input() set coverColor(val: string | undefined) { this._coverColor.set(val); }
   get coverColor(): string | undefined { return this._coverColor(); }
 
+  private _relatedProducts = signal<Product[]>([]);
+
+  @Input() set relatedProducts(val: Product[] | null | undefined) { this._relatedProducts.set(val ?? []); }
+  get relatedProducts(): Product[] { return this._relatedProducts(); }
+
   /** Boutique publique : affiche « Partager » et « Commander ». Désactivé côté commerçant. */
   @Input() buyerActions = false;
 
   @Output() closed = new EventEmitter<void>();
   @Output() share = new EventEmitter<Product>();
   @Output() orderNow = new EventEmitter<Product>();
+  @Output() productSelected = new EventEmitter<Product>();
+  @Output() viewCategory = new EventEmitter<string>();
+  @Output() cartClicked = new EventEmitter<void>();
+
+  @ViewChild('scrollArea') private scrollAreaRef?: ElementRef<HTMLElement>;
 
   private cartService = inject(CartService);
+
+  constructor() {
+    effect(() => {
+      this._product(); // s'abonne au signal
+      this.descExpanded.set(false);
+      this.scrollAreaRef?.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
   private cartItems = toSignal(this.cartService.items$, { initialValue: [] });
 
   isInCart = computed(() =>
@@ -44,7 +63,16 @@ export class ProductDetailModalComponent {
     this._product() ? (this.cartItems().find(i => i.product.id === this._product()!.id)?.quantity ?? 0) : 0
   );
 
+  cartTotalItems = computed(() =>
+    this.cartItems().reduce((sum, i) => sum + i.quantity, 0)
+  );
+
   addedFeedback = signal(false);
+  descExpanded = signal(false);
+
+  readonly isDescLong = computed(() => (this._product()?.description?.length ?? 0) > 160);
+
+  toggleDesc(): void { this.descExpanded.update(v => !v); }
 
   addToCart(): void {
     const p = this._product();
@@ -84,8 +112,25 @@ export class ProductDetailModalComponent {
     e.stopPropagation();
   }
 
+  onCartClick(): void {
+    this.cartClicked.emit();
+  }
+
+  selectRelated(product: Product): void {
+    this.productSelected.emit(product);
+  }
+
+  onViewCategory(): void {
+    const catId = this._product()?.categoryId;
+    if (catId) this.viewCategory.emit(catId);
+  }
+
   isUrl(value: string): boolean {
     return !!value && (value.startsWith('http') || value.startsWith('data:'));
+  }
+
+  thumbUrl(url: string): string {
+    return cloudinaryThumb(url, 160, 160);
   }
 
   formatPrice(price: number): string {

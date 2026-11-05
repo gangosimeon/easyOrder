@@ -1,9 +1,17 @@
 @if (product) {
   <!-- Backdrop -->
-  <div class="pd-backdrop" (click)="close()"></div>
+  <div class="pd-backdrop" (click)="close()">
+    @if (buyerActions && cartTotalItems() > 0) {
+      <button class="pd-cart-pill" (click)="onCartClick(); $event.stopPropagation()" aria-label="Voir le panier">
+        <mat-icon>shopping_cart</mat-icon>
+        <span>Panier</span>
+        <span class="pd-cart-pill-badge">{{ cartTotalItems() }}</span>
+      </button>
+    }
+  </div>
 
   <!-- Sheet / Modal -->
-  <div class="pd-sheet" (click)="stopProp($event)" role="dialog" aria-modal="true">
+  <div class="pd-sheet" (click)="stopProp($event)" role="dialog" aria-modal="true" [style]="{'--pd-accent': accentColor}">
 
     <!-- Fixed header: stays put while the body below scrolls -->
     <div class="pd-modal-header">
@@ -18,7 +26,7 @@
     </div>
 
     <!-- Scrollable body -->
-    <div class="pd-scroll-area">
+    <div class="pd-scroll-area" #scrollArea>
       <div class="pd-content">
 
         <!-- LEFT: Hero image -->
@@ -75,7 +83,17 @@
 
             <!-- Description -->
             @if (product.description) {
-              <p class="pd-description">{{ product.description }}</p>
+              <div class="pd-desc-block">
+                <p class="pd-description" [class.pd-description--collapsed]="isDescLong() && !descExpanded()">
+                  {{ product.description }}
+                </p>
+                @if (isDescLong()) {
+                  <button class="pd-desc-toggle" (click)="toggleDesc()" [style.color]="accentColor">
+                    {{ descExpanded() ? 'Voir moins' : 'Voir plus' }}
+                    <mat-icon>{{ descExpanded() ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button>
+                }
+              </div>
             }
 
             <!-- Meta chips -->
@@ -102,47 +120,85 @@
 
           </div>
 
-          <!-- Footer -->
-          <div class="pd-footer">
-            <button class="pd-btn-back" (click)="close()" aria-label="Retour">
-              <mat-icon>arrow_back</mat-icon>
-            </button>
+        </div>
+      </div>
 
-            @if (isInCart()) {
-              <div class="pd-qty-control" [style.border-color]="accentColor">
-                <button class="pd-qty-btn" (click)="decrement()" [style.color]="accentColor">
-                  <mat-icon>{{ cartQuantity() === 1 ? 'delete_outline' : 'remove' }}</mat-icon>
-                </button>
-                <span class="pd-qty-count" [style.color]="accentColor">{{ cartQuantity() }}</span>
-                <button class="pd-qty-btn" (click)="increment()" [style.color]="accentColor">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-            } @else {
-              <button
-                class="pd-btn-cart"
-                (click)="addToCart()"
-                [disabled]="!product.inStock"
-                [class.pd-btn-cart--secondary]="buyerActions && product.inStock"
-                [style.background]="buyerActions && product.inStock ? '#fff' : (product.inStock ? accentColor : '#9ca3af')"
-                [style.color]="buyerActions && product.inStock ? accentColor : null"
-                [style.border-color]="buyerActions && product.inStock ? accentColor : null"
-              >
-                <mat-icon>{{ addedFeedback() ? 'check_circle' : 'shopping_cart' }}</mat-icon>
-                {{ addedFeedback() ? 'Ajouté !' : (buyerActions ? 'Ajouter' : 'Ajouter au panier') }}
-              </button>
-            }
-
-            @if (buyerActions && product.inStock) {
-              <button class="pd-btn-order" (click)="onOrderNow()" [style.background]="accentColor">
-                <mat-icon>bolt</mat-icon>
-                Commander
+      <!-- ── Vous aimerez aussi ─────────────────────────────────────── -->
+      @if (relatedProducts.length) {
+        <div class="pd-related">
+          <div class="pd-related-header">
+            <h3 class="pd-related-title">Vous aimerez aussi</h3>
+            @if (category) {
+              <button class="pd-related-more" (click)="onViewCategory()" aria-label="Voir plus de produits dans cette catégorie">
+                Voir plus
+                <mat-icon>arrow_forward</mat-icon>
               </button>
             }
           </div>
 
+          <div class="pd-related-grid" role="list">
+            @for (p of relatedProducts; track p.id) {
+              <button class="pd-related-card" (click)="selectRelated(p)" [attr.aria-label]="p.name" role="listitem">
+                <div class="pd-related-thumb">
+                  @if (isUrl(p.image)) {
+                    <img [src]="thumbUrl(p.image)" [alt]="p.name" class="pd-related-img" loading="lazy" />
+                  } @else {
+                    <span class="pd-related-emoji">{{ p.image || '🛍️' }}</span>
+                  }
+                  @if (!p.inStock) {
+                    <span class="pd-related-out-badge">Épuisé</span>
+                  }
+                </div>
+                <div class="pd-related-info">
+                  <span class="pd-related-name">{{ p.name }}</span>
+                  <span class="pd-related-price" [style.color]="accentColor">{{ formatPrice(p.price) }}</span>
+                </div>
+              </button>
+            }
+          </div>
         </div>
-      </div>
+      }
+
+    </div><!-- /pd-scroll-area -->
+
+    <!-- Footer: always visible at bottom of modal -->
+    <div class="pd-footer">
+      <button class="pd-btn-back" (click)="close()" aria-label="Retour">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      @if (isInCart()) {
+        <div class="pd-qty-control" [style.border-color]="accentColor">
+          <button class="pd-qty-btn" (click)="decrement()" [style.color]="accentColor">
+            <mat-icon>{{ cartQuantity() === 1 ? 'delete_outline' : 'remove' }}</mat-icon>
+          </button>
+          <span class="pd-qty-count" [style.color]="accentColor">{{ cartQuantity() }}</span>
+          <button class="pd-qty-btn" (click)="increment()" [style.color]="accentColor">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      } @else {
+        <button
+          class="pd-btn-cart"
+          (click)="addToCart()"
+          [disabled]="!product.inStock"
+          [class.pd-btn-cart--secondary]="buyerActions && product.inStock"
+          [style.background]="buyerActions && product.inStock ? '#fff' : (product.inStock ? accentColor : '#9ca3af')"
+          [style.color]="buyerActions && product.inStock ? accentColor : null"
+          [style.border-color]="buyerActions && product.inStock ? accentColor : null"
+        >
+          <mat-icon>{{ addedFeedback() ? 'check_circle' : 'shopping_cart' }}</mat-icon>
+          {{ addedFeedback() ? 'Ajouté !' : (buyerActions ? 'Ajouter' : 'Ajouter au panier') }}
+        </button>
+      }
+
+      @if (buyerActions && product.inStock) {
+        <button class="pd-btn-order" (click)="onOrderNow()" [style.background]="accentColor">
+          <mat-icon>bolt</mat-icon>
+          Commander
+        </button>
+      }
     </div>
+
   </div>
 }

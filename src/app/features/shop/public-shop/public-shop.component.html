@@ -88,14 +88,10 @@
                 <span class="ann-pin">📌</span>
               }
               <div class="ann-card-content">
-                <span class="ann-badge" [style.background]="ANNONCE_TYPE_CONFIG[ann.type].color">
-                  {{ ANNONCE_TYPE_CONFIG[ann.type].label }}
-                </span>
+                <span class="ann-badge">{{ ANNONCE_TYPE_CONFIG[ann.type].label }}</span>
                 <h3 class="ann-card-title">{{ ann.titre }}</h3>
                 <p class="ann-card-message">{{ ann.message }}</p>
-                <span class="ann-card-cta" [style.background]="ANNONCE_TYPE_CONFIG[ann.type].color">
-                  Lire plus →
-                </span>
+                <span class="ann-card-cta">Lire plus →</span>
                 <span class="ann-card-date">
                   <mat-icon>event</mat-icon>
                   {{ annDateLabel(ann) }}
@@ -278,20 +274,29 @@
   <!-- ANNOUNCEMENT DETAIL MODAL -->
   @if (selectedAnn()) {
     <div class="ann-modal-backdrop" (click)="closeAnn()"></div>
-    <div class="ann-modal" [style.border-top-color]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].color">
-      <div class="ann-modal-header" [style.background]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].bgColor">
+    <div class="ann-modal" [style.--ann-color]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].color">
+
+      <!-- Header -->
+      <div class="ann-modal-header">
         <div class="ann-modal-meta">
-          <span class="ann-modal-emoji">{{ selectedAnn()!.emoji }}</span>
-          <span class="ann-modal-type" [style.color]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].color">
+          <span class="ann-modal-type-badge"
+            [style.background]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].bgColor"
+            [style.color]="ANNONCE_TYPE_CONFIG[selectedAnn()!.type].color">
             <mat-icon>{{ ANNONCE_TYPE_CONFIG[selectedAnn()!.type].icon }}</mat-icon>
             {{ ANNONCE_TYPE_CONFIG[selectedAnn()!.type].label }}
           </span>
-          @if (selectedAnn()!.epinglee) { <span class="ann-modal-pin">📌 Épinglée</span> }
+          @if (selectedAnn()!.epinglee) {
+            <span class="ann-modal-pin">
+              <mat-icon>push_pin</mat-icon>Épinglée
+            </span>
+          }
         </div>
-        <button class="ann-modal-close" (click)="closeAnn()">
+        <button class="ann-modal-close" (click)="closeAnn()" aria-label="Fermer">
           <mat-icon>close</mat-icon>
         </button>
       </div>
+
+      <!-- Scrollable body -->
       <div class="ann-modal-scroll">
         <div class="ann-modal-content">
 
@@ -302,17 +307,34 @@
           }
 
           <div class="ann-modal-body">
+            <div class="ann-modal-emoji-row">
+              <span class="ann-modal-emoji">{{ selectedAnn()!.emoji }}</span>
+            </div>
             <h2 class="ann-modal-titre">{{ selectedAnn()!.titre }}</h2>
-            <p class="ann-modal-message">{{ selectedAnn()!.message }}</p>
+            <div class="ann-modal-message" [innerHTML]="renderAnnMessage(selectedAnn()!.message)"></div>
             @if (selectedAnn()!.dateFin) {
-              <p class="ann-modal-date">
+              <div class="ann-modal-date">
                 <mat-icon>event</mat-icon>
                 Valable jusqu'au {{ formatDate(selectedAnn()!.dateFin!) }}
-              </p>
+              </div>
             }
           </div>
+
         </div>
       </div>
+
+      <!-- Footer fixe : bouton WhatsApp -->
+      @if (company()?.phone || company()?.fullPhone) {
+        <div class="ann-modal-footer">
+          <button class="ann-wa-btn" (click)="contactViaWhatsApp()">
+            <svg class="ann-wa-logo" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+              <path d="M16 2C8.268 2 2 8.268 2 16c0 2.49.655 4.825 1.8 6.845L2 30l7.355-1.78A13.93 13.93 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.6a11.56 11.56 0 0 1-5.89-1.61l-.42-.25-4.365 1.055 1.085-4.25-.275-.435A11.6 11.6 0 1 1 16 27.6zm6.37-8.68c-.35-.175-2.07-1.02-2.39-1.135-.32-.115-.555-.175-.79.175-.235.35-.905 1.135-1.11 1.37-.205.235-.41.26-.76.085-.35-.175-1.475-.545-2.81-1.73-1.04-.925-1.74-2.065-1.945-2.415-.205-.35-.022-.54.153-.714.158-.157.35-.41.525-.615.175-.205.233-.35.35-.585.117-.235.058-.44-.03-.615-.087-.175-.79-1.9-1.082-2.6-.285-.685-.575-.59-.79-.6l-.673-.012a1.29 1.29 0 0 0-.935.44c-.32.35-1.225 1.195-1.225 2.915s1.254 3.38 1.429 3.615c.175.235 2.47 3.77 5.985 5.285.837.36 1.49.577 2 .738.84.267 1.605.23 2.21.14.674-.1 2.07-.847 2.362-1.665.293-.817.293-1.518.205-1.665-.087-.147-.32-.234-.672-.41z"/>
+            </svg>
+            <span>Contacter via WhatsApp</span>
+          </button>
+        </div>
+      }
+
     </div>
   }
 
@@ -322,9 +344,13 @@
     [category]="getCategoryFor(selectedDetailProduct())"
     [coverColor]="company()?.coverColor"
     [buyerActions]="true"
+    [relatedProducts]="selectedDetailRelatedProducts()"
     (share)="shareProduct($event)"
     (orderNow)="orderProductNow($event)"
-    (closed)="closeProductDetail()">
+    (closed)="closeProductDetail()"
+    (productSelected)="openRelatedProduct($event)"
+    (viewCategory)="viewCategoryFromModal($event)"
+    (cartClicked)="closeProductDetail(); goToCart()">
   </app-product-detail-modal>
 
   <!-- SHARE BUTTON -->
