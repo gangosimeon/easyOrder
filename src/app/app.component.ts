@@ -8,6 +8,7 @@ import { CartService } from './core/services/cart.service';
 import { AuthService } from './core/services/auth.service';
 import { ShopOrdersService } from './core/services/shop-orders.service';
 import { AnnouncementBannerComponent } from './shared/announcement-banner/announcement-banner.component';
+import { TopTickerComponent } from './shared/top-ticker/top-ticker.component';
 import { TopbarComponent } from './shared/topbar/topbar.component';
 import { PublicTopbarComponent } from './shared/public-topbar/public-topbar.component';
 import { CartDrawerComponent } from './shared/cart-drawer/cart-drawer.component';
@@ -27,7 +28,7 @@ interface NavItem {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent, TopbarComponent, PublicTopbarComponent, CartDrawerComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule, MatRippleModule, AnnouncementBannerComponent, TopTickerComponent, TopbarComponent, PublicTopbarComponent, CartDrawerComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -95,6 +96,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly isAdmin = computed(() => this.authService.company()?.role === 'admin');
 
+  readonly tickerVisible = signal(false);
+
   readonly bannerProducts = computed(() => this.cartService.previewProducts());
   readonly bannerIndex = signal(0);
   private bannerTimer?: ReturnType<typeof setInterval>;
@@ -139,6 +142,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     effect(() => {
       this.themeService.setThemeColor(this.isAuthRoute() ? undefined : this.coverColor());
     });
+
+    // Hauteur du ticker : injectée comme variable CSS sur <html> pour que
+    // sidebar, topbar et mobile-header décalent leur position top en conséquence.
+    effect(() => {
+      const h = this.tickerVisible() ? '42px' : '0px';
+      document.documentElement.style.setProperty('--ticker-h', h);
+    });
+  }
+
+  onTickerContent(hasContent: boolean): void {
+    this.tickerVisible.set(hasContent);
   }
 
   setBannerIndex(i: number): void {

@@ -1,3 +1,5 @@
+<app-top-ticker (hasContent)="onTickerContent($event)" />
+
 @if (isAuthRoute()) {
   <router-outlet />
 } @else {
@@ -394,9 +396,6 @@
       }
 
       <div class="page-container" [class.public-page]="isPublicRoute()">
-        @if (!isPublicRoute() && authService.isLoggedIn()) {
-          <app-announcement-banner />
-        }
         <router-outlet />
       </div>
 

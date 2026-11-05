@@ -6,7 +6,7 @@ $muted:   var(--text-secondary);
 
 .lp-nav {
   position: sticky;
-  top: 0;
+  top: var(--ticker-h, 0);
   z-index: 100;
   background: #fff;
   border-bottom: 1px solid transparent;
