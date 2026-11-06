@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink }  from '@angular/router';
 import { FormsModule }           from '@angular/forms';
 import { MatDialog }             from '@angular/material/dialog';
@@ -31,6 +31,7 @@ import { productShareUrl, shareLink } from '../../../core/utils/share-url.util';
     ProductDetailModalComponent,
   ],
   templateUrl: './product-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls:  ['./product-list.component.scss'],
 })
 export class ProductListComponent implements OnInit {

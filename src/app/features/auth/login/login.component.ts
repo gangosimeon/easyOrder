@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { phoneNumberValidator } from '../../../shared/phone-input/phone-validator';
 import { Router, RouterLink } from '@angular/router';
@@ -28,6 +28,7 @@ import { InstallPromptComponent } from '../../../shared/install-prompt/install-p
     InstallPromptComponent,
   ],
   templateUrl: './login.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {

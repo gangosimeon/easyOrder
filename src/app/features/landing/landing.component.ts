@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { SeoService, SEO_DEFAULTS } from '../../core/services/seo.service';
 import { LandingNavComponent }      from './components/landing-nav/landing-nav.component';
 import { HeroComponent }            from './components/hero/hero.component';
@@ -29,6 +29,7 @@ import { LandingFooterComponent }   from './components/landing-footer/landing-fo
     LandingFooterComponent,
   ],
   templateUrl: './landing.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './landing.component.scss'
 })
 export class LandingComponent {

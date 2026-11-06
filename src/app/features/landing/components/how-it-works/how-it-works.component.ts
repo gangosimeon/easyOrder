@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 interface Step {
@@ -13,6 +13,7 @@ interface Step {
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './how-it-works.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./how-it-works.component.scss']
 })
 export class HowItWorksComponent {

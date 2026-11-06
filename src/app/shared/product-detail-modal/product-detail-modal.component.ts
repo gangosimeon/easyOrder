@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject, signal, computed, effect, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal, computed, effect, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Product } from '../../models/product.model';
@@ -11,6 +11,7 @@ import { cloudinaryThumb } from '../../core/utils/cloudinary.util';
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './product-detail-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./product-detail-modal.component.scss'],
 })
 export class ProductDetailModalComponent {

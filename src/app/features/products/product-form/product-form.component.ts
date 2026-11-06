@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule }           from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -34,6 +34,7 @@ export interface ProductFormData {
     MatRippleModule,
   ],
   templateUrl: './product-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls:  ['./product-form.component.scss'],
 })
 export class ProductFormComponent implements OnInit {

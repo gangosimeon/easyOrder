@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog }          from '@angular/material/dialog';
 import { MatIconModule }      from '@angular/material/icon';
 import { MatButtonModule }    from '@angular/material/button';
@@ -24,6 +24,7 @@ type FilterTab = 'toutes' | 'actives' | 'epinglees' | AnnonceType;
     MatRippleModule, MatSnackBarModule, MatTooltipModule,
   ],
   templateUrl: './annonce-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls:  ['./annonce-list.component.scss'],
 })
 export class AnnonceListComponent implements OnInit, OnDestroy {

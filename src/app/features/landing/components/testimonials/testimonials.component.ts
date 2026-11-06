@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 interface Testimonial {
@@ -15,6 +15,7 @@ interface Testimonial {
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './testimonials.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './testimonials.component.scss'
 })
 export class TestimonialsComponent {

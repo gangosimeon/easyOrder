@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, DestroyRef, computed } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef, computed, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { debounceTime } from 'rxjs/operators';
@@ -35,6 +35,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confi
     MatTooltipModule,
   ],
   templateUrl: './admin-shops.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './admin-shops.component.scss',
 })
 export class AdminShopsComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { PwaInstallService } from '../../core/services/pwa-install.service';
 
@@ -21,6 +21,7 @@ import { PwaInstallService } from '../../core/services/pwa-install.service';
       </div>
     }
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host { display: block; }
 

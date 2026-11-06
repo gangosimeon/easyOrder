@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl, ReactiveFormsModule, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { phoneNumberValidator } from '../../../shared/phone-input/phone-validator';
 import { Router, RouterLink } from '@angular/router';
@@ -51,6 +51,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
     InstallPromptComponent,
   ],
   templateUrl: './register.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls:  ['./register.component.scss'],
 })
 export class RegisterComponent {

@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -19,6 +19,7 @@ import { OrderDetailDrawerComponent } from '../../../shared/order-detail-drawer/
     OrderDetailDrawerComponent,
   ],
   templateUrl: './shop-orders.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./shop-orders.component.scss'],
 })
 export class ShopOrdersComponent implements OnInit {

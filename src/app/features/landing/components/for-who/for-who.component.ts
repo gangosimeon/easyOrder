@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 interface Profile {
@@ -13,6 +13,7 @@ interface Profile {
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './for-who.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './for-who.component.scss'
 })
 export class ForWhoComponent {

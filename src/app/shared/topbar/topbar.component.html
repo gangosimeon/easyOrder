@@ -101,9 +101,9 @@
               [class.is-open]="showUser()"
               matRipple>
         <div class="tb-avatar">
-          @if (isUrl(authService.company()?.logo)) {
-            <img [src]="authService.company()?.logo"
-                 [alt]="authService.company()?.name"
+          @if (isUrl($safeNavigationMigration(authService.company()?.logo))) {
+            <img [src]="$safeNavigationMigration(authService.company()?.logo)"
+                 [alt]="$safeNavigationMigration(authService.company()?.name)"
                  (error)="onImgError($event)" />
           } @else {
             <span class="tb-avatar-emoji">{{ authService.company()?.logo || '🏪' }}</span>
@@ -122,8 +122,8 @@
         <div class="tb-drop tb-drop-user">
           <div class="tb-user-head">
             <div class="tb-user-avatar-lg">
-              @if (isUrl(authService.company()?.logo)) {
-                <img [src]="authService.company()?.logo" (error)="onImgError($event)" />
+              @if (isUrl($safeNavigationMigration(authService.company()?.logo))) {
+                <img [src]="$safeNavigationMigration(authService.company()?.logo)" (error)="onImgError($event)" />
               } @else {
                 <span>{{ authService.company()?.logo || '🏪' }}</span>
               }
@@ -137,7 +137,7 @@
           <div class="tb-hr"></div>
 
           @if (authService.company()?.slug) {
-            <a [routerLink]="['/shop', authService.company()?.slug]"
+            <a [routerLink]="['/shop', $safeNavigationMigration(authService.company()?.slug)]"
                class="tb-menu-item" (click)="closeAll()">
               <mat-icon>storefront</mat-icon>
               <span>Voir ma boutique</span>

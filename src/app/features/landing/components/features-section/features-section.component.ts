@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 interface Feature {
@@ -12,6 +12,7 @@ interface Feature {
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './features-section.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './features-section.component.scss'
 })
 export class FeaturesSectionComponent {

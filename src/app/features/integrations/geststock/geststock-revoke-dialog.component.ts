@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
@@ -44,6 +44,7 @@ export interface GeststockRevokeResult {
       </button>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     .revoke-label { display: block; font-weight: 600; margin-top: 12px; }
     .revoke-reason { width: 100%; box-sizing: border-box; margin-top: 4px; font: inherit; }

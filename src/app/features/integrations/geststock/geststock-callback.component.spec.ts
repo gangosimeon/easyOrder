@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
-import { HttpInterceptorFn, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpInterceptorFn, provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -9,7 +9,8 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { environment } from '../../../../environments/environment';
 import { GeststockCallbackComponent } from './geststock-callback.component';
 
-@Component({ template: 'page' })
+@Component({ changeDetection: ChangeDetectionStrategy.Eager,
+ template: 'page' })
 class PageComponent {}
 
 const API = `${environment.apiUrl}/integrations/geststock`;
@@ -45,7 +46,7 @@ describe('GeststockCallbackComponent', () => {
     };
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(withInterceptors([record])),
+        provideHttpClient(withXhr(), withInterceptors([record])),
         provideHttpClientTesting(),
         provideRouter([
           { path: 'integrations/geststock/callback', component: GeststockCallbackComponent },

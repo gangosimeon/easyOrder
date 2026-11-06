@@ -1,6 +1,7 @@
 import {
   AfterViewInit, Component, ElementRef, inject,
   OnDestroy, OnInit, computed, signal, ViewChild,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { Router }           from '@angular/router';
 import { MatIconModule }    from '@angular/material/icon';
@@ -43,6 +44,7 @@ function toPublicShopInfo(shop: AdminShop): PublicShopInfo {
   standalone: true,
   imports: [MatIconModule, MatRippleModule, NgTemplateOutlet, LandingNavComponent],
   templateUrl: './discover-shops.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./discover-shops.component.scss'],
 })
 export class DiscoverShopsComponent implements OnInit, AfterViewInit, OnDestroy {

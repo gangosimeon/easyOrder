@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -19,6 +19,7 @@ import { isValidPhone } from '../../../shared/phone-input/phone-validator';
   standalone: true,
   imports: [MatIconModule, MatButtonModule, MatDialogModule, MatProgressSpinnerModule, FormsModule, PhoneInputComponent],
   templateUrl: './cart.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent {

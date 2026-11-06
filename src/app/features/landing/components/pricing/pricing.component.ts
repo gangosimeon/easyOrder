@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 interface Plan {
@@ -17,6 +17,7 @@ interface Plan {
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './pricing.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './pricing.component.scss'
 })
 export class PricingComponent {

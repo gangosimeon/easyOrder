@@ -3,9 +3,9 @@
   <!-- ── Breadcrumb ── -->
   <nav class="pub-breadcrumb" aria-label="Navigation boutique">
     <div class="pub-shop-logo">
-      @if (isUrl(cartService.company()?.logo)) {
-        <img [src]="cartService.company()?.logo"
-             [alt]="cartService.company()?.name"
+      @if (isUrl($safeNavigationMigration(cartService.company()?.logo))) {
+        <img [src]="$safeNavigationMigration(cartService.company()?.logo)"
+             [alt]="$safeNavigationMigration(cartService.company()?.name)"
              (error)="onImgError($event)" />
       } @else {
         <span class="pub-logo-emoji">{{ cartService.company()?.logo || '🏪' }}</span>

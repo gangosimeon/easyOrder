@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject, signal, computed, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatFormFieldModule }       from '@angular/material/form-field';
@@ -31,6 +31,7 @@ import { GeststockLinkSectionComponent } from '../integrations/geststock/geststo
     GeststockLinkSectionComponent,
   ],
   templateUrl: './profile.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls:  ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit, OnDestroy {

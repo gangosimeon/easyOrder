@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 interface FaqCategory {
@@ -19,6 +19,7 @@ interface FaqItem {
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './faq.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './faq.component.scss',
 })
 export class FaqComponent {

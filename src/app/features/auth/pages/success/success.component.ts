@@ -1,4 +1,4 @@
-import { Component, inject, AfterViewInit } from '@angular/core';
+import { Component, inject, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [MatCardModule, MatButtonModule, MatIconModule],
   templateUrl: './success.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./success.component.scss'],
 })
 export class SuccessComponent implements AfterViewInit {

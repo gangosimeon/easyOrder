@@ -1,5 +1,6 @@
 import {
   Component, Input, Output, EventEmitter, inject, signal, OnInit, OnDestroy, DestroyRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, retry } from 'rxjs';
@@ -50,6 +51,7 @@ import { AuthService } from '../../core/services/auth.service';
       </div>
     }
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     :host { display: block; }
 

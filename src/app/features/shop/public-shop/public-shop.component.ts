@@ -1,6 +1,7 @@
 import {
   AfterViewInit, Component, ElementRef, inject,
   OnDestroy, OnInit, signal, computed, effect, ViewChild, Renderer2,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
@@ -36,6 +37,7 @@ registerLocaleData(localeFr);
     ProductDetailModalComponent,
   ],
   templateUrl: './public-shop.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./public-shop.component.scss'],
 })
 export class PublicShopComponent implements OnInit, AfterViewInit, OnDestroy {

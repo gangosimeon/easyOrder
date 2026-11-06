@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule }   from '@angular/material/form-field';
@@ -31,6 +31,7 @@ export interface AnnonceFormData {
     MatRippleModule,
   ],
   templateUrl: './annonce-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls:  ['./annonce-form.component.scss'],
 })
 export class AnnonceFormComponent implements OnInit {

@@ -169,7 +169,7 @@
         <label class="field-label">Numéro WhatsApp</label>
         <app-phone-input
           [ngModel]="customerPhone()"
-          [defaultDialCode]="company()?.countryCode"
+          [defaultDialCode]="$safeNavigationMigration(company()?.countryCode)"
           (ngModelChange)="onPhoneChange($event)"
           (countryCodeChange)="countryCode.set($event)">
         </app-phone-input>

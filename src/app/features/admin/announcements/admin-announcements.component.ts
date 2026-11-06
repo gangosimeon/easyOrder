@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, DestroyRef, computed } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef, computed, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
@@ -27,6 +27,7 @@ import { AuthService } from '../../../core/services/auth.service';
     MatIconModule, MatDialogModule, MatTooltipModule, MatProgressBarModule,
   ],
   templateUrl: './admin-announcements.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl:    './admin-announcements.component.scss',
 })
 export class AdminAnnouncementsComponent implements OnInit {

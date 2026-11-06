@@ -1,4 +1,4 @@
-import { Component, HostListener, signal, inject } from '@angular/core';
+import { Component, HostListener, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 
 @Component({
@@ -6,6 +6,7 @@ import { RouterLink, Router } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   templateUrl: './landing-nav.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './landing-nav.component.scss'
 })
 export class LandingNavComponent {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { ViewportScroller } from '@angular/common';
@@ -8,6 +8,7 @@ import { ViewportScroller } from '@angular/common';
   standalone: true,
   imports: [RouterLink, MatIconModule],
   templateUrl: './hero.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './hero.component.scss'
 })
 export class HeroComponent {

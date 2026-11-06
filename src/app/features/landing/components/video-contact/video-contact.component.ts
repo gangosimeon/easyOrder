@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 interface ContactItem {
@@ -14,6 +14,7 @@ interface ContactItem {
   standalone: true,
   imports: [MatIconModule],
   templateUrl: './video-contact.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './video-contact.component.scss'
 })
 export class VideoContactComponent {

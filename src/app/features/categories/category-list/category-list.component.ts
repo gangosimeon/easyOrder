@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Router }              from '@angular/router';
 import { MatDialog }           from '@angular/material/dialog';
 import { MatIconModule }       from '@angular/material/icon';
@@ -24,6 +24,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../../shared/confi
     MatRippleModule, MatSnackBarModule, MatTooltipModule,
   ],
   templateUrl: './category-list.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls:  ['./category-list.component.scss'],
 })
 export class CategoryListComponent {

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject, signal } from '@angular/core';
+import { Component, Inject, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule }          from '@angular/common';
 import {
   ReactiveFormsModule, FormBuilder, FormGroup, Validators,
@@ -31,6 +31,7 @@ export interface CategoryFormData {
     MatRippleModule,
   ],
   templateUrl: './category-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls:  ['./category-form.component.scss'],
 })
 export class CategoryFormComponent implements OnInit {

@@ -165,7 +165,7 @@
           <div class="price-preview">
             <div class="price-before">
               <span class="label">Prix normal :</span>
-              <span class="value striked">{{ fmt(form.get('price')?.value) }}</span>
+              <span class="value striked">{{ fmt($safeNavigationMigration(form.get('price')?.value)) }}</span>
             </div>
             <div class="price-after">
               <span class="label">Prix final :</span>

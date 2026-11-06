@@ -1,4 +1,4 @@
-import { Component, inject, computed, input } from '@angular/core';
+import { Component, inject, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -12,6 +12,7 @@ import { CartDrawerService } from '../../core/services/cart-drawer.service';
   standalone: true,
   imports: [ MatIconModule, MatRippleModule],
   templateUrl: './public-topbar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl:    './public-topbar.component.scss',
 })
 export class PublicTopbarComponent {

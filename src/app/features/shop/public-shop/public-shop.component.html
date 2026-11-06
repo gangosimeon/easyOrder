@@ -342,7 +342,7 @@
   <app-product-detail-modal
     [product]="selectedDetailProduct()"
     [category]="getCategoryFor(selectedDetailProduct())"
-    [coverColor]="company()?.coverColor"
+    [coverColor]="$safeNavigationMigration(company()?.coverColor)"
     [buyerActions]="true"
     [relatedProducts]="selectedDetailRelatedProducts()"
     (share)="shareProduct($event)"

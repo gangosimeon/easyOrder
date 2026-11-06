@@ -22,7 +22,7 @@
           @if (heroImage) {
             <!-- Large preview + thumbnail strip -->
             <div class="od-hero-main">
-              <img class="od-hero-main-img od-zoomable" [src]="heroImage" [alt]="order.items[selectedItemIndex]?.productName"
+              <img class="od-hero-main-img od-zoomable" [src]="heroImage" [alt]="$safeNavigationMigration(order.items[selectedItemIndex]?.productName)"
                 loading="lazy" (click)="openZoom(heroImage); stopProp($event)" />
 
               @if (itemImages.length > 1) {

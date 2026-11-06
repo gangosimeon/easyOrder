@@ -1,5 +1,6 @@
 import {
   Component, inject, computed, signal, input,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
@@ -18,6 +19,7 @@ interface QuickAction    { label: string; icon: string; route: string; color: st
   standalone: true,
   imports: [RouterLink, MatIconModule, MatRippleModule, MatTooltipModule],
   templateUrl: './topbar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl:    './topbar.component.scss',
 })
 export class TopbarComponent {

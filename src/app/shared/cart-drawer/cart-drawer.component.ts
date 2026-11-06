@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -17,6 +17,7 @@ import { isValidPhone } from '../phone-input/phone-validator';
   standalone: true,
   imports: [MatIconModule, MatProgressSpinnerModule, MatRippleModule, FormsModule, PhoneInputComponent],
   templateUrl: './cart-drawer.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl:    './cart-drawer.component.scss',
 })
 export class CartDrawerComponent {

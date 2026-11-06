@@ -1,4 +1,4 @@
-import { Component, Injectable, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, Injectable, OnDestroy, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { DOCUMENT, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -60,6 +60,7 @@ export class GeststockCallbackGuard {
       }
     </section>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: `
     .callback { max-width: 520px; margin: 48px auto; padding: 24px 16px; text-align: center; }
     .callback-title { font-family: var(--font-display); font-size: 1.3rem; margin: 0 0 16px; }

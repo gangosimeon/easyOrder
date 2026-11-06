@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
@@ -9,6 +9,7 @@ import { Order } from '../../core/services/orders-api.service';
   standalone: true,
   imports: [MatIconModule, MatButtonModule, MatRippleModule],
   templateUrl: './order-detail-drawer.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./order-detail-drawer.component.scss'],
 })
 export class OrderDetailDrawerComponent {

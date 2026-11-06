@@ -1,6 +1,7 @@
 import {
   Component, signal, computed, output, input, effect,
   inject, ElementRef, HostListener, forwardRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { COUNTRIES, Country } from './countries';
@@ -12,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [MatIconModule],
   templateUrl: './phone-input.component.html',
   styleUrl: './phone-input.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [{
     provide:     NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => PhoneInputComponent),

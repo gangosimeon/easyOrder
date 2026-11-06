@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +23,7 @@ type View = 'hidden' | 'loading' | 'ready' | 'error';
   standalone: true,
   imports: [DatePipe, MatButtonModule, MatIconModule],
   templateUrl: './geststock-link-section.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./geststock-link-section.component.scss'],
 })
 export class GeststockLinkSectionComponent implements OnInit {

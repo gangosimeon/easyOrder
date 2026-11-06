@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatIcon } from "@angular/material/icon";
 
 interface FooterSection {
@@ -12,6 +12,7 @@ interface FooterSection {
   standalone: true,
   imports: [],
   templateUrl: './landing-footer.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './landing-footer.component.scss'
 })
 export class LandingFooterComponent {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -37,7 +37,7 @@ export interface AnnouncementDialogData {
   template: `
     <div class="dlg-header">
       <mat-icon class="dlg-header-icon" [class]="'type-' + form.get('type')?.value">
-        {{ iconFor(form.get('type')?.value) }}
+        {{ iconFor($safeNavigationMigration(form.get('type')?.value)) }}
       </mat-icon>
       <h2 class="dlg-title">
         {{ data.announcement ? "Modifier l'annonce" : "Nouvelle annonce"}}
@@ -70,7 +70,7 @@ export interface AnnouncementDialogData {
           <mat-form-field appearance="outline" class="type-field">
             <mat-label>Type</mat-label>
             <mat-icon matPrefix [class]="'type-icon type-' + form.get('type')?.value">
-              {{ iconFor(form.get('type')?.value) }}
+              {{ iconFor($safeNavigationMigration(form.get('type')?.value)) }}
             </mat-icon>
             <mat-select formControlName="type">
               @for (t of typeOptions; track t.value) {
@@ -135,6 +135,7 @@ export interface AnnouncementDialogData {
       </button>
     </mat-dialog-actions>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .dlg-header {
       display: flex; align-items: center; gap: 12px;
