@@ -95,7 +95,7 @@ describe('ProductDetailModalComponent', () => {
       const emitted: Product[] = [];
       component.productSelected.subscribe((p: Product) => emitted.push(p));
       (element.querySelector('.pd-related-card') as HTMLButtonElement).click();
-      expect(emitted).toHaveSize(1);
+      expect(emitted).toHaveLength(1);
       expect(emitted[0].id).toBe('p2');
     });
 
@@ -139,7 +139,7 @@ describe('ProductDetailModalComponent', () => {
       const footer = sheet.querySelector('.pd-footer') as HTMLElement;
       // Le footer est un enfant direct du sheet, pas du scroll area
       expect(footer).not.toBeNull();
-      expect(scrollArea.contains(footer)).toBeFalse();
+      expect(scrollArea.contains(footer)).toBe(false);
     });
   });
 });
