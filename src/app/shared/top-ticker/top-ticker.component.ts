@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter, inject, signal, OnInit, OnDestroy, DestroyRef,
+  Component, Input, Output, EventEmitter, inject, signal, OnInit, OnDestroy, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of, retry } from 'rxjs';
@@ -11,7 +11,8 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   template: `
     @if (ann()) {
-      <div class="ticker-bar" role="marquee" aria-live="polite" aria-label="Annonce de la plateforme">
+      <div class="ticker-bar" role="marquee" aria-live="polite" aria-label="Annonce de la plateforme"
+           [style]="{'--tc': coverColor || null}">
 
         <!-- Bloc date fixe -->
         <div class="ticker-date">
@@ -58,7 +59,9 @@ import { AuthService } from '../../core/services/auth.service';
       top: 0; left: 0; right: 0;
       z-index: 400;
       height: 42px;
-      background: linear-gradient(90deg, #00695c 0%, #00897b 100%);
+      background: linear-gradient(90deg,
+        color-mix(in srgb, var(--tc, #00695c) 85%, #000) 0%,
+        var(--tc, #00897b) 100%);
       display: flex;
       align-items: stretch;
       overflow: hidden;
@@ -73,7 +76,7 @@ import { AuthService } from '../../core/services/auth.service';
       align-items: center;
       gap: 7px;
       padding: 0 28px 0 14px;
-      background: #004d40;
+      background: color-mix(in srgb, var(--tc, #00695c) 60%, #000);
       flex-shrink: 0;
       white-space: nowrap;
       font-size: 12.5px;
@@ -185,6 +188,8 @@ import { AuthService } from '../../core/services/auth.service';
   `],
 })
 export class TopTickerComponent implements OnInit, OnDestroy {
+  @Input() coverColor?: string;
+
   private svc        = inject(AdminAnnouncementService);
   private auth       = inject(AuthService);
   private destroyRef = inject(DestroyRef);

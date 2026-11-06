@@ -1,4 +1,4 @@
-<app-top-ticker (hasContent)="onTickerContent($event)" />
+<app-top-ticker [coverColor]="coverColor()" (hasContent)="onTickerContent($event)" />
 
 @if (isAuthRoute()) {
   <router-outlet />
