@@ -1,7 +1,11 @@
 .app-layout {
   display: flex;
   min-height: 100vh;
-  padding-top: var(--ticker-h, 0);
+  padding-top: var(--ticker-h, 0); /* desktop : pousse la sidebar fixed + main sous le ticker */
+
+  @media (max-width: 768px) {
+    padding-top: 0; /* mobile : c'est margin-top sur .mobile-header qui absorbe l'offset */
+  }
 }
 
 /* ===== SIDEBAR ===== */
@@ -852,6 +856,7 @@ $skel-white-gradient: linear-gradient(
     display: flex;
     flex-direction: column;
     background: var(--cover-color, var(--bg-sidebar));
+    margin-top: var(--ticker-h, 0); /* pousse le header admin sous le ticker */
     padding: 12px 16px 0;
     position: sticky; top: var(--ticker-h, 0); z-index: 50;
     box-shadow: 0 2px 12px rgba(0,0,0,.2);
