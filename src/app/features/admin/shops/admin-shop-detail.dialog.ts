@@ -119,6 +119,27 @@ import { AdminShop, AdminShopDetail, AdminService } from '../../../core/services
           </div>
         </div>
 
+        <!-- ── GestStock access ── -->
+        <div class="geststock-row">
+          <div class="geststock-info">
+            <div class="geststock-ico-wrap">
+              <mat-icon>sync_alt</mat-icon>
+            </div>
+            <div>
+              <span class="geststock-lbl">Liaison GestStock</span>
+              <span class="geststock-sub">{{ geststockEnabled() ? 'Accès autorisé' : 'Accès refusé' }}</span>
+            </div>
+          </div>
+          <button mat-stroked-button
+            class="geststock-toggle-btn"
+            [class.geststock-on]="geststockEnabled()"
+            [class.geststock-off]="!geststockEnabled()"
+            (click)="toggleGeststock()">
+            <mat-icon>{{ geststockEnabled() ? 'link' : 'link_off' }}</mat-icon>
+            {{ geststockEnabled() ? 'Révoquer' : 'Autoriser' }}
+          </button>
+        </div>
+
         <!-- ── URL bar ── -->
         <div class="url-bar">
           <mat-icon class="url-ico">link</mat-icon>
@@ -236,6 +257,24 @@ import { AdminShop, AdminShopDetail, AdminService } from '../../../core/services
     .info-color-row { display: flex; align-items: center; gap: 10px; justify-content: space-between; flex: 1; }
     .color-swatch { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(0,0,0,.1); flex-shrink: 0; }
 
+    /* GestStock row */
+    .geststock-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-top: 14px; padding: 12px 14px;
+      background: #f8f9ff; border-radius: 12px;
+    }
+    .geststock-info { display: flex; align-items: center; gap: 10px; }
+    .geststock-ico-wrap {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: #e0e7ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .geststock-ico-wrap mat-icon { font-size: 17px; width: 17px; height: 17px; color: #6366f1; }
+    .geststock-lbl { display: block; font-size: 13px; font-weight: 600; color: #1f2937; }
+    .geststock-sub { display: block; font-size: 11px; color: #9ca3af; margin-top: 1px; }
+    .geststock-toggle-btn { min-width: 100px; font-size: 12px !important; }
+    .geststock-toggle-btn.geststock-on  { color: #16a34a !important; border-color: #16a34a !important; }
+    .geststock-toggle-btn.geststock-off { color: #9ca3af !important; border-color: #d1d5db !important; }
+
     /* URL bar */
     .url-bar {
       display: flex; align-items: center; gap: 8px;
@@ -311,6 +350,7 @@ export class AdminShopDetailDialogComponent implements OnInit {
   readonly copied        = signal(false);
   readonly detailLoading = signal(true);
   readonly detail        = signal<AdminShopDetail | null>(null);
+  readonly geststockEnabled = signal(false);
 
   readonly shopUrl = `${window.location.origin}/shop/${this.data.slug}`;
 
@@ -318,9 +358,17 @@ export class AdminShopDetailDialogComponent implements OnInit {
     this.adminService.getShopById(this.data.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next:  d  => { this.detail.set(d); this.detailLoading.set(false); },
+        next:  d  => { this.detail.set(d); this.detailLoading.set(false); this.geststockEnabled.set(d.geststockEnabled ?? false); },
         error: () => this.detailLoading.set(false),
       });
+  }
+
+  toggleGeststock(): void {
+    const next = !this.geststockEnabled();
+    this.adminService.toggleGeststockAccess(this.data.id, next).subscribe({
+      next: () => this.geststockEnabled.set(next),
+      error: () => {},
+    });
   }
 
   isUrl(v: string): boolean {
