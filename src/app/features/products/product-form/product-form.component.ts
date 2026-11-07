@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule }           from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -9,9 +9,11 @@ import { MatIconModule }          from '@angular/material/icon';
 import { MatSelectModule }        from '@angular/material/select';
 import { MatSlideToggleModule }   from '@angular/material/slide-toggle';
 import { MatRippleModule }        from '@angular/material/core';
+import { MatTooltipModule }       from '@angular/material/tooltip';
 import { Product, PRODUCT_UNITS, PRODUCT_EMOJIS } from '../../../models/product.model';
 import { Category }               from '../../../models/category.model';
 import { UploadService }          from '../../../core/services/upload.service';
+import { GeststockSyncService }   from '../../../core/services/geststock-sync.service';
 
 export interface ProductFormData {
   product?: Product;
@@ -32,6 +34,7 @@ export interface ProductFormData {
     MatSelectModule,
     MatSlideToggleModule,
     MatRippleModule,
+    MatTooltipModule,
   ],
   templateUrl: './product-form.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -46,6 +49,20 @@ export class ProductFormComponent implements OnInit {
   @ViewChild('fileInputRef') fileInputRef!: ElementRef<HTMLInputElement>;
 
   private uploadService = inject(UploadService);
+  private syncService   = inject(GeststockSyncService);
+
+  /** Le produit est synchronise par GestStock. */
+  readonly isGeststock = computed(() => this.data.product?.external?.source === 'geststock');
+
+  /** Un prix de reference GestStock different du prix actuel est disponible. */
+  readonly hasPriceSuggestion = computed(() => {
+    const p = this.data.product;
+    if (!p || !this.isGeststock()) return false;
+    return p.externalPrice !== undefined && p.externalPrice !== p.price;
+  });
+
+  readonly acceptingPrice = signal(false);
+  readonly acceptPriceError = signal<string | null>(null);
 
   imageMode      = signal<'emoji' | 'url' | 'upload'>('upload');
   selectedEmoji  = signal<string>('🛍️');
@@ -104,6 +121,12 @@ export class ProductFormComponent implements OnInit {
 
     if (this.hasPromo() && promotionValue != null) {
       this.promoPreset.set(this.promoPresets.includes(promotionValue) ? promotionValue : 'other');
+    }
+
+    // Champs en lecture seule si le produit est synchronise par GestStock.
+    if (this.isGeststock()) {
+      this.form.get('name')?.disable();
+      this.form.get('unit')?.disable();
     }
 
     // Le prix normal change → le prix final est recalculé à partir de la
@@ -243,4 +266,26 @@ export class ProductFormComponent implements OnInit {
   }
 
   onCancel(): void { this.dialogRef.close(null); }
+
+  acceptExternalPrice(): void {
+    const id = this.data.product?.id;
+    if (!id || this.acceptingPrice()) return;
+    this.acceptingPrice.set(true);
+    this.acceptPriceError.set(null);
+    this.syncService.acceptExternalPrice(id).subscribe({
+      next: (updated) => {
+        this.acceptingPrice.set(false);
+        // Applique le nouveau prix dans le formulaire.
+        this.form.get('price')?.setValue(updated.price);
+        // Met a jour la reference locale pour que le bandeau disparaisse.
+        if (this.data.product) {
+          this.data.product = { ...this.data.product, price: updated.price };
+        }
+      },
+      error: () => {
+        this.acceptingPrice.set(false);
+        this.acceptPriceError.set('Echec de l\'application du prix. Reessayez.');
+      },
+    });
+  }
 }

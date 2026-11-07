@@ -39,12 +39,31 @@
               <dt>Liée le</dt>
               <dd>{{ link.linkedAt | date: 'dd/MM/yyyy' }}</dd>
             </div>
+            <div>
+              <dt>Dernière synchronisation</dt>
+              <dd data-test="last-sync">{{ link.lastStateSyncAt ? (link.lastStateSyncAt | date:'dd/MM/yyyy HH:mm') : 'Jamais' }}</dd>
+            </div>
           </dl>
           @if (suspension(); as suspension) {
             <p class="geststock-reason">{{ suspension }}</p>
           }
           @if (state()?.stale) {
             <p class="geststock-muted" data-test="stale">État non actualisé : GestStock est momentanément injoignable.</p>
+          }
+          @if (link.status === 'ACTIVE') {
+            <div class="geststock-actions geststock-actions--left">
+              <button
+                mat-stroked-button
+                type="button"
+                data-test="match-categories"
+                (click)="openMatchCategories()">
+                <mat-icon>compare_arrows</mat-icon>
+                Rapprocher des catégories
+                @if (unmatchedCount() > 0) {
+                  <span class="geststock-unmatched-badge" data-test="unmatched-badge">{{ unmatchedCount() }}</span>
+                }
+              </button>
+            </div>
           }
           <div class="geststock-actions">
             <button mat-stroked-button type="button" class="geststock-revoke" data-test="revoke" [disabled]="busy()" (click)="revoke()">

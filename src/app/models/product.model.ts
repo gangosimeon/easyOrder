@@ -11,6 +11,14 @@ export interface Product {
   stock?: number;
   createdAt: Date;
   inStock: boolean;
+  /** Prix de référence reçu de GestStock (JA2). */
+  externalPrice?: number;
+  /** Identification de la source externe (JA2). */
+  external?: {
+    source: 'geststock';
+    id: string;
+    version: number;
+  };
 }
 
 export const PRODUCT_UNITS = [
