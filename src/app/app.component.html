@@ -333,7 +333,7 @@
       </header>
 
       @if (isPublicRoute() && bannerProducts().length > 0) {
-        <div class="mobile-shop-banner" [style.margin-top.px]="headerHeight()">
+        <div class="mobile-shop-banner" [style.margin-top.px]="totalHeaderOffset()">
           @for (product of bannerProducts(); track product.id; let i = $index) {
             <img
               class="banner-img"
@@ -364,7 +364,7 @@
       @if (isPublicRoute() && cartService.company()) {
         <div
           class="mobile-shop-card"
-          [style.margin-top.px]="bannerProducts().length === 0 ? 56 : 0"
+          [style.margin-top.px]="bannerProducts().length === 0 ? totalHeaderOffset() : 0"
         >
           <div
             class="mobile-shop-avatar"

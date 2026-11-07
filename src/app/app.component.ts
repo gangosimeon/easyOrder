@@ -97,6 +97,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly isAdmin = computed(() => this.authService.company()?.role === 'admin');
 
   readonly tickerVisible = signal(false);
+  readonly totalHeaderOffset = computed(() => this.headerHeight() + (this.tickerVisible() ? 42 : 0));
 
   readonly bannerProducts = computed(() => this.cartService.previewProducts());
   readonly bannerIndex = signal(0);
