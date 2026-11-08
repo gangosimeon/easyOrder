@@ -88,9 +88,16 @@
   <!-- Form -->
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-body">
 
+    @if (isGeststock()) {
+      <div class="geststock-sync-badge" data-test="geststock-badge">
+        <mat-icon>sync_alt</mat-icon>
+        <span>Synchronise par GestStock — nom, unite et categorie non editables</span>
+      </div>
+    }
+
     <mat-form-field appearance="outline">
       <mat-label>Nom du produit</mat-label>
-      <input matInput formControlName="name" placeholder="Ex: Chaussures Nike Air Max" />
+      <input matInput formControlName="name" placeholder="Ex: Chaussures Nike Air Max" [readonly]="isGeststock()" />
       <mat-icon matSuffix>sell</mat-icon>
     </mat-form-field>
 
@@ -103,12 +110,12 @@
           <mat-error>Prix requis</mat-error>
         }
         @if (form.get('price')?.hasError('min')) {
-          <mat-error>Le prix ne peut pas être négatif</mat-error>
+          <mat-error>Le prix ne peut pas etre negatif</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Unité</mat-label>
+        <mat-label>Unite</mat-label>
         <mat-select formControlName="unit">
           <mat-option [value]=""></mat-option>
           @for (unit of productUnits; track unit) {
@@ -117,6 +124,25 @@
         </mat-select>
       </mat-form-field>
     </div>
+
+    @if (hasPriceSuggestion()) {
+      <div class="geststock-price-notice" data-test="price-suggestion">
+        <mat-icon>info</mat-icon>
+        <span>Prix de reference GestStock : {{ fmt(data.product!.externalPrice!) }}</span>
+        <button
+          type="button"
+          mat-stroked-button
+          class="apply-price-btn"
+          [disabled]="acceptingPrice()"
+          (click)="acceptExternalPrice()"
+          data-test="accept-price">
+          {{ acceptingPrice() ? 'En cours...' : 'Appliquer' }}
+        </button>
+      </div>
+      @if (acceptPriceError()) {
+        <p class="geststock-price-error" role="alert">{{ acceptPriceError() }}</p>
+      }
+    }
 
     <!-- Promo toggle -->
     <div class="promo-toggle">

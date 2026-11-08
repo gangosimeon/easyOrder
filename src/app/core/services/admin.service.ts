@@ -18,6 +18,7 @@ export interface AdminShop {
   status:       'active' | 'inactive';
   isActive:     boolean;
   banned:       boolean;
+  geststockEnabled: boolean;
   publicUrl:    string;
 }
 
@@ -138,6 +139,13 @@ export class AdminService {
     return this.http.patch<{ id: string; banned: boolean }>(
       `${this.apiUrl}/admin/shops/${shopId}/toggle-ban`,
       { banned },
+    );
+  }
+
+  toggleGeststockAccess(shopId: string, geststockEnabled: boolean): Observable<{ id: string; geststockEnabled: boolean }> {
+    return this.http.patch<{ id: string; geststockEnabled: boolean }>(
+      `${this.apiUrl}/admin/shops/${shopId}/toggle-geststock`,
+      { geststockEnabled },
     );
   }
 }

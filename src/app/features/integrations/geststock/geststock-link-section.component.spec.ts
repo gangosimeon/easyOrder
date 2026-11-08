@@ -10,6 +10,8 @@ import { environment } from '../../../../environments/environment';
 import { BROWSER_NAVIGATE, GeststockLink } from '../../../core/services/geststock-link.service';
 import { GeststockLinkSectionComponent } from './geststock-link-section.component';
 
+// SYNC_API = API (meme base), defini ci-dessous avec API.
+
 const API = `${environment.apiUrl}/integrations/geststock`;
 const AUTHORIZE = `${environment.geststockOrigin}/integrations/jecreemaboutique/authorize?client_id=jcmb&request_uri=urn%3Aietf%3Aparams%3Aoauth%3Arequest_uri%3AZx9`;
 
@@ -75,9 +77,15 @@ describe('GeststockLinkSectionComponent', () => {
     fixture.detectChanges();
   }
 
-  async function serve(state: object): Promise<void> {
+  async function serve(state: { link: GeststockLink | null; refreshed: boolean; stale: boolean }): Promise<void> {
     http.expectOne(`${API}/link`).flush(state);
     await settle();
+    // Si la liaison est ACTIVE, le composant appelle aussi getUnmatched (JA2).
+    if (state.link && state.link.status === 'ACTIVE') {
+      const req = http.match(`${API}/unmatched`);
+      req.forEach(r => r.flush({ geststockCategories: [], localCategories: [] }));
+      await settle();
+    }
   }
 
   function fail(request: TestRequest, status: number, code: string, headers: Record<string, string> = {}): void {
@@ -108,7 +116,7 @@ describe('GeststockLinkSectionComponent', () => {
     expect(text().trim()).toBe('');
   });
 
-  it('intégration désactivée (404 INTEGRATION_DISABLED) : section masquée, sans message d’erreur', async () => {
+  it("intégration désactivée (404 INTEGRATION_DISABLED) : section masquée, sans message d'erreur", async () => {
     session();
     create();
     fail(http.expectOne(`${API}/link`), 404, 'INTEGRATION_DISABLED');
@@ -125,7 +133,7 @@ describe('GeststockLinkSectionComponent', () => {
     expect(button('connect').textContent).toContain('Connecter à GestStock');
   });
 
-  it('active : nom de l’entreprise, date de liaison ; code si le nom est absent', async () => {
+  it("active : nom de l'entreprise, date de liaison ; code si le nom est absent", async () => {
     session();
     create();
     await serve({ link: link(), refreshed: true, stale: false });
@@ -146,7 +154,7 @@ describe('GeststockLinkSectionComponent', () => {
     create();
     await serve({ link: link({ status: 'SUSPENDED', suspensionReason: 'AUTHORIZER_LOST_ACCESS' }), refreshed: true, stale: false });
     expect(text()).toContain('Suspendue');
-    expect(text()).toContain('n’a plus les droits');
+    expect(text()).toContain('a plus les droits');
 
     TestBed.resetTestingModule();
     session();
@@ -162,7 +170,7 @@ describe('GeststockLinkSectionComponent', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('[data-test="stale"]')?.textContent).toContain('non actualisé');
   });
 
-  it('nom d’entreprise contenant du HTML : affiché comme du texte', async () => {
+  it("nom d'entreprise contenant du HTML : affiché comme du texte", async () => {
     session();
     create();
     await serve({ link: link({ companyName: '<img src=x onerror="alert(1)"><b>Optique</b>' }), refreshed: true, stale: false });
@@ -179,7 +187,7 @@ describe('GeststockLinkSectionComponent', () => {
 
   // --- Démarrer ------------------------------------------------------------------------------------------
 
-  it('démarrer : POST start, bouton inactif pendant l’appel, navigation vers l’URL de GestStock', async () => {
+  it("démarrer : POST start, bouton inactif pendant l'appel, navigation vers l'URL de GestStock", async () => {
     session();
     create();
     await serve({ link: null, refreshed: false, stale: false });
@@ -194,7 +202,7 @@ describe('GeststockLinkSectionComponent', () => {
     expect(navigations).toEqual([AUTHORIZE]);
   });
 
-  it('démarrer : URL d’une autre origine → aucune navigation, message d’erreur', async () => {
+  it("démarrer : URL d'une autre origine → aucune navigation, message d'erreur", async () => {
     session();
     create();
     await serve({ link: null, refreshed: false, stale: false });
@@ -257,7 +265,7 @@ describe('GeststockLinkSectionComponent', () => {
     await settle();
   });
 
-  it('révoquer : GestStock indisponible → « réessayez plus tard », l’état reste lié', async () => {
+  it("révoquer : GestStock indisponible → « réessayez plus tard », l'état reste lié", async () => {
     session();
     create();
     await serve({ link: link(), refreshed: true, stale: false });
@@ -269,5 +277,57 @@ describe('GeststockLinkSectionComponent', () => {
     expect(text()).toContain('réessayez plus tard');
     expect(text()).toContain('Optique Principale');
     expect(button('revoke').disabled).toBe(false);
+  });
+
+  // --- JA2 : synchronisation et rapprochement -----------------------------------------------------------
+
+  it('liaison active : affiche la date de derniere synchronisation', async () => {
+    session();
+    create();
+    http.expectOne(`${API}/link`).flush({ link: link(), refreshed: true, stale: false });
+    http.expectOne(`${API}/unmatched`).flush({ geststockCategories: [], localCategories: [] });
+    await settle();
+    expect(text()).toContain('Dernière synchronisation');
+    expect(text()).toContain('30/10/2026');
+  });
+
+  it('liaison active : lastStateSyncAt null → affiche "Jamais"', async () => {
+    session();
+    create();
+    http.expectOne(`${API}/link`).flush({ link: link({ lastStateSyncAt: null }), refreshed: false, stale: false });
+    http.expectOne(`${API}/unmatched`).flush({ geststockCategories: [], localCategories: [] });
+    await settle();
+    expect(text()).toContain('Jamais');
+  });
+
+  it('badge de rapprochement absent si aucune categorie non rapprochee', async () => {
+    session();
+    create();
+    http.expectOne(`${API}/link`).flush({ link: link(), refreshed: true, stale: false });
+    http.expectOne(`${API}/unmatched`).flush({ geststockCategories: [], localCategories: [] });
+    await settle();
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-test="unmatched-badge"]')).toBeNull();
+  });
+
+  it('badge de rapprochement affiche le compte si des categories non rapprochees existent', async () => {
+    session();
+    create();
+    http.expectOne(`${API}/link`).flush({ link: link(), refreshed: true, stale: false });
+    http.expectOne(`${API}/unmatched`).flush({
+      geststockCategories: [{ id: 'g1', name: 'Cat GS' }, { id: 'g2', name: 'Cat GS 2' }],
+      localCategories: [{ id: 'l1', name: 'Cat Locale' }],
+    });
+    await settle();
+    const badge = (fixture.nativeElement as HTMLElement).querySelector('[data-test="unmatched-badge"]');
+    expect(badge).not.toBeNull();
+    expect(badge?.textContent?.trim()).toBe('3');
+  });
+
+  it('liaison non liee : pas de bouton rapprochement ni d\'appel unmatched', async () => {
+    session();
+    create();
+    await serve({ link: null, refreshed: false, stale: false });
+    http.expectNone(`${API}/unmatched`);
+    expect((fixture.nativeElement as HTMLElement).querySelector('[data-test="match-categories"]')).toBeNull();
   });
 });

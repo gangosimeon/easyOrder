@@ -85,6 +85,11 @@
             <mat-icon>local_offer</mat-icon> -{{ product.promotion }}%
           </div>
         }
+        @if (product.external?.source === 'geststock' && (!product.price || product.price === 0)) {
+          <div class="pending-price-badge" data-test="pending-price-badge">
+            <mat-icon>schedule</mat-icon> Prix en attente
+          </div>
+        }
 
         <div class="card-actions">
           <button class="action-btn share" (click)="shareProduct(product, $event)" matTooltip="Partager" aria-label="Partager ce produit">

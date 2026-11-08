@@ -4,12 +4,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatBadgeModule } from '@angular/material/badge';
 
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/services/auth.service';
 import { BROWSER_NAVIGATE, GeststockLinkService, GeststockLinkState } from '../../../core/services/geststock-link.service';
+import { GeststockSyncService } from '../../../core/services/geststock-sync.service';
 import { geststockError, isGeststockAuthorizationUrl, suspensionReasonLabel } from './geststock-messages';
 import { GeststockRevokeDialogComponent, GeststockRevokeResult } from './geststock-revoke-dialog.component';
+import { GeststockMatchCategoriesDialogComponent } from './geststock-match-categories-dialog.component';
 
 type View = 'hidden' | 'loading' | 'ready' | 'error';
 
@@ -21,7 +24,7 @@ type View = 'hidden' | 'loading' | 'ready' | 'error';
 @Component({
   selector: 'app-geststock-link-section',
   standalone: true,
-  imports: [DatePipe, MatButtonModule, MatIconModule],
+  imports: [DatePipe, MatButtonModule, MatIconModule, MatBadgeModule],
   templateUrl: './geststock-link-section.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./geststock-link-section.component.scss'],
@@ -29,6 +32,7 @@ type View = 'hidden' | 'loading' | 'ready' | 'error';
 export class GeststockLinkSectionComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly api = inject(GeststockLinkService);
+  private readonly sync = inject(GeststockSyncService);
   private readonly dialog = inject(MatDialog);
   private readonly navigate = inject(BROWSER_NAVIGATE);
 
@@ -37,6 +41,8 @@ export class GeststockLinkSectionComponent implements OnInit {
   readonly busy = signal(false);
   readonly error = signal<string | null>(null);
   readonly notice = signal<string | null>(null);
+  /** Nombre de categories non rapprochees (GestStock + locales). */
+  readonly unmatchedCount = signal<number>(0);
 
   /** Liaison en cours (une liaison révoquée n'en est plus une). */
   readonly link = computed(() => {
@@ -68,7 +74,7 @@ export class GeststockLinkSectionComponent implements OnInit {
     this.api.start().subscribe({
       next: ({ authorizationUrl }) => {
         if (!isGeststockAuthorizationUrl(authorizationUrl, environment.geststockOrigin)) {
-          this.error.set('L’adresse de l’écran GestStock est inattendue : aucune redirection. Réessayez plus tard.');
+          this.error.set("L'adresse de l'écran GestStock est inattendue : aucune redirection. Réessayez plus tard.");
           this.busy.set(false);
           return;
         }
@@ -113,12 +119,22 @@ export class GeststockLinkSectionComponent implements OnInit {
       });
   }
 
+  openMatchCategories(): void {
+    this.dialog
+      .open(GeststockMatchCategoriesDialogComponent, { maxWidth: '640px', width: '100%' })
+      .afterClosed()
+      .subscribe(() => this.loadUnmatched());
+  }
+
   private load(): void {
     this.view.set('loading');
     this.api.getLink().subscribe({
       next: (state) => {
         this.state.set(state);
         this.view.set('ready');
+        if (state.link && state.link.status === 'ACTIVE') {
+          this.loadUnmatched();
+        }
       },
       error: (err: unknown) => {
         const disabled = err instanceof HttpErrorResponse && err.status === 404
@@ -129,6 +145,19 @@ export class GeststockLinkSectionComponent implements OnInit {
         }
         this.error.set(geststockError(err).message);
         this.view.set('error');
+      },
+    });
+  }
+
+  private loadUnmatched(): void {
+    this.sync.getUnmatched().subscribe({
+      next: (data) => {
+        this.unmatchedCount.set(
+          data.geststockCategories.length + data.localCategories.length,
+        );
+      },
+      error: () => {
+        // Non bloquant : on ignore silencieusement.
       },
     });
   }
