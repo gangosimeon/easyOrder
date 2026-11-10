@@ -84,6 +84,86 @@
   @media (min-width: 480px) { height: 38px; font-size: 14px; padding: 0 16px; }
 }
 
+
+/* ── Color picker panel ── */
+.color-picker-panel {
+  padding: 5px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+
+  h4 {
+    margin: 0 0 5px;
+    font-size: 15px;
+  }
+
+  p {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+}
+
+.color-picker-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.native-color-picker {
+  width: 65px;
+  height: 55px;
+  padding: 3px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  background: white;
+}
+
+.hex-input-group {
+  label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: #64748b;
+  }
+}
+
+.hex-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 10px;
+
+  span {
+    color: #64748b;
+  }
+
+  input {
+    width: 100px;
+    padding: 10px 5px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+  }
+}
+
+.validate-color-btn {
+  margin-top: 18px;
+  background:var(--cover);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
 /* ── Cover card (visual only) ── */
 .cover-card {
   background: var(--bg-card);
