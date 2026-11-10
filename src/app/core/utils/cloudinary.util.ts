@@ -10,5 +10,6 @@ export function cloudinaryThumb(url: string | undefined | null, width: number, h
   if (idx === -1) return url;
   const insertAt = idx + marker.length;
   const transform = `w_${width},h_${height},c_fill,q_auto,f_auto/`;
-  return url.slice(0, insertAt) + transform + url.slice(insertAt);
+  // return url.slice(0, insertAt) + transform + url.slice(insertAt);
+  return url.slice(0, insertAt) + url.slice(insertAt);
 }
