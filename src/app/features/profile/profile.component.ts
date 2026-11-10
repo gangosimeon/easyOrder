@@ -75,7 +75,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   });
 
   form!: FormGroup;
-  logoMode      = signal<'emoji' | 'upload'>('upload');
+  logoMode      = signal<'emoji' | 'upload' | 'color'>('upload');
   selectedLogo  = signal<string>('🏪');
   uploadedLogo  = signal<string>('');
   selectedColor = signal<string>('#a04343');
@@ -167,6 +167,31 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return map[source.toLowerCase()] ?? '#8b5cf6';
   }
 
+  //Choix de la couleur autres que ceux proposés
+  colorDraft = signal<string>('#a04343');
+
+  updateColorDraft(value: string): void {
+    let color = value.trim();
+
+    if (color && !color.startsWith('#')) {
+      color = '#' + color;
+    }
+
+    this.colorDraft.set(color);
+  }
+
+  isValidColor(): boolean {
+    return /^#[0-9A-Fa-f]{6}$/.test(this.colorDraft());
+  }
+
+  confirmColor(): void {
+    if (!this.isValidColor()) return;
+
+    this.selectColor(this.colorDraft());
+  }
+
+
+
   copyShareLink(url: string, key: string): void {
     navigator.clipboard.writeText(url).then(() => {
       this.copiedChannel.set(key);
@@ -202,6 +227,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.selectedLogo.set(existingLogo);
     }
     this.selectedColor.set(c?.coverColor ?? '#a04343');
+    this.colorDraft.set(c?.coverColor ?? '#a04343');
 
     this.form = this.fb.group({
       name:        [c?.name        ?? '', [Validators.required, Validators.minLength(2)]],
@@ -234,7 +260,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.recoveryEmailVerified.set(!pending && (companyData?.recoveryEmailVerified ?? false));
   }
 
-  setLogoMode(mode: 'emoji' | 'upload'): void { this.logoMode.set(mode); }
+  setLogoMode(mode: 'emoji' | 'upload' | 'color'): void { this.logoMode.set(mode); }
   selectLogo(logo: string): void              { this.selectedLogo.set(logo); }
   selectColor(color: string): void            { this.selectedColor.set(color); }
   triggerLogoUpload(): void                   { this.logoFileRef.nativeElement.click(); }

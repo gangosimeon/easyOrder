@@ -85,7 +85,8 @@
           <button type="button" class="cover-tab" [class.active]="logoMode() === 'upload'" (click)="setLogoMode('upload')">
             <mat-icon>add_photo_alternate</mat-icon> Photo
           </button>
-          <button type="button" class="cover-tab active">
+          <button
+            type="button"  class="cover-tab"  [class.active]="logoMode() === 'color'"  (click)="setLogoMode('color')">
             <mat-icon>palette</mat-icon> Couleur
           </button>
         </div>
@@ -98,6 +99,52 @@
                       [class.selected]="selectedLogo() === logo"
                       (click)="selectLogo(logo)">{{ logo }}</button>
             }
+          </div>
+        }
+
+        <!-- Choisir autres couleurs que ce qui est proposé -->
+        @if (logoMode() === 'color') {
+          <div class="color-picker-panel">
+
+            <h4>Choisir une couleur</h4>
+            <p>Sélectionnez une couleur ou saisissez son code HEX.</p>
+
+            <div class="color-picker-content">
+
+              <!-- Sélecteur visuel -->
+              <input
+                type="color"
+                [value]="colorDraft()"
+                (input)="updateColorDraft($any($event.target).value)"
+                class="native-color-picker"
+              />
+
+              <!-- Code HEX -->
+              <div class="hex-input-group">
+                <label>Code couleur HEX</label>
+                <div class="hex-input-wrapper">
+                  <span>#</span>
+                  <input
+                    type="text"
+                    maxlength="7"
+                    [value]="colorDraft()"
+                    (input)="updateColorDraft($any($event.target).value)"
+                    placeholder="#16A34A"
+                  />
+                </div>
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              class="btn-view-shop validate-color-btn"
+              [disabled]="!isValidColor()"
+              (click)="confirmColor()">
+              <mat-icon>check</mat-icon>
+              <span>Valider la couleur</span>
+            </button>
+
           </div>
         }
       </div>
