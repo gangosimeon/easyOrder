@@ -188,6 +188,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (!this.isValidColor()) return;
 
     this.selectColor(this.colorDraft());
+    this.onSubmit();
   }
 
 
@@ -262,7 +263,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   setLogoMode(mode: 'emoji' | 'upload' | 'color'): void { this.logoMode.set(mode); }
   selectLogo(logo: string): void              { this.selectedLogo.set(logo); }
-  selectColor(color: string): void            { this.selectedColor.set(color); }
+  selectColor(color: string): void            { this.selectedColor.set(color); this.colorDraft.set(color); }
   triggerLogoUpload(): void                   { this.logoFileRef.nativeElement.click(); }
 
   onLogoFileSelected(event: Event): void {
