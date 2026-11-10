@@ -1,0 +1,1 @@
+function s(n,t,c=t){if(!n)return``;let o=n.indexOf(`/image/upload/`);if(o===-1)return n;let i=o+14;`${t}${c}`;return n.slice(0,i)+n.slice(i)}export{s as t};
