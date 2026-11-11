@@ -86,8 +86,12 @@
             <mat-icon>add_photo_alternate</mat-icon> Photo
           </button>
           <button
-            type="button"  class="cover-tab"  [class.active]="logoMode() === 'color'"  (click)="setLogoMode('color')">
-            <mat-icon>palette</mat-icon> Couleur
+            type="button"
+            class="cover-tab"
+            [class.active]="colorPickerOpen()"
+            (click)="openColorPicker()">
+            <mat-icon>palette</mat-icon>
+            Couleur
           </button>
         </div>
 
@@ -103,7 +107,7 @@
         }
 
         <!-- Choisir autres couleurs que ce qui est proposé -->
-        @if (logoMode() === 'color') {
+        @if (colorPickerOpen()) {
           <div class="color-picker-panel">
 
             <h4>Choisir une couleur</h4>

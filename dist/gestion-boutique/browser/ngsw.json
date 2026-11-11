@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   "timestamp": 1794161066469,
 =======
   "timestamp": 1794321331573,
@@ -12,6 +13,9 @@
 >>>>>>> feat/integration-lot2
 =======
   "timestamp": 1794351161310,
+>>>>>>> feat/integration-lot2
+=======
+  "timestamp": 1794358291020,
 >>>>>>> feat/integration-lot2
   "index": "/index.html",
   "assetGroups": [
@@ -24,6 +28,7 @@
       },
       "urls": [
         "/chunk-05ltvhNz.js",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -62,30 +67,35 @@
 =======
         "/chunk-4gzDEiFc.js",
 >>>>>>> feat/integration-lot2
+=======
+        "/chunk-5DtSawaC.js",
+>>>>>>> feat/integration-lot2
         "/chunk-5eBBR9CV.js",
         "/chunk-6F0PJ4f6.js",
+        "/chunk-77dzKVDx.js",
         "/chunk-97p5mxa8.js",
-        "/chunk-A49m8GEg.js",
         "/chunk-B3mKEoL5.js",
+        "/chunk-B43s90ze.js",
+        "/chunk-B4XvT-zy.js",
         "/chunk-B4tPdyDy.js",
-        "/chunk-BQg74Tr4.js",
-        "/chunk-BVizFd7J.js",
+        "/chunk-B5NQfoji.js",
+        "/chunk-B7DUcvnM.js",
+        "/chunk-B80n-rAS.js",
+        "/chunk-BG_JqKbm.js",
+        "/chunk-BQlzyEdz.js",
         "/chunk-BfFeIDEX.js",
-        "/chunk-BfFqp0nY.js",
-        "/chunk-BfQNtgYB.js",
-        "/chunk-BgMsdAwu.js",
-        "/chunk-BlHMlZHo.js",
+        "/chunk-BgTgzg-R.js",
         "/chunk-BopogVBY.js",
         "/chunk-Bq2NHkoe.js",
-        "/chunk-CJ0S13zr.js",
+        "/chunk-C0dg7xJn.js",
+        "/chunk-CCYdz2oy.js",
+        "/chunk-CEQz6-bz.js",
         "/chunk-CMxPBW_J.js",
-        "/chunk-CNmWLgCF.js",
-        "/chunk-CRGy8--N.js",
-        "/chunk-CeFlTCDs.js",
-        "/chunk-CembAkna.js",
-        "/chunk-CpbO7PWe.js",
+        "/chunk-CXCl5H4i.js",
+        "/chunk-CcIxJEtQ.js",
         "/chunk-CqNmYtFv.js",
         "/chunk-CyDXkhMn.js",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         "/chunk-CzJfIvCp.js",
@@ -129,25 +139,35 @@
         "/chunk-D8a5vavW.js",
         "/chunk-DD61dldd.js",
         "/chunk-DDs8_iJ0.js",
+=======
+        "/chunk-D7Ios6fg.js",
+>>>>>>> feat/integration-lot2
         "/chunk-DFHbGO0e.js",
+        "/chunk-DGmWrMcb.js",
         "/chunk-DHM4SRhF.js",
-        "/chunk-DMQBMyvz.js",
+        "/chunk-DIDDKeQx.js",
         "/chunk-DQ9v_89u.js",
+<<<<<<< HEAD
+>>>>>>> feat/integration-lot2
+=======
+        "/chunk-DYRIU8B2.js",
 >>>>>>> feat/integration-lot2
         "/chunk-DYp6iN5m.js",
         "/chunk-Da8L7OiF.js",
-        "/chunk-DejUjQUk.js",
         "/chunk-DhdaZ2Cc.js",
-        "/chunk-DpLg0bUE.js",
         "/chunk-DqtD4cjg.js",
         "/chunk-Drbq3HVB.js",
-        "/chunk-Du8walHl.js",
-        "/chunk-IWJrcypV.js",
-        "/chunk-_GEzkmx0.js",
-        "/chunk-g9SNIMbT.js",
-        "/chunk-iUKeMCMp.js",
+        "/chunk-Dt34rweo.js",
+        "/chunk-Dt6Vv8-F.js",
+        "/chunk-DvVW9Xzi.js",
+        "/chunk-DwgFJ5L_.js",
+        "/chunk-DwglsTgv.js",
+        "/chunk-Md71No1s.js",
+        "/chunk-p5J9qMAF.js",
+        "/chunk-rUH0vep8.js",
         "/favicon.ico",
         "/index.html",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         "/main-R7QUP3QG.js",
@@ -157,6 +177,9 @@
 >>>>>>> feat/integration-lot2
 =======
         "/main-RHRV5L36.js",
+>>>>>>> feat/integration-lot2
+=======
+        "/main-SUFXP2ZL.js",
 >>>>>>> feat/integration-lot2
         "/manifest.webmanifest",
         "/polyfills-5CFQRCPP.js",
@@ -221,6 +244,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     "/chunk-0a2T_YtC.js": "a93f893b8738cfae97fd31e1c45f0ec2ee4e96c6",
     "/chunk-5eBBR9CV.js": "cc0152836ecf9255799d8f6cf27acc68e6b2c59f",
     "/chunk-6F0PJ4f6.js": "1ed80e726f33c9ee8a3b7d68ee9e8e0086d9fb73",
@@ -256,30 +280,35 @@
 =======
     "/chunk-4gzDEiFc.js": "f6360253a2d5bc4c269a0eb698d998027d4844d7",
 >>>>>>> feat/integration-lot2
+=======
+    "/chunk-5DtSawaC.js": "e0b31e02bf8b0fd0e1c3aad5946720ad4dbc153a",
+>>>>>>> feat/integration-lot2
     "/chunk-5eBBR9CV.js": "cc0152836ecf9255799d8f6cf27acc68e6b2c59f",
     "/chunk-6F0PJ4f6.js": "1ed80e726f33c9ee8a3b7d68ee9e8e0086d9fb73",
+    "/chunk-77dzKVDx.js": "00b9b1b81e2ef77f1a95d85e2bc3e813f34a46af",
     "/chunk-97p5mxa8.js": "3675e39c1ee8bbb553f6fe86c314f5e76b018b40",
-    "/chunk-A49m8GEg.js": "17864b6c5651356b426f29bc30e0a8a110a33bbd",
     "/chunk-B3mKEoL5.js": "a1b7ebf79f1c91d1fcf679ed10427bbf5387ccf4",
+    "/chunk-B43s90ze.js": "4bb17805eb7a1ac3a52b1698ecabf9ba1acb1be1",
+    "/chunk-B4XvT-zy.js": "aa220507a7803a810b701606100aad9f972712d7",
     "/chunk-B4tPdyDy.js": "9244455f08423ade361ecae1b83d72cc6627ba8f",
-    "/chunk-BQg74Tr4.js": "ccae694ac1fe2b9a52a19b2f3ad3e1d27fa9225d",
-    "/chunk-BVizFd7J.js": "52d96b86dd8cb58fb91bd098c22f1bf4e6693b64",
+    "/chunk-B5NQfoji.js": "7148f9786d09996279c415befb94d9206004c076",
+    "/chunk-B7DUcvnM.js": "e5691ae284215b1ade45a0a950781d2881020123",
+    "/chunk-B80n-rAS.js": "12dc94117781a022c5e803f3cac8036a9cb79873",
+    "/chunk-BG_JqKbm.js": "7773f7f6f03c3c4e4b1aee2954d0c622ef839365",
+    "/chunk-BQlzyEdz.js": "3d139c93636791a822844f16591cac31589fa1a6",
     "/chunk-BfFeIDEX.js": "46955c16fb32a9efa171cc587e49d5b1df9783e8",
-    "/chunk-BfFqp0nY.js": "daac3665d0a6f7cc89d2b2279e58d8a6ecbd3da3",
-    "/chunk-BfQNtgYB.js": "30f8d855193004b536edd73297ddc934a6c16976",
-    "/chunk-BgMsdAwu.js": "d6d4e2bf64543a51a40fafea6c35dcd4e6d07b11",
-    "/chunk-BlHMlZHo.js": "16b9d09ec3e4be0b01defbf424efcc3b9cdfc555",
+    "/chunk-BgTgzg-R.js": "c3322968ad43ca65bd5c508d56ba9d0ad7069ede",
     "/chunk-BopogVBY.js": "61d2e09db03e3a6a2b1a811e27cd5666a79a91c0",
     "/chunk-Bq2NHkoe.js": "c8c7c294fc881cc5ea6d7c106e7a3e7311b9ff87",
-    "/chunk-CJ0S13zr.js": "f17a4596162241b7676a81835dd8e5e895244a6d",
+    "/chunk-C0dg7xJn.js": "b63182a797f26d6bf5ab27640bcb1c9f9fbd1d53",
+    "/chunk-CCYdz2oy.js": "6d2e359c62be3509760f23acf4d36c82312aa5f5",
+    "/chunk-CEQz6-bz.js": "126571dbc2a806a61dd774bee17fc8ef7c916d2b",
     "/chunk-CMxPBW_J.js": "62d792e8b7efbe4d242bcda8e27a90118952b1c0",
-    "/chunk-CNmWLgCF.js": "0000a935375a756f83ffb674b8d1b1d4107a0d93",
-    "/chunk-CRGy8--N.js": "31a14b83bd67d9119b6cd02d37b5fdee556e2491",
-    "/chunk-CeFlTCDs.js": "f225bd2cbea9257a9ae1b1b7b16d41ff58241781",
-    "/chunk-CembAkna.js": "698d1140df667d7281af923ce8d59307329d8a4e",
-    "/chunk-CpbO7PWe.js": "e213a19003ca5df9bcf2e7a92d27007dcd3da8ea",
+    "/chunk-CXCl5H4i.js": "0df640c8283e3107e1f977e660b79f40acce542d",
+    "/chunk-CcIxJEtQ.js": "5b8deb35cfdc5e28d5f0d3289bb013f7451e43c5",
     "/chunk-CqNmYtFv.js": "2fc9cc503ae3b8427e0842bf0ae67b944f6ceb35",
     "/chunk-CyDXkhMn.js": "9669d2221b5bd3f36744729fb16943a58b0176f7",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     "/chunk-CzJfIvCp.js": "0e06d08779e10faeba71a06186c9af87f33c8ef5",
@@ -323,24 +352,34 @@
     "/chunk-D8a5vavW.js": "fcdeede0408f58b9264fdd73977610128cabb7f1",
     "/chunk-DD61dldd.js": "d52f8240cafd8c753d1d8690c92a55006fe1a07a",
     "/chunk-DDs8_iJ0.js": "713d9402b772b824eccd1bf85054d259348a6dd2",
+=======
+    "/chunk-D7Ios6fg.js": "f8d253c38ed46b04e958fac1624a4fec17f01562",
+>>>>>>> feat/integration-lot2
     "/chunk-DFHbGO0e.js": "eb99b230c43a6fd1e0036f4fe11ca6074558d6cc",
+    "/chunk-DGmWrMcb.js": "746f31121f0e8a12d60af56088e3e23df4d91c46",
     "/chunk-DHM4SRhF.js": "0ea1745ec3988fe2ce5981ed24c608b3789bcd7b",
-    "/chunk-DMQBMyvz.js": "ed64cc481048bfa6e3cdddc06f0b0a68adeecd72",
+    "/chunk-DIDDKeQx.js": "07a1152e0a08dbf056ef05cc3536ea9f6dad26f4",
     "/chunk-DQ9v_89u.js": "e050bcf8689f983ddae8bac160b5128d7b7ccc28",
+<<<<<<< HEAD
+>>>>>>> feat/integration-lot2
+=======
+    "/chunk-DYRIU8B2.js": "3a0e455cbd442eb76ad06bb97316e24082fa7b26",
 >>>>>>> feat/integration-lot2
     "/chunk-DYp6iN5m.js": "bb131ee9690ac3cbd87d72c136ce6f36f7fff8ac",
     "/chunk-Da8L7OiF.js": "53fb4f064d29bdedf611617d045a8f340578ff4b",
-    "/chunk-DejUjQUk.js": "4599a5bbb636bd6e2327922d10a8e0bd35b0e575",
     "/chunk-DhdaZ2Cc.js": "98e25a6f5cba06d5d5132f03c79dc3614dfbc058",
-    "/chunk-DpLg0bUE.js": "dce640d763adc8529ac8323da350da91d6da7969",
     "/chunk-DqtD4cjg.js": "321b281afea4b7322c8841ea4a3d279243c09171",
     "/chunk-Drbq3HVB.js": "1dd89b3bffb55f556e8996e926d3a0f2c35ea65d",
-    "/chunk-Du8walHl.js": "8518c5f1e1bd164732627b42069f976af5b0a190",
-    "/chunk-IWJrcypV.js": "5613ddb6b97f209f5f8d87a381b00c68dbc89728",
-    "/chunk-_GEzkmx0.js": "6ab041f849894d5774be21062583186d7418aa50",
-    "/chunk-g9SNIMbT.js": "6f5c74838f32a40a9f663993fed1d8968a003daf",
-    "/chunk-iUKeMCMp.js": "96ec2396153b83f2a1c88763780b4bc482f8a190",
+    "/chunk-Dt34rweo.js": "e43f8c321bebfe3dc867277eb6073da7d7e89fed",
+    "/chunk-Dt6Vv8-F.js": "75922f6017d293edcbfc52d97fa3ba5668a5b7ca",
+    "/chunk-DvVW9Xzi.js": "0a2920c8101597b5a4309ec4b623568791dad026",
+    "/chunk-DwgFJ5L_.js": "ee61452e73b1ad4711297432198a87af7b604ecc",
+    "/chunk-DwglsTgv.js": "387ac0061c7923a710f63f7ef0da2ac53efbe5ba",
+    "/chunk-Md71No1s.js": "99a2d10ad7b142c7bf22b2c396e59e3bf8eab1d3",
+    "/chunk-p5J9qMAF.js": "40ed8b34b260e7535595282c306e1a486a610117",
+    "/chunk-rUH0vep8.js": "51e3d3ecc68968852b05eab376f3e6ef1982a16e",
     "/favicon.ico": "d44891721d24ab6a9d73a5e5a9bd3c63576d6ba0",
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     "/index.html": "b11f824291166e0c00bbc0deed89bb661fa0853e",
@@ -353,6 +392,10 @@
 =======
     "/index.html": "4eb33ef8fc97240c18b20d03455456c9c8e83a75",
     "/main-RHRV5L36.js": "529f392361d3e6781dd425d39c7b6a4b2eae23d3",
+>>>>>>> feat/integration-lot2
+=======
+    "/index.html": "93f197d5a7dda87231842fe0bb2dd8f41847557c",
+    "/main-SUFXP2ZL.js": "f928b4fd374b62813d7cd8ce5debb5c337516e96",
 >>>>>>> feat/integration-lot2
     "/manifest.webmanifest": "6dc7467deb15788df0f268715d50016277f653b7",
     "/polyfills-5CFQRCPP.js": "f2241e9a25858f895ce299d15f6f22e849e2fd72",
