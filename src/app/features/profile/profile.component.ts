@@ -75,9 +75,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   });
 
   form!: FormGroup;
-  logoMode      = signal<'emoji' | 'upload' | 'color'>('upload');
+  logoMode      = signal<'emoji' | 'upload'>('upload');
   selectedLogo  = signal<string>('🏪');
   uploadedLogo  = signal<string>('');
+  defaultLogo   = signal<string>('');
+  colorPickerOpen = signal<boolean>(false);
   selectedColor = signal<string>('#a04343');
   loading       = signal<boolean>(false);
   logoUploading = signal<boolean>(false);
@@ -191,7 +193,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.onSubmit();
   }
 
-
+  openColorPicker(): void {
+    this.colorPickerOpen.set(!this.colorPickerOpen());
+  }
 
   copyShareLink(url: string, key: string): void {
     navigator.clipboard.writeText(url).then(() => {
@@ -224,11 +228,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (existingLogo.startsWith('data:image/') || existingLogo.startsWith('http')) {
       this.logoMode.set('upload');
       this.uploadedLogo.set(existingLogo);
+      this.defaultLogo.set(existingLogo);
     } else {
       this.selectedLogo.set(existingLogo);
+      this.defaultLogo.set(existingLogo);
     }
-    this.selectedColor.set(c?.coverColor ?? '#a04343');
-    this.colorDraft.set(c?.coverColor ?? '#a04343');
+
+    // 2. Charger uniquement la couleur
+    const existingColor = c?.coverColor ?? '#a04343';
+
+    this.selectedColor.set(existingColor);
+    this.colorDraft.set(existingColor);
 
     this.form = this.fb.group({
       name:        [c?.name        ?? '', [Validators.required, Validators.minLength(2)]],
@@ -261,8 +271,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.recoveryEmailVerified.set(!pending && (companyData?.recoveryEmailVerified ?? false));
   }
 
-  setLogoMode(mode: 'emoji' | 'upload' | 'color'): void { this.logoMode.set(mode); }
-  selectLogo(logo: string): void              { this.selectedLogo.set(logo); }
+  setLogoMode(mode: 'emoji' | 'upload'): void { this.logoMode.set(mode); this.colorPickerOpen.set(false); }
+  selectLogo(logo: string): void              {   this.selectedLogo.set(logo); }
   selectColor(color: string): void            { this.selectedColor.set(color); this.colorDraft.set(color); }
   triggerLogoUpload(): void                   { this.logoFileRef.nativeElement.click(); }
 
@@ -307,7 +317,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   get activeLogo(): string {
-    return this.logoMode() === 'upload' ? this.uploadedLogo() : this.selectedLogo();
+    return this.logoMode() !== 'upload' ? this.selectedLogo() : this.uploadedLogo();
   }
 
   onSubmit(): void {
